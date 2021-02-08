@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.time.LocalDate;
 
 import static com.insulin.shared.SecurityConstants.FORBIDDEN_MESSAGE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -30,6 +31,7 @@ public class JwtAuthenticationEntryPoint extends Http403ForbiddenEntryPoint {
                 .httpStatus(HttpStatus.FORBIDDEN) //
                 .reason(HttpStatus.FORBIDDEN.getReasonPhrase()) //
                 .message(FORBIDDEN_MESSAGE) //
+                .timeStamp(LocalDate.now()) //
                 .build();
         response.setContentType(APPLICATION_JSON_VALUE); //json type, to pass our object
         response.setStatus(HttpStatus.FORBIDDEN.value()); //set the actual value of the request
