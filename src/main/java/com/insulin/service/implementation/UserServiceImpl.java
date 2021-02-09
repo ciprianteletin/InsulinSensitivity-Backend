@@ -1,9 +1,13 @@
 package com.insulin.service.implementation;
 
+import com.insulin.exception.model.EmailAlreadyExistentException;
+import com.insulin.exception.model.UserNotFoundException;
+import com.insulin.exception.model.UsernameAlreadyExistentException;
 import com.insulin.model.User;
 import com.insulin.model.UserPrincipal;
 import com.insulin.repository.UserRepository;
 import com.insulin.service.UserService;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -15,6 +19,9 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.Date;
+import java.util.Objects;
+
+import static com.insulin.shared.UserConstants.*;
 
 @Service
 @Transactional
@@ -35,8 +42,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.findUserByUsername(username);
         if (user == null) {
-            logger.error("User not found: " + username);
-            throw new UsernameNotFoundException("User not found: " + username);
+            logger.error(USER_NOT_FOUND + ": " + username);
+            throw new UsernameNotFoundException(USER_NOT_FOUND + ": " + username);
         }
         logger.info("User found for username: " + username);
         user.getDetails()
@@ -45,5 +52,33 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         userRepository.save(user); //update information
         logger.info("Returning found user");
         return new UserPrincipal(user);
+    }
+
+    @Override
+    public User findUserByUsername(String username) throws UserNotFoundException {
+        User user = userRepository.findUserByUsername(username);
+        if (Objects.isNull(user)) {
+            throw new UserNotFoundException(USER_NOT_FOUND);
+        }
+        return user;
+    }
+
+    @Override
+    public User findUserByEmail(String email) {
+        return null;
+    }
+
+    private void validateNewUsernameAndEmail(String username, String email) throws UserNotFoundException, UsernameAlreadyExistentException, EmailAlreadyExistentException {
+        if(!StringUtils.isNotEmpty(username) || !StringUtils.isNotEmpty(email)) {
+            throw new UserNotFoundException(INVALID_DATA);
+        }
+        User userByUsername = findUserByUsername(username);
+        if (userByUsername != null) {
+            throw new UsernameAlreadyExistentException(USERNAME_ALREADY_EXISTENT);
+        }
+        User userByEmail = findUserByEmail(email);
+        if (userByEmail != null) {
+            throw new EmailAlreadyExistentException(EMAIL_ALREADY_EXISTENT);
+        }
     }
 }

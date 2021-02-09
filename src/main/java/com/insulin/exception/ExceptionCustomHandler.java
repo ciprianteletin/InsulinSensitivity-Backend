@@ -1,10 +1,7 @@
 package com.insulin.exception;
 
 import com.auth0.jwt.exceptions.TokenExpiredException;
-import com.insulin.exception.model.EmailAlreadyExistentException;
-import com.insulin.exception.model.EmailNotFoundException;
-import com.insulin.exception.model.UserNotFoundException;
-import com.insulin.exception.model.UsernameAlreadyExistentException;
+import com.insulin.exception.model.*;
 import com.insulin.shared.HttpResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,6 +53,12 @@ public class ExceptionCustomHandler {
     public ResponseEntity<HttpResponse> userNotFoundException(UserNotFoundException exception) {
         logger.error(exception.getMessage());
         return createHttpResponse(HttpStatus.NOT_FOUND, exception.getMessage());
+    }
+
+    @ExceptionHandler(InvalidDataException.class)
+    public ResponseEntity<HttpResponse> invalidDataException(InvalidDataException exception) {
+        logger.error(exception.getMessage());
+        return createHttpResponse(HttpStatus.BAD_REQUEST, exception.getMessage());
     }
 
     @ExceptionHandler(BadCredentialsException.class)

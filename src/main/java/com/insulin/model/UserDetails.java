@@ -1,6 +1,7 @@
 package com.insulin.model;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
@@ -9,6 +10,7 @@ import java.util.Date;
 @Entity
 @Table(name = "user_details")
 @NoArgsConstructor
+@Builder
 @AllArgsConstructor
 public class UserDetails {
     @Id
