@@ -5,8 +5,8 @@ public class SecurityConstants {
     public static final String TOKEN_PREFIX = "Bearer "; //tipul de token, prefixul
     public static final String JWT_TOKEN_HEADER = "Jwt-Token"; //pentru header
     public static final String TOKEN_CANNOT_BE_VERIFIED = "Token cannot be verified"; //error message
-    public static final String GET_ARRAYS_LLC = "Insulin Sensitivity INC"; //cine emite
-    public static final String GET_ARRAYS_ADMINISTRATION = "User Admin"; //optional
+    public static final String ISSUER = "Insulin Sensitivity INC"; //cine emite
+    public static final String AUDIENCE = "User Admin"; //optional
     //TODO implements for the doctor, patient. Or remove it if not needed
     public static final String AUTHORITIES = "authorities";
     public static final String FORBIDDEN_MESSAGE = "You need to be logged-in in order to access this page."; //error message access
