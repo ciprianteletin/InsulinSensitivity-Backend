@@ -12,5 +12,5 @@ public class SecurityConstants {
     public static final String FORBIDDEN_MESSAGE = "You need to be logged-in in order to access this page."; //error message access
     public static final String ACCESS_DENIED_MESSAGE = "You don't have the permission to access this page."; //another error
     public static final String OPTIONS_HTTP_METHOD = "OPTIONS";
-    public static final String[] PUBLIC_URLS = {"/user/login", "/user/register", "/user/resetpassword/**", "/user/image/**"}; //url-uri ce nu vor fi blocate de security
+    public static final String[] PUBLIC_URLS = {"/login", "/register", "/user/resetpassword/**", "/user/image/**"}; //url-uri ce nu vor fi blocate de security
 }

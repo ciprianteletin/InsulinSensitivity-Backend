@@ -12,7 +12,7 @@ import java.util.Date;
 @NoArgsConstructor
 @Builder
 @AllArgsConstructor
-public class UserDetails {
+public class UserDetail {
     @Id
     @Column(name = "user_id")
     private Long id;

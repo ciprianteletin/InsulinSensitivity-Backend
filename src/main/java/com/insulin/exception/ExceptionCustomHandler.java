@@ -16,9 +16,9 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import javax.persistence.NoResultException;
 
 import java.io.IOException;
-import java.time.LocalDate;
 
 import static com.insulin.shared.ExceptionConstants.*;
+import static com.insulin.utils.HttpResponseUtils.buildHttpResponseEntity;
 
 /**
  * Special class which has the role to 'handle' all the exceptions and to return a specific, easy to understand message to the user.
@@ -34,82 +34,66 @@ public class ExceptionCustomHandler {
     @ExceptionHandler(EmailAlreadyExistentException.class)
     public ResponseEntity<HttpResponse> emailExistentException(EmailAlreadyExistentException exception) {
         logger.error(exception.getMessage());
-        return createHttpResponse(HttpStatus.BAD_REQUEST, exception.getMessage());
+        return buildHttpResponseEntity(HttpStatus.BAD_REQUEST, exception.getMessage());
     }
 
     @ExceptionHandler(EmailNotFoundException.class)
     public ResponseEntity<HttpResponse> emailNotFoundException(EmailNotFoundException exception) {
         logger.error(exception.getMessage());
-        return createHttpResponse(HttpStatus.NOT_FOUND, exception.getMessage());
+        return buildHttpResponseEntity(HttpStatus.NOT_FOUND, exception.getMessage());
     }
 
     @ExceptionHandler(UsernameAlreadyExistentException.class)
     public ResponseEntity<HttpResponse> usernameExistentException(UsernameAlreadyExistentException exception) {
         logger.error(exception.getMessage());
-        return createHttpResponse(HttpStatus.BAD_REQUEST, exception.getMessage());
+        return buildHttpResponseEntity(HttpStatus.BAD_REQUEST, exception.getMessage());
     }
 
     @ExceptionHandler(UserNotFoundException.class)
     public ResponseEntity<HttpResponse> userNotFoundException(UserNotFoundException exception) {
         logger.error(exception.getMessage());
-        return createHttpResponse(HttpStatus.NOT_FOUND, exception.getMessage());
+        return buildHttpResponseEntity(HttpStatus.NOT_FOUND, exception.getMessage());
     }
 
     @ExceptionHandler(InvalidDataException.class)
     public ResponseEntity<HttpResponse> invalidDataException(InvalidDataException exception) {
         logger.error(exception.getMessage());
-        return createHttpResponse(HttpStatus.BAD_REQUEST, exception.getMessage());
+        return buildHttpResponseEntity(HttpStatus.BAD_REQUEST, exception.getMessage());
     }
 
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<HttpResponse> badCredentialsException() {
-        return createHttpResponse(HttpStatus.BAD_REQUEST, INCORRECT_CREDENTIALS);
+        return buildHttpResponseEntity(HttpStatus.BAD_REQUEST, INCORRECT_CREDENTIALS);
     }
 
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<HttpResponse> accessDeniedException() {
-        return createHttpResponse(HttpStatus.FORBIDDEN, NOT_ENOUGH_PERMISSION);
+        return buildHttpResponseEntity(HttpStatus.FORBIDDEN, NOT_ENOUGH_PERMISSION);
     }
 
     @ExceptionHandler(TokenExpiredException.class)
     public ResponseEntity<HttpResponse> tokenExpiredException(TokenExpiredException exception) {
-        return createHttpResponse(HttpStatus.GATEWAY_TIMEOUT, exception.getMessage());
+        return buildHttpResponseEntity(HttpStatus.GATEWAY_TIMEOUT, exception.getMessage());
     }
 
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     public ResponseEntity<HttpResponse> methodNotSupportedException() {
-        return createHttpResponse(HttpStatus.METHOD_NOT_ALLOWED, METHOD_NOT_ALLOWED);
+        return buildHttpResponseEntity(HttpStatus.METHOD_NOT_ALLOWED, METHOD_NOT_ALLOWED);
     }
 
     @ExceptionHandler(NoResultException.class)
     public ResponseEntity<HttpResponse> notFoundException(NoResultException exception) {
-        return createHttpResponse(HttpStatus.NOT_FOUND, exception.getMessage());
+        return buildHttpResponseEntity(HttpStatus.NOT_FOUND, exception.getMessage());
     }
 
     @ExceptionHandler(IOException.class)
     public ResponseEntity<HttpResponse> fileException() {
-        return createHttpResponse(HttpStatus.INTERNAL_SERVER_ERROR, FILE_ERROR);
+        return buildHttpResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR, FILE_ERROR);
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<HttpResponse> unexpectedException(Exception exception) {
         logger.error(exception.getMessage());
-        return createHttpResponse(HttpStatus.INTERNAL_SERVER_ERROR, INTERNAL_SERVER_ERROR);
-    }
-
-    /**
-     * Creates a new HttpResponse based on the status passed and also on the message of the error.
-     * The httpResponse object will be what the user will see.
-     */
-    private ResponseEntity<HttpResponse> createHttpResponse(HttpStatus httpStatus, String message) {
-        HttpResponse httpResponse = HttpResponse.builder()
-                .httpStatusCode(httpStatus.value()) //
-                .httpStatus(httpStatus) //
-                .reason(httpStatus.getReasonPhrase()) //
-                .message(message) //
-                .timeStamp(LocalDate.now()) //
-                .build();
-
-        return new ResponseEntity<>(httpResponse, httpStatus);
+        return buildHttpResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR, INTERNAL_SERVER_ERROR);
     }
 }

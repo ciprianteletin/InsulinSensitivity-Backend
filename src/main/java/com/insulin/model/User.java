@@ -26,7 +26,7 @@ public class User implements Serializable {
     //using the primary key as a foreign key.
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     @PrimaryKeyJoinColumn
-    private UserDetails details;
+    private UserDetail details;
 
     public Long getId() {
         return id;
@@ -52,11 +52,11 @@ public class User implements Serializable {
         this.password = password;
     }
 
-    public UserDetails getDetails() {
+    public UserDetail getDetails() {
         return details;
     }
 
-    public void setDetails(UserDetails details) {
+    public void setDetails(UserDetail details) {
         this.details = details;
     }
 

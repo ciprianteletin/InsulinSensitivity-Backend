@@ -1,10 +1,7 @@
 package com.insulin.utils;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 /**
  * Complete user represents the user with all the details provided in order to register a user into the database.
@@ -13,6 +10,7 @@ import lombok.Setter;
  */
 @Builder
 @NoArgsConstructor
+@AllArgsConstructor
 @Getter
 @Setter
 public class CompleteUser {

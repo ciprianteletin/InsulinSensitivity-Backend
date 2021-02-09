@@ -4,12 +4,16 @@ import com.insulin.exception.model.EmailAlreadyExistentException;
 import com.insulin.exception.model.UserNotFoundException;
 import com.insulin.exception.model.UsernameAlreadyExistentException;
 import com.insulin.model.User;
+import com.insulin.model.UserDetail;
 import com.insulin.model.UserPrincipal;
 import com.insulin.repository.UserRepository;
 import com.insulin.service.UserService;
+import com.insulin.utils.CompleteUser;
+import com.insulin.utils.abstractions.AbstractUserFactory;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -19,9 +23,9 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.Date;
-import java.util.Objects;
 
 import static com.insulin.shared.UserConstants.*;
+import static java.util.Objects.isNull;
 
 @Service
 @Transactional
@@ -29,9 +33,12 @@ import static com.insulin.shared.UserConstants.*;
 public class UserServiceImpl implements UserService, UserDetailsService {
     private final Logger logger = LoggerFactory.getLogger(getClass());
     private final UserRepository userRepository;
+    private final AbstractUserFactory userFactory;
 
-    public UserServiceImpl(UserRepository userRepository) {
+    @Autowired
+    public UserServiceImpl(UserRepository userRepository, AbstractUserFactory userFactory) {
         this.userRepository = userRepository;
+        this.userFactory = userFactory;
     }
 
     /**
@@ -55,12 +62,20 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
-    public User findUserByUsername(String username) throws UserNotFoundException {
-        User user = userRepository.findUserByUsername(username);
-        if (Objects.isNull(user)) {
-            throw new UserNotFoundException(USER_NOT_FOUND);
-        }
-        return user;
+    public void register(CompleteUser completeUser) throws UserNotFoundException, EmailAlreadyExistentException, UsernameAlreadyExistentException {
+        validateNewUsernameAndEmail(completeUser.getUsername(), completeUser.getEmail());
+        logger.info("Username and e-mail ok");
+        User user = userFactory.createUser(completeUser);
+        UserDetail userDetail = userFactory.createUserDetails(completeUser);
+        user.setDetails(userDetail);
+        userDetail.setUser(user);
+        userRepository.save(user);
+        logger.info("User registered with success!");
+    }
+
+    @Override
+    public User findUserByUsername(String username) {
+        return userRepository.findUserByUsername(username);
     }
 
     @Override
@@ -70,14 +85,17 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     private void validateNewUsernameAndEmail(String username, String email) throws UserNotFoundException, UsernameAlreadyExistentException, EmailAlreadyExistentException {
         if(!StringUtils.isNotEmpty(username) || !StringUtils.isNotEmpty(email)) {
+            logger.error("Empty username or email!");
             throw new UserNotFoundException(INVALID_DATA);
         }
         User userByUsername = findUserByUsername(username);
-        if (userByUsername != null) {
+        if (!isNull(userByUsername)) {
+            logger.error("Username already existent!");
             throw new UsernameAlreadyExistentException(USERNAME_ALREADY_EXISTENT);
         }
         User userByEmail = findUserByEmail(email);
-        if (userByEmail != null) {
+        if (!isNull(userByEmail)) {
+            logger.error("Email already existent!");
             throw new EmailAlreadyExistentException(EMAIL_ALREADY_EXISTENT);
         }
     }

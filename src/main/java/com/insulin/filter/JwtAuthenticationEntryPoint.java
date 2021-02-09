@@ -2,6 +2,7 @@ package com.insulin.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.insulin.shared.HttpResponse;
+import com.insulin.utils.HttpResponseUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.Http403ForbiddenEntryPoint;
@@ -26,13 +27,7 @@ public class JwtAuthenticationEntryPoint extends Http403ForbiddenEntryPoint {
 
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException {
-        HttpResponse httpResponse = HttpResponse.builder() //
-                .httpStatusCode(HttpStatus.FORBIDDEN.value()) //
-                .httpStatus(HttpStatus.FORBIDDEN) //
-                .reason(HttpStatus.FORBIDDEN.getReasonPhrase()) //
-                .message(FORBIDDEN_MESSAGE) //
-                .timeStamp(LocalDate.now()) //
-                .build();
+        HttpResponse httpResponse = HttpResponseUtils.buildHttpResponse(HttpStatus.FORBIDDEN, FORBIDDEN_MESSAGE);
         response.setContentType(APPLICATION_JSON_VALUE); //json type, to pass our object
         response.setStatus(HttpStatus.FORBIDDEN.value()); //set the actual value of the request
         OutputStream out = response.getOutputStream(); //getting the output stream to output our custom response

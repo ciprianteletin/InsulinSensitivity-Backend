@@ -2,6 +2,7 @@ package com.insulin.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.insulin.shared.HttpResponse;
+import com.insulin.utils.HttpResponseUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.access.AccessDeniedHandler;
@@ -25,13 +26,7 @@ public class JwtAccessDeniedHandler implements AccessDeniedHandler {
 
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException exception) throws IOException {
-        HttpResponse httpResponse = HttpResponse.builder() //
-                .httpStatusCode(HttpStatus.UNAUTHORIZED.value()) //
-                .httpStatus(HttpStatus.UNAUTHORIZED) //
-                .reason(HttpStatus.UNAUTHORIZED.getReasonPhrase()) //
-                .message(ACCESS_DENIED_MESSAGE) //
-                .timeStamp(LocalDate.now()) //
-                .build();
+        HttpResponse httpResponse = HttpResponseUtils.buildHttpResponse(HttpStatus.UNAUTHORIZED, ACCESS_DENIED_MESSAGE);
         response.setContentType(APPLICATION_JSON_VALUE); //json type, to pass our object
         response.setStatus(HttpStatus.UNAUTHORIZED.value()); //set the actual value of the request
         OutputStream out = response.getOutputStream(); //getting the output stream to output our custom response
