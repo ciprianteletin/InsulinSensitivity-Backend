@@ -19,15 +19,12 @@ public class User implements Serializable {
     private String username;
     @Column(nullable = false)
     private String password;
+    @Column(nullable = false)
+    private String role;
     //using the primary key as a foreign key.
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     @PrimaryKeyJoinColumn
     private UserDetails details;
-    //same here, using PK for foreign key
-    //TODO implement ONE TO MANY in the future
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
-    @PrimaryKeyJoinColumn
-    private UserAuthorities authorities;
 
     public Long getId() {
         return id;
@@ -61,11 +58,11 @@ public class User implements Serializable {
         this.details = details;
     }
 
-    public UserAuthorities getAuthorities() {
-        return authorities;
+    public String getRole() {
+        return role;
     }
 
-    public void setAuthorities(UserAuthorities authorities) {
-        this.authorities = authorities;
+    public void setRole(String role) {
+        this.role = role;
     }
 }

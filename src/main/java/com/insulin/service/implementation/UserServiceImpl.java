@@ -20,8 +20,8 @@ import java.util.Date;
 @Transactional
 @Qualifier("userService")
 public class UserServiceImpl implements UserService, UserDetailsService {
-    private Logger logger = LoggerFactory.getLogger(getClass());
-    private UserRepository userRepository;
+    private final Logger logger = LoggerFactory.getLogger(getClass());
+    private final UserRepository userRepository;
 
     public UserServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;

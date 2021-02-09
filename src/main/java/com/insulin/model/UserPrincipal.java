@@ -4,10 +4,9 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.ArrayList;
 import java.util.Collection;
-
-import static java.util.Arrays.stream;
-import static java.util.stream.Collectors.*;
+import java.util.List;
 
 /**
  * Class which is an Adapter between User class and UserDetails which is provided by Spring Security.
@@ -22,12 +21,13 @@ public class UserPrincipal implements UserDetails {
     }
 
     /**
-     * Returns the privileges of the user, what rights does he have.
+     * Returns the privilege of the user, what rights does he have.
      */
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        String[] userAuth = this.user.getAuthorities().getAuthorities();
-        return stream(userAuth).map(SimpleGrantedAuthority::new).collect(toList());
+        List<GrantedAuthority> authorities = new ArrayList<>();
+        authorities.add(new SimpleGrantedAuthority((user.getRole().toUpperCase())));
+        return authorities;
     }
 
     @Override
