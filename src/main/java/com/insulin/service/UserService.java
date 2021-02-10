@@ -6,9 +6,11 @@ import com.insulin.exception.model.UsernameAlreadyExistentException;
 import com.insulin.model.User;
 import com.insulin.utils.model.CompleteUser;
 
+import javax.mail.MessagingException;
+
 public interface UserService {
 
-    void register(CompleteUser completeUser) throws UserNotFoundException, EmailAlreadyExistentException, UsernameAlreadyExistentException;
+    void register(CompleteUser completeUser) throws UserNotFoundException, EmailAlreadyExistentException, UsernameAlreadyExistentException, MessagingException;
 
     User findUserByUsername(String username);
 

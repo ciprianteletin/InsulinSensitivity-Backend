@@ -22,6 +22,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.mail.MessagingException;
+
 import static com.insulin.shared.SecurityConstants.JWT_TOKEN_HEADER;
 
 @RestController
@@ -49,7 +51,7 @@ public class UserController {
 
     @PostMapping("/register")
     public ResponseEntity<HttpResponse> registerUser(@RequestBody CompleteUser completeUser)
-            throws UserNotFoundException, EmailAlreadyExistentException, UsernameAlreadyExistentException {
+            throws UserNotFoundException, EmailAlreadyExistentException, UsernameAlreadyExistentException, MessagingException {
         userService.register(completeUser);
         return HttpResponseUtils.buildHttpResponseEntity(HttpStatus.OK, "User registered successfully");
     }

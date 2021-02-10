@@ -7,6 +7,7 @@ import com.insulin.model.User;
 import com.insulin.model.UserDetail;
 import com.insulin.model.UserPrincipal;
 import com.insulin.repository.UserRepository;
+import com.insulin.service.EmailService;
 import com.insulin.service.LoginAttemptService;
 import com.insulin.service.UserService;
 import com.insulin.utils.model.CompleteUser;
@@ -21,6 +22,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import javax.mail.MessagingException;
 import javax.transaction.Transactional;
 import java.util.Date;
 
@@ -35,12 +37,15 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     private final UserRepository userRepository;
     private final AbstractUserFactory userFactory;
     private final LoginAttemptService loginAttemptService;
+    private final EmailService emailService;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, AbstractUserFactory userFactory, LoginAttemptService loginAttemptService) {
+    public UserServiceImpl(UserRepository userRepository, AbstractUserFactory userFactory,
+                           LoginAttemptService loginAttemptService, EmailService emailService) {
         this.userRepository = userRepository;
         this.userFactory = userFactory;
         this.loginAttemptService = loginAttemptService;
+        this.emailService = emailService;
     }
 
     /**
@@ -75,7 +80,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
-    public void register(CompleteUser completeUser) throws UserNotFoundException, EmailAlreadyExistentException, UsernameAlreadyExistentException {
+    public void register(CompleteUser completeUser) throws UserNotFoundException, EmailAlreadyExistentException,
+            UsernameAlreadyExistentException, MessagingException {
         validateNewUsernameAndEmail(completeUser.getUsername(), completeUser.getEmail());
         logger.info("Username and e-mail ok");
         User user = userFactory.createUser(completeUser);
@@ -83,6 +89,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         user.setDetails(userDetail);
         userDetail.setUser(user);
         userRepository.save(user);
+        emailService.sendRegisterEmail(userDetail.getFirstName(), userDetail.getEmail());
         logger.info("User registered with success!");
     }
 
