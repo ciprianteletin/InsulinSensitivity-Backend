@@ -3,6 +3,7 @@ package com.insulin.utils;
 import com.insulin.model.User;
 import com.insulin.model.UserDetail;
 import com.insulin.utils.abstractions.AbstractUserFactory;
+import com.insulin.utils.model.CompleteUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;

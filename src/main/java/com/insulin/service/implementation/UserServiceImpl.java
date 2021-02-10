@@ -7,8 +7,9 @@ import com.insulin.model.User;
 import com.insulin.model.UserDetail;
 import com.insulin.model.UserPrincipal;
 import com.insulin.repository.UserRepository;
+import com.insulin.service.LoginAttemptService;
 import com.insulin.service.UserService;
-import com.insulin.utils.CompleteUser;
+import com.insulin.utils.model.CompleteUser;
 import com.insulin.utils.abstractions.AbstractUserFactory;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -19,7 +20,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-
 
 import javax.transaction.Transactional;
 import java.util.Date;
@@ -34,11 +34,13 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     private final Logger logger = LoggerFactory.getLogger(getClass());
     private final UserRepository userRepository;
     private final AbstractUserFactory userFactory;
+    private final LoginAttemptService loginAttemptService;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, AbstractUserFactory userFactory) {
+    public UserServiceImpl(UserRepository userRepository, AbstractUserFactory userFactory, LoginAttemptService loginAttemptService) {
         this.userRepository = userRepository;
         this.userFactory = userFactory;
+        this.loginAttemptService = loginAttemptService;
     }
 
     /**
@@ -53,12 +55,23 @@ public class UserServiceImpl implements UserService, UserDetailsService {
             throw new UsernameNotFoundException(USER_NOT_FOUND + ": " + username);
         }
         logger.info("User found for username: " + username);
+        UserPrincipal principal = new UserPrincipal(user);
+        validateLoginAttempt(principal);
         user.getDetails()
                 .setLastLoginDateDisplay(user.getDetails().getLastLoginDate()); //last login
         user.getDetails().setLastLoginDate(new Date()); // current login, now
         userRepository.save(user); //update information
         logger.info("Returning found user");
-        return new UserPrincipal(user);
+        return principal;
+    }
+
+    public void validateLoginAttempt(UserPrincipal userPrincipal) {
+        logger.info("Validating the user authentication");
+        if (userPrincipal.isNoActiveCaptcha()) {
+            userPrincipal.setNoActiveCaptcha(!loginAttemptService.isExceededMaxAttempts(userPrincipal.getUsername()));
+        } else {
+            loginAttemptService.evictUserFromLoginCache(userPrincipal.getUsername());
+        }
     }
 
     @Override
@@ -84,7 +97,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     private void validateNewUsernameAndEmail(String username, String email) throws UserNotFoundException, UsernameAlreadyExistentException, EmailAlreadyExistentException {
-        if(!StringUtils.isNotEmpty(username) || !StringUtils.isNotEmpty(email)) {
+        if (!StringUtils.isNotEmpty(username) || !StringUtils.isNotEmpty(email)) {
             logger.error("Empty username or email!");
             throw new UserNotFoundException(INVALID_DATA);
         }

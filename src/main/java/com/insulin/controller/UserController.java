@@ -8,7 +8,7 @@ import com.insulin.model.User;
 import com.insulin.model.UserPrincipal;
 import com.insulin.service.UserService;
 import com.insulin.shared.HttpResponse;
-import com.insulin.utils.CompleteUser;
+import com.insulin.utils.model.CompleteUser;
 import com.insulin.utils.HttpResponseUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;

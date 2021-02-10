@@ -15,6 +15,7 @@ import java.util.List;
  */
 public class UserPrincipal implements UserDetails {
     private User user;
+    private boolean noActiveCaptcha = true;
 
     public UserPrincipal(User user) {
         this.user = user;
@@ -47,7 +48,7 @@ public class UserPrincipal implements UserDetails {
 
     @Override
     public boolean isAccountNonLocked() {
-        return true;
+        return noActiveCaptcha;
     }
 
     @Override
@@ -58,5 +59,13 @@ public class UserPrincipal implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    public void setNoActiveCaptcha(boolean captcha) {
+        this.noActiveCaptcha = captcha;
+    }
+
+    public boolean isNoActiveCaptcha() {
+        return noActiveCaptcha;
     }
 }

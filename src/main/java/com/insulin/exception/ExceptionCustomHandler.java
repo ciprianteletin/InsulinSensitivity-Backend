@@ -3,12 +3,13 @@ package com.insulin.exception;
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.insulin.exception.model.*;
 import com.insulin.shared.HttpResponse;
+import com.insulin.utils.model.CaptchaModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.LockedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -66,11 +67,6 @@ public class ExceptionCustomHandler {
         return buildHttpResponseEntity(HttpStatus.BAD_REQUEST, INCORRECT_CREDENTIALS);
     }
 
-    @ExceptionHandler(AccessDeniedException.class)
-    public ResponseEntity<HttpResponse> accessDeniedException() {
-        return buildHttpResponseEntity(HttpStatus.FORBIDDEN, NOT_ENOUGH_PERMISSION);
-    }
-
     @ExceptionHandler(TokenExpiredException.class)
     public ResponseEntity<HttpResponse> tokenExpiredException(TokenExpiredException exception) {
         return buildHttpResponseEntity(HttpStatus.GATEWAY_TIMEOUT, exception.getMessage());
@@ -79,6 +75,11 @@ public class ExceptionCustomHandler {
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     public ResponseEntity<HttpResponse> methodNotSupportedException() {
         return buildHttpResponseEntity(HttpStatus.METHOD_NOT_ALLOWED, METHOD_NOT_ALLOWED);
+    }
+
+    @ExceptionHandler(LockedException.class)
+    public ResponseEntity<CaptchaModel> activateCaptchaCode() {
+        return new ResponseEntity<>(new CaptchaModel(true), HttpStatus.OK);
     }
 
     @ExceptionHandler(NoResultException.class)

@@ -4,7 +4,7 @@ import com.insulin.exception.model.EmailAlreadyExistentException;
 import com.insulin.exception.model.UserNotFoundException;
 import com.insulin.exception.model.UsernameAlreadyExistentException;
 import com.insulin.model.User;
-import com.insulin.utils.CompleteUser;
+import com.insulin.utils.model.CompleteUser;
 
 public interface UserService {
 
