@@ -2,11 +2,15 @@ package com.insulin.model;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.insulin.validation.Phone;
+import com.sun.istack.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.Size;
 import java.util.Date;
 
 @Entity
@@ -22,12 +26,20 @@ public class UserDetail {
     @Column(name = "user_id")
     private Long id;
     @Column(name = "first_name", nullable = false)
+    @NotNull
+    @Size(min = 3, max = 20)
     private String firstName;
     @Column(name = "last_name", nullable = false)
+    @NotNull
+    @Size(min = 3, max = 20)
     private String lastName;
     @Column(nullable = false)
+    @Email
+    @NotNull
     private String email;
     @Column(nullable = false)
+    @NotNull
+    @Phone
     private String phoneNr;
     private String profileImageUrl;
 

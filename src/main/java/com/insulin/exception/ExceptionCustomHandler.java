@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.LockedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -31,6 +32,12 @@ import static com.insulin.utils.HttpResponseUtils.buildHttpResponseEntity;
 @RestControllerAdvice
 public class ExceptionCustomHandler {
     private final Logger logger = LoggerFactory.getLogger(ExceptionCustomHandler.class);
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<HttpResponse> invalidField(MethodArgumentNotValidException exception) {
+        logger.error(exception.getMessage());
+        return buildHttpResponseEntity(HttpStatus.BAD_REQUEST, INVALID_FIELD);
+    }
 
     @ExceptionHandler(EmailAlreadyExistentException.class)
     public ResponseEntity<HttpResponse> emailExistentException(EmailAlreadyExistentException exception) {
