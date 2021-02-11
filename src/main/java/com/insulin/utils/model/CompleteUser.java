@@ -26,7 +26,7 @@ public class CompleteUser {
     private String username;
     @JsonProperty
     @NotNull
-    @Size(min = 8, max = 30)
+    @Size(min = 8)
     private String password;
     @JsonProperty
     @NotNull

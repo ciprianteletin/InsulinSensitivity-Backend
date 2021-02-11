@@ -100,7 +100,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Override
     public User findUserByEmail(String email) {
-        return null;
+        return userRepository.findUserByEmail(email);
     }
 
     private void validateNewUsernameAndEmail(String username, String email) throws UserNotFoundException, UsernameAlreadyExistentException, EmailAlreadyExistentException {
