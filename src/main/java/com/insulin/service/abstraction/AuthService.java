@@ -1,4 +1,4 @@
-package com.insulin.service;
+package com.insulin.service.abstraction;
 
 import com.insulin.exception.model.EmailAlreadyExistentException;
 import com.insulin.exception.model.UserNotFoundException;
@@ -8,7 +8,7 @@ import com.insulin.utils.model.CompleteUser;
 
 import javax.mail.MessagingException;
 
-public interface UserService {
+public interface AuthService {
 
     void register(CompleteUser completeUser) throws UserNotFoundException, EmailAlreadyExistentException, UsernameAlreadyExistentException, MessagingException;
 

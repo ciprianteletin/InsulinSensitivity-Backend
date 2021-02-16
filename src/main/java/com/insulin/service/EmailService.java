@@ -22,8 +22,20 @@ public class EmailService {
     @Value("${email.password}")
     private String PASSWORD;
 
-    public void sendRegisterEmail(String firstname, String email) throws MessagingException {
-        Message message = createMessage(firstname, email);
+    public void sendRegisterEmail(String firstName, String email) throws MessagingException {
+        sendMessage(email, String.format(REGISTER_TEXT_MESSAGE, firstName), EMAIL_SUBJECT);
+    }
+
+    public void sendDeleteEmail(String firstName, String email) throws MessagingException {
+        sendMessage(email, String.format(DELETE_TEXT_MESSAGE, firstName), DELETE_SUBJECT);
+    }
+
+    /**
+     * Generic method to send an email to an user, no matter of the scope of the message.
+     * It is derived from the need of sending multiple emails with different messages (Register, delete)
+     */
+    private void sendMessage(String email, String textMessage, String subject) throws MessagingException {
+        Message message = createMessage(email, textMessage, subject);
         SMTPTransport smtpTransport = (SMTPTransport) getEmailSession().getTransport(SIMPLE_MAIL_TRANSFER_PROTOCOL);
         smtpTransport.connect(GMAIL_SMTP_SERVER, USERNAME, PASSWORD);
         smtpTransport.sendMessage(message, message.getAllRecipients());
@@ -33,13 +45,13 @@ public class EmailService {
     /**
      * Creates the message that is passed to the user.
      */
-    private Message createMessage(String firstname, String email) throws MessagingException {
+    private Message createMessage(String email, String textMessage, String subject) throws MessagingException {
         Message message = new MimeMessage(getEmailSession());
         message.setFrom(new InternetAddress(FROM_EMAIL));
         message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(email, false));
         message.setRecipients(Message.RecipientType.CC, InternetAddress.parse(CC_EMAIL, false));
-        message.setSubject(EMAIL_SUBJECT);
-        message.setText(String.format(TEXT_MESSAGE, firstname));
+        message.setSubject(subject);
+        message.setText(textMessage);
         message.setSentDate(new Date());
         message.saveChanges();
         return message;

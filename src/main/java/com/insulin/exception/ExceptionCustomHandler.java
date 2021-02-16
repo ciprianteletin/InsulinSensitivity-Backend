@@ -4,6 +4,7 @@ import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.insulin.exception.model.*;
 import com.insulin.shared.HttpResponse;
 import com.insulin.utils.model.CaptchaModel;
+import org.hibernate.exception.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -65,6 +66,12 @@ public class ExceptionCustomHandler {
 
     @ExceptionHandler(InvalidDataException.class)
     public ResponseEntity<HttpResponse> invalidDataException(InvalidDataException exception) {
+        logger.error(exception.getMessage());
+        return buildHttpResponseEntity(HttpStatus.BAD_REQUEST, exception.getMessage());
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<HttpResponse> constraintException(ConstraintViolationException exception) {
         logger.error(exception.getMessage());
         return buildHttpResponseEntity(HttpStatus.BAD_REQUEST, exception.getMessage());
     }
