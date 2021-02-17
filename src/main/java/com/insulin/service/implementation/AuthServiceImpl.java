@@ -24,7 +24,7 @@ import org.springframework.stereotype.Service;
 
 import javax.mail.MessagingException;
 import javax.transaction.Transactional;
-import java.util.Date;
+import java.time.LocalDate;
 
 import static com.insulin.shared.UserConstants.*;
 import static java.util.Objects.isNull;
@@ -64,7 +64,7 @@ public class AuthServiceImpl implements AuthService, UserDetailsService {
         validateLoginAttempt(principal);
         user.getDetails()
                 .setLastLoginDateDisplay(user.getDetails().getLastLoginDate()); //last login
-        user.getDetails().setLastLoginDate(new Date()); // current login, now
+        user.getDetails().setLastLoginDate(LocalDate.now()); // current login, now
         authRepository.save(user); //update information
         logger.info("Returning found user");
         return principal;
@@ -86,8 +86,7 @@ public class AuthServiceImpl implements AuthService, UserDetailsService {
         logger.info("Username and e-mail ok");
         User user = userFactory.createUser(completeUser);
         UserDetail userDetail = userFactory.createUserDetails(completeUser);
-        user.setDetails(userDetail);
-        userDetail.setUser(user);
+        user.setBidirectionalDetails(userDetail);
         authRepository.save(user);
         emailService.sendRegisterEmail(userDetail.getFirstName(), userDetail.getEmail());
         logger.info("User registered with success!");

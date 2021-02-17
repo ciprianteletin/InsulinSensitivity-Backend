@@ -1,5 +1,6 @@
 package com.insulin.utils;
 
+import com.insulin.enumeration.Role;
 import com.insulin.model.User;
 import com.insulin.model.UserDetail;
 import com.insulin.utils.abstractions.AbstractUserFactory;
@@ -8,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 @Component
 public class UserFactory implements AbstractUserFactory {
@@ -24,7 +25,7 @@ public class UserFactory implements AbstractUserFactory {
         return User.builder() //
                 .username(completeUser.getUsername()) //
                 .password(encoder.encode(completeUser.getPassword())) //
-                .role(completeUser.getRole().toUpperCase()) //
+                .role(Role.valueOf(completeUser.getRole())) //
                 .build();
     }
 
@@ -37,7 +38,7 @@ public class UserFactory implements AbstractUserFactory {
                 .phoneNr(completeUser.getPhoneNr()) //
                 .age(completeUser.getAge()) //
                 .gender(completeUser.getGender()) //
-                .joinDate(new Date(System.currentTimeMillis())) //
+                .joinDate(LocalDate.now()) //
                 .build();
     }
 }

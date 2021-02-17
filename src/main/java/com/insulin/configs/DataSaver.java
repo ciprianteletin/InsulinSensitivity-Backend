@@ -8,6 +8,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 import static com.insulin.enumeration.Role.*;
@@ -33,8 +34,7 @@ public class DataSaver implements CommandLineRunner {
         User user = buildUser();
         UserDetail userDetail = buildUserDetails();
 
-        user.setDetails(userDetail);
-        userDetail.setUser(user);
+        user.setBidirectionalDetails(userDetail);
 
         userRepository.save(user);
     }
@@ -42,7 +42,7 @@ public class DataSaver implements CommandLineRunner {
     private User buildUser() {
         return User.builder() //
                 .username("Cipri22")
-                .role(ADMIN.name())
+                .role(ADMIN)
                 .password(encoder.encode("secretPassword"))
                 .build();
     }
@@ -53,7 +53,7 @@ public class DataSaver implements CommandLineRunner {
                 .lastName("Teletin") //
                 .email("ciprian_teletin@yahoo.com") //
                 .phoneNr("0712345678") //
-                .joinDate(new Date()) //
+                .joinDate(LocalDate.now()) //
                 .age(21) //
                 .gender('M') //
                 .build();
