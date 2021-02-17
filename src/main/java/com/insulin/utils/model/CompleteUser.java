@@ -19,8 +19,7 @@ import javax.validation.constraints.Size;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
-@Setter
+@Data
 public class CompleteUser {
     @JsonProperty
     @NotNull

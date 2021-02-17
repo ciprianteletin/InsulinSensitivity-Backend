@@ -22,8 +22,9 @@ import java.time.LocalDate;
 @Table(name = "user_details")
 @NoArgsConstructor
 @Builder
-@Getter
-@Setter
+@Data
+@EqualsAndHashCode(exclude = {"user"})
+@ToString(exclude = {"user"})
 @AllArgsConstructor
 @JsonIdentityInfo(
         generator = ObjectIdGenerators.PropertyGenerator.class,

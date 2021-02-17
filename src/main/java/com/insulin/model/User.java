@@ -15,8 +15,9 @@ import java.io.Serializable;
 @Table(name = "users")
 @NoArgsConstructor
 @Builder
-@Getter
-@Setter
+@Data
+@EqualsAndHashCode(exclude = {"details"})
+@ToString(exclude = {"details"})
 @AllArgsConstructor
 @JsonIdentityInfo(
         generator = ObjectIdGenerators.PropertyGenerator.class,
