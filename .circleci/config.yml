@@ -3,14 +3,27 @@ jobs:
   build:
     docker:
       - image: circleci/openjdk:11-jdk
+        environment:
+          MAVEN_OPTS: -Xmx3200m
+          DB_ROOT_USER: root
+          DB_URL: jdbc:mysql://localhost:3306/licenta
+          DB_DRIVER: com.mysql.cj.jdbc.Driver
+          DB_PASS: "linux_mint"
+
+      - image: circleci/mysql:latest
 
     working_directory: ~/Licenta Backend
 
-    environment:
-      MAVEN_OPTS: -Xmx3200m
-
     steps:
       - checkout
+      - run:
+            name: Wait for Database Connection
+            # preinstalled in circleci/* docker image
+            command: dockerize -wait tcp://localhost:3306 -timeout 1m
+              #install mysql client
+              - run: sudo apt-get install mysql-client
+              # create databases
+              - run: mysql -h 127.0.0.1 -u root -e "create database licenta"
       - restore_cache:
           keys:
             - v1-dependencies-{‌{ checksum "pom.xml" }}
