@@ -10,7 +10,8 @@ import javax.mail.MessagingException;
 
 public interface AuthService {
 
-    void register(CompleteUser completeUser) throws UserNotFoundException, EmailAlreadyExistentException, UsernameAlreadyExistentException, MessagingException;
+    void register(CompleteUser completeUser)
+            throws UserNotFoundException, EmailAlreadyExistentException, UsernameAlreadyExistentException, MessagingException;
 
     User findUserByUsername(String username);
 

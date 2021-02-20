@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import javax.persistence.NoResultException;
-
 import java.io.IOException;
 
 import static com.insulin.shared.ExceptionConstants.*;
@@ -109,6 +108,7 @@ public class ExceptionCustomHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<HttpResponse> unexpectedException(Exception exception) {
         logger.error(exception.getMessage());
+        exception.printStackTrace();
         return buildHttpResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR, INTERNAL_SERVER_ERROR);
     }
 }

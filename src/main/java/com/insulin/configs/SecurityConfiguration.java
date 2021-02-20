@@ -3,6 +3,7 @@ package com.insulin.configs;
 import com.insulin.filter.JwtAccessDeniedHandler;
 import com.insulin.filter.JwtAuthenticationEntryPoint;
 import com.insulin.filter.JwtAuthorizationFilter;
+import com.insulin.listener.AuthenticationSuccessListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -18,7 +19,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import static com.insulin.shared.SecurityConstants.PUBLIC_URLS;
-import static org.springframework.security.config.http.SessionCreationPolicy.*;
+import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
 @Configuration
 @EnableWebSecurity
@@ -29,17 +30,20 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     private final UserDetailsService userDetailsService;
     private final BCryptPasswordEncoder encoder;
+    private final AuthenticationSuccessListener successListener;
 
     @Autowired
     public SecurityConfiguration(JwtAuthorizationFilter authFilter, JwtAccessDeniedHandler handler,
                                  JwtAuthenticationEntryPoint entryPoint,
                                  @Qualifier("userService") UserDetailsService userDetailsService,
-                                 BCryptPasswordEncoder encoder) {
+                                 BCryptPasswordEncoder encoder,
+                                 AuthenticationSuccessListener successListener) {
         this.jwtAuthorizationFilter = authFilter;
         this.jwtAccessDeniedHandler = handler;
         this.jwtAuthenticationEntryPoint = entryPoint;
         this.userDetailsService = userDetailsService;
         this.encoder = encoder;
+        this.successListener = successListener;
     }
 
     /**

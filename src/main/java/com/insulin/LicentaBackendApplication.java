@@ -40,7 +40,6 @@ public class LicentaBackendApplication {
         template.setHashKeySerializer(new StringRedisSerializer());
         template.setHashValueSerializer(new JdkSerializationRedisSerializer());
         template.setValueSerializer(new JdkSerializationRedisSerializer());
-        template.setEnableTransactionSupport(true);
         template.afterPropertiesSet();
         return template;
     }
