@@ -1,6 +1,7 @@
 package com.insulin.shared;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
@@ -20,10 +21,15 @@ import java.time.LocalDate;
 @Getter
 @Setter
 public class HttpResponse {
+    @JsonProperty
     private int httpStatusCode;
+    @JsonProperty
     private HttpStatus httpStatus;
+    @JsonProperty
     private String reason;
+    @JsonProperty
     private String message;
+    @JsonProperty
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
     @JsonDeserialize(using = LocalDateDeserializer.class)
     @JsonSerialize(using = LocalDateSerializer.class)

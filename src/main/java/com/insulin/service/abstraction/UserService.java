@@ -1,5 +1,6 @@
 package com.insulin.service.abstraction;
 
+import com.insulin.exception.model.UserNotFoundException;
 import com.insulin.model.User;
 
 /**
@@ -10,5 +11,5 @@ import com.insulin.model.User;
 public interface UserService {
     void deleteUser(Long id);
 
-    User getUserById(Long id);
+    User getUserById(Long id) throws UserNotFoundException;
 }

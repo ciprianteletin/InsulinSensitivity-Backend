@@ -25,7 +25,7 @@ public class UserFactory implements AbstractUserFactory {
         return User.builder() //
                 .username(completeUser.getUsername()) //
                 .password(encoder.encode(completeUser.getPassword())) //
-                .role(Role.valueOf(completeUser.getRole())) //
+                .role(Role.valueOf(completeUser.getRole().toUpperCase())) //
                 .build();
     }
 

@@ -83,7 +83,7 @@ public class ExceptionCustomHandler {
 
     @ExceptionHandler(TokenExpiredException.class)
     public ResponseEntity<HttpResponse> tokenExpiredException(TokenExpiredException exception) {
-        return buildHttpResponseEntity(HttpStatus.GATEWAY_TIMEOUT, exception.getMessage());
+        return buildHttpResponseEntity(HttpStatus.REQUEST_TIMEOUT, exception.getMessage());
     }
 
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)

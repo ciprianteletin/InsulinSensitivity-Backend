@@ -1,7 +1,8 @@
 package com.insulin.shared;
 
 public class SecurityConstants {
-    public static final long EXPIRATION_TIME = 432_000_000;  // 5 DAYS in milliseconds
+    public static final long JWT_EXPIRATION_TIME = 900_000;  // 15 minutes in milliseconds
+    public static final long REFRESH_EXPIRATION_TIME = 864_000_00; // one day in ms
     public static final String TOKEN_PREFIX = "Bearer "; //tipul de token, prefixul
     public static final String JWT_TOKEN_HEADER = "Jwt-Token"; //pentru header
     public static final String TOKEN_CANNOT_BE_VERIFIED = "Token cannot be verified"; //error message

@@ -27,7 +27,7 @@ import static org.apache.commons.lang3.StringUtils.*;
  */
 @Component
 public class JwtAuthorizationFilter extends OncePerRequestFilter {
-    private JwtTokenProvider provider;
+    private final JwtTokenProvider provider;
 
     @Autowired //not mandatory, as it is done automatically when there is only one constructor
     public JwtAuthorizationFilter(JwtTokenProvider provider) {
