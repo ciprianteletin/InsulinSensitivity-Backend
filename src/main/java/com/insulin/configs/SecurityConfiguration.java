@@ -3,7 +3,6 @@ package com.insulin.configs;
 import com.insulin.filter.JwtAccessDeniedHandler;
 import com.insulin.filter.JwtAuthenticationEntryPoint;
 import com.insulin.filter.JwtAuthorizationFilter;
-import com.insulin.listener.AuthenticationSuccessListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -17,10 +16,17 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+
+import javax.servlet.http.HttpServletRequest;
 
 import static com.insulin.shared.SecurityConstants.PUBLIC_URLS;
+import static java.util.Collections.singletonList;
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
+/**
+ * Class with the scope of providing configuration regarding the security of the application.
+ */
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
@@ -30,20 +36,17 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     private final UserDetailsService userDetailsService;
     private final BCryptPasswordEncoder encoder;
-    private final AuthenticationSuccessListener successListener;
 
     @Autowired
     public SecurityConfiguration(JwtAuthorizationFilter authFilter, JwtAccessDeniedHandler handler,
                                  JwtAuthenticationEntryPoint entryPoint,
                                  @Qualifier("userService") UserDetailsService userDetailsService,
-                                 BCryptPasswordEncoder encoder,
-                                 AuthenticationSuccessListener successListener) {
+                                 BCryptPasswordEncoder encoder) {
         this.jwtAuthorizationFilter = authFilter;
         this.jwtAccessDeniedHandler = handler;
         this.jwtAuthenticationEntryPoint = entryPoint;
         this.userDetailsService = userDetailsService;
         this.encoder = encoder;
-        this.successListener = successListener;
     }
 
     /**
@@ -60,8 +63,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
      */
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.csrf().disable()
-                .cors().and()
+        http.cors().configurationSource(this::createCorsConfig).and().csrf().disable()
                 .sessionManagement().sessionCreationPolicy(STATELESS) //Since we are using REST + JWT, we don't need to keep a state of who is logged.
                 .and().authorizeRequests().antMatchers(PUBLIC_URLS).permitAll() //URLS accessible by anyone (login, register, recover password etc).
                 .anyRequest().authenticated() //TODO Secure in the future
@@ -78,5 +80,17 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         return super.authenticationManagerBean();
     }
 
+    /**
+     * Method to create and configure CorsConfiguration, to allow the communication between
+     * front-end and back-end.
+     */
+    private CorsConfiguration createCorsConfig(HttpServletRequest request) {
+        CorsConfiguration config = new CorsConfiguration();
+        config.setAllowedHeaders(singletonList("*"));
+        config.setAllowedMethods(singletonList("*"));
+        config.addAllowedOriginPattern("*");
+        config.setAllowCredentials(true);
+        return config;
+    }
 }
 

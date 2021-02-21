@@ -12,6 +12,13 @@ import java.io.Serializable;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * Class with the sole purpose to store details about the user: it's account id, from what device he accessed the application,
+ * and what is his refreshToken. The intention of this class is to provide a different refresh token, even if the user
+ * is connected simultaneously on multiple devices. This is useful in order to implement auto-login functionality e.g
+ * the user tries to connect to the application after two days of the last login date, the application will auto-login
+ * the user without the need to login manually.
+ */
 @RedisHash("MetaInformation")
 @Data
 @NoArgsConstructor

@@ -108,7 +108,7 @@ public class ExceptionCustomHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<HttpResponse> unexpectedException(Exception exception) {
         logger.error(exception.getMessage());
-        exception.printStackTrace();
+        exception.printStackTrace(); //TODO remove once the app is stable (this line only)
         return buildHttpResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR, INTERNAL_SERVER_ERROR);
     }
 }

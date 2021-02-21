@@ -31,6 +31,10 @@ import javax.validation.Valid;
 import static com.insulin.shared.SecurityConstants.JWT_TOKEN_HEADER;
 import static com.insulin.utils.AuthenticationUtils.createMetaDataInformation;
 
+/**
+ * Handles http request related to authentication process, including login, register, refreshToken, changePassword and so on.
+ * Represents the gate between the user and the application, if he desires to use additional functionality
+ */
 @RestController
 @RequestMapping("")
 public class AuthController {
@@ -56,7 +60,7 @@ public class AuthController {
         User loginUser = authService.findUserByUsername(user.getUsername());
         UserPrincipal userPrincipal = new UserPrincipal(loginUser);
         HttpHeaders jwtHeader = getJwtHeader(userPrincipal);
-        saveMetaDataInformation(user.getId(), request);
+        saveMetaDataInformation(user.getId(), request); //TODO send refresh as a HttpOnly cookie.
         return new ResponseEntity<>(loginUser, jwtHeader, HttpStatus.OK);
     }
 

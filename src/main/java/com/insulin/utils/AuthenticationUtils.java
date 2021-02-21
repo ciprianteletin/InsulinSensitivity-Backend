@@ -8,6 +8,10 @@ import ua_parser.Parser;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Objects;
 
+/**
+ * Utility class with reusable methods related to authentication. Since the AuthController has as main scope to treat request of any kind,
+ * adding new functionality would break Single Resp. Principle, hence creating a new class.
+ */
 public class AuthenticationUtils {
 
     public static String getDeviceDetails(String userAgent) {
