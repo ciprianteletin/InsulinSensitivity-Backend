@@ -25,7 +25,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.mail.MessagingException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import static com.insulin.shared.SecurityConstants.JWT_TOKEN_HEADER;
@@ -55,12 +57,13 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<User> login(@Valid @RequestBody User user, HttpServletRequest request) {
+    public ResponseEntity<User> login(@Valid @RequestBody User user, HttpServletRequest request, HttpServletResponse response) {
         authenticate(user.getUsername(), user.getPassword());
-        User loginUser = authService.findUserByUsername(user.getUsername());
+        User loginUser = authService.findUserByUsernameOrEmail(user.getUsername());
         UserPrincipal userPrincipal = new UserPrincipal(loginUser);
         HttpHeaders jwtHeader = getJwtHeader(userPrincipal);
-        saveMetaDataInformation(user.getId(), request); //TODO send refresh as a HttpOnly cookie.
+        MetaInformation metaInformation = saveMetaDataInformation(user.getId(), request);
+        passHttpOnlyCookie(metaInformation, response);
         return new ResponseEntity<>(loginUser, jwtHeader, HttpStatus.OK);
     }
 
@@ -71,9 +74,36 @@ public class AuthController {
         return HttpResponseUtils.buildHttpResponseEntity(HttpStatus.OK, "User registered successfully");
     }
 
-    private void saveMetaDataInformation(Long userId, HttpServletRequest request) {
+    private MetaInformation saveMetaDataInformation(Long userId, HttpServletRequest request) {
         MetaInformation metaInformation = createMetaDataInformation(userId, request);
         metaInformationService.save(metaInformation);
+        return metaInformation;
+    }
+
+    /**
+     * Creates a cookie for the refresh token with a duration of life of 7 days. By making it
+     * httpOnly, the cookie would be read only by the server side, making it secure against
+     * attacks like XSS
+     */
+    private void passHttpOnlyCookie(MetaInformation metaInformation, HttpServletResponse response) {
+        Cookie cookie = new Cookie("refreshToken", metaInformation.getRefreshToken());
+        cookie.setHttpOnly(true);
+        cookie.setMaxAge(7 * 24 * 60 * 60); //7 days in seconds
+        cookie.setPath("/"); //accessible everywhere, change for a stable path
+        response.addCookie(cookie);
+    }
+
+    /**
+     * For deleting a cookie, we must set the value as null to the same key and also
+     * set the life of the cookie as 0. The same set of property must be used for
+     * both cookies.
+     */
+    private void deleteCookie(HttpServletResponse response) {
+        Cookie cookie = new Cookie("refreshToken", null);
+        cookie.setHttpOnly(true);
+        cookie.setMaxAge(0);
+        cookie.setPath("/");
+        response.addCookie(cookie);
     }
 
     private HttpHeaders getJwtHeader(UserPrincipal userPrincipal) {

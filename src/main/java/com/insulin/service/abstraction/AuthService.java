@@ -16,4 +16,6 @@ public interface AuthService {
     User findUserByUsername(String username);
 
     User findUserByEmail(String email);
+
+    User findUserByUsernameOrEmail(String text);
 }

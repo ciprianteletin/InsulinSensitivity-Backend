@@ -32,7 +32,7 @@ public class MetaInformation implements Serializable {
     private String refreshToken;
 
     @TimeToLive(unit = TimeUnit.MILLISECONDS)
-    private Long expirationTime = 432_000_000L; // 5 days Expiration time
+    private Long expirationTime = 604_800_000L ; // 7 days Expiration time, match the cookie duration
 
     @Override
     public boolean equals(Object meta) {

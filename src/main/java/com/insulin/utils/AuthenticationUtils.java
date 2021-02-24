@@ -2,6 +2,7 @@ package com.insulin.utils;
 
 import com.insulin.metadata.MetaInformation;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.validator.routines.EmailValidator;
 import ua_parser.Client;
 import ua_parser.Parser;
 
@@ -13,6 +14,11 @@ import java.util.Objects;
  * adding new functionality would break Single Resp. Principle, hence creating a new class.
  */
 public class AuthenticationUtils {
+    private static final EmailValidator emailValidator;
+
+    static {
+        emailValidator = EmailValidator.getInstance();
+    }
 
     public static String getDeviceDetails(String userAgent) {
         StringBuilder deviceDetails = new StringBuilder();
@@ -38,5 +44,9 @@ public class AuthenticationUtils {
                 .refreshToken(randomToken) //
                 .deviceInformation(deviceDetails) //
                 .build();
+    }
+
+    public static boolean checkIfEmail(String text) {
+        return emailValidator.isValid(text);
     }
 }

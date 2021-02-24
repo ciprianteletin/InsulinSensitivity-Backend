@@ -46,7 +46,7 @@ public class UserDetail implements Serializable {
     @Email
     @NotNull
     private String email;
-    @Column(nullable = false)
+    @Column(nullable = false, name = "phone_number", unique = true)
     @NotNull
     @Phone
     private String phoneNr;

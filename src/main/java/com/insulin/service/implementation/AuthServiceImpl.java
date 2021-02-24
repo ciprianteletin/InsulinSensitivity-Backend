@@ -27,6 +27,7 @@ import javax.transaction.Transactional;
 import java.time.LocalDate;
 
 import static com.insulin.shared.UserConstants.*;
+import static com.insulin.utils.AuthenticationUtils.checkIfEmail;
 import static java.util.Objects.isNull;
 
 @Service
@@ -50,15 +51,11 @@ public class AuthServiceImpl implements AuthService, UserDetailsService {
 
     /**
      * Method used by Spring Security, to fetch the current user from
-     * the database. Throws an error if the user is not existent
+     * the database. Throws an error if the user is not existent. The user can be found based on his username/email
      */
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = authRepository.findUserByUsername(username);
-        if (user == null) {
-            logger.error(USER_NOT_FOUND + ": " + username);
-            throw new UsernameNotFoundException(USER_NOT_FOUND + ": " + username);
-        }
+        User user = findUserByUsernameOrEmail(username);
         logger.info("User found for username: " + username);
         UserPrincipal principal = new UserPrincipal(user);
         validateLoginAttempt(principal);
@@ -70,13 +67,23 @@ public class AuthServiceImpl implements AuthService, UserDetailsService {
         return principal;
     }
 
-    public void validateLoginAttempt(UserPrincipal userPrincipal) {
-        logger.info("Validating the user authentication");
-        if (userPrincipal.isNoActiveCaptcha()) {
-            userPrincipal.setNoActiveCaptcha(!loginAttemptService.isExceededMaxAttempts(userPrincipal.getUsername()));
-        } else {
-            loginAttemptService.evictUserFromLoginCache(userPrincipal.getUsername());
+    @Override
+    public User findUserByUsernameOrEmail(String text) {
+        User user;
+        if (checkIfEmail(text)) {
+            user = authRepository.findUserByEmail(text);
+            if (isNull(user)) {
+                logger.error(USER_NOT_FOUND + ": " + text);
+                throw new UsernameNotFoundException(USER_NOT_FOUND + " for email address " + text);
+            }
+            return user;
         }
+        user = authRepository.findUserByUsername(text);
+        if (user == null) {
+            logger.error(USER_NOT_FOUND + ": " + text);
+            throw new UsernameNotFoundException(USER_NOT_FOUND + ": " + text);
+        }
+        return user;
     }
 
     @Override
@@ -102,7 +109,8 @@ public class AuthServiceImpl implements AuthService, UserDetailsService {
         return authRepository.findUserByEmail(email);
     }
 
-    private void validateNewUsernameAndEmail(String username, String email) throws UserNotFoundException, UsernameAlreadyExistentException, EmailAlreadyExistentException {
+    private void validateNewUsernameAndEmail(String username, String email)
+            throws UserNotFoundException, UsernameAlreadyExistentException, EmailAlreadyExistentException {
         if (!StringUtils.isNotEmpty(username) || !StringUtils.isNotEmpty(email)) {
             logger.error("Empty username or email!");
             throw new UserNotFoundException(INVALID_DATA);
@@ -116,6 +124,15 @@ public class AuthServiceImpl implements AuthService, UserDetailsService {
         if (!isNull(userByEmail)) {
             logger.error("Email already existent!");
             throw new EmailAlreadyExistentException(EMAIL_ALREADY_EXISTENT);
+        }
+    }
+
+    private void validateLoginAttempt(UserPrincipal userPrincipal) {
+        logger.info("Validating the user authentication");
+        if (userPrincipal.isNoActiveCaptcha()) {
+            userPrincipal.setNoActiveCaptcha(!loginAttemptService.isExceededMaxAttempts(userPrincipal.getUsername()));
+        } else {
+            loginAttemptService.evictUserFromLoginCache(userPrincipal.getUsername());
         }
     }
 }
