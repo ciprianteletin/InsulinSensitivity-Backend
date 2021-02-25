@@ -20,6 +20,9 @@ import org.springframework.web.cors.CorsConfiguration;
 
 import javax.servlet.http.HttpServletRequest;
 
+import java.util.List;
+
+import static com.insulin.shared.SecurityConstants.JWT_TOKEN_HEADER;
 import static com.insulin.shared.SecurityConstants.PUBLIC_URLS;
 import static java.util.Collections.singletonList;
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
@@ -86,7 +89,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
      */
     private CorsConfiguration createCorsConfig(HttpServletRequest request) {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedHeaders(singletonList("*"));
+        config.setAllowedHeaders(List.of("Authorization", "Cache-Control", "Content-Type"));
+        config.addExposedHeader(JWT_TOKEN_HEADER);
         config.setAllowedMethods(singletonList("*"));
         config.addAllowedOriginPattern("*");
         config.setAllowCredentials(true);

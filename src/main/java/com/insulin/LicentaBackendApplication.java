@@ -1,7 +1,11 @@
 package com.insulin;
 
+import org.apache.catalina.Context;
+import org.apache.tomcat.util.http.Rfc6265CookieProcessor;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
+import org.springframework.boot.web.servlet.server.ServletWebServerFactory;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
@@ -19,11 +23,16 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 @SpringBootApplication
 @EnableCaching
 public class LicentaBackendApplication {
+
     @Bean
     public BCryptPasswordEncoder getBCryptPasswordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
+    /**
+     * Creates a configuration setup for a connection with Redis database, mentioning the port number
+     * and the host name.
+     */
     @Bean
     public JedisConnectionFactory jedisConnectionFactory() {
         RedisStandaloneConfiguration redisStandaloneConfiguration = new RedisStandaloneConfiguration();
@@ -42,6 +51,22 @@ public class LicentaBackendApplication {
         template.setValueSerializer(new JdkSerializationRedisSerializer());
         template.afterPropertiesSet();
         return template;
+    }
+
+    /**
+     * Add to every cookie sent do the client the property "sameSite = strict". This was necessary because
+     * on Firefox, if the cookie had as sameSite value "Lax" or "None", a warning would appear.
+     */
+    @Bean
+    public ServletWebServerFactory servletContainer() {
+        return new TomcatServletWebServerFactory() {
+            @Override
+            protected void postProcessContext(Context context) {
+                Rfc6265CookieProcessor rfc6265CookieProcessor = new Rfc6265CookieProcessor();
+                rfc6265CookieProcessor.setSameSiteCookies("Strict");
+                context.setCookieProcessor(rfc6265CookieProcessor);
+            }
+        };
     }
 
     public static void main(String[] args) {

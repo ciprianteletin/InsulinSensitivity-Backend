@@ -88,6 +88,7 @@ public class AuthController {
     private void passHttpOnlyCookie(MetaInformation metaInformation, HttpServletResponse response) {
         Cookie cookie = new Cookie("refreshToken", metaInformation.getRefreshToken());
         cookie.setHttpOnly(true);
+        cookie.setSecure(false);
         cookie.setMaxAge(7 * 24 * 60 * 60); //7 days in seconds
         cookie.setPath("/"); //accessible everywhere, change for a stable path
         response.addCookie(cookie);
@@ -101,6 +102,7 @@ public class AuthController {
     private void deleteCookie(HttpServletResponse response) {
         Cookie cookie = new Cookie("refreshToken", null);
         cookie.setHttpOnly(true);
+        cookie.setSecure(false);
         cookie.setMaxAge(0);
         cookie.setPath("/");
         response.addCookie(cookie);
