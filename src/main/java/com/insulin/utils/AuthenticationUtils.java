@@ -3,11 +3,15 @@ package com.insulin.utils;
 import com.insulin.metadata.MetaInformation;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.validator.routines.EmailValidator;
+import org.springframework.web.context.request.RequestContextHolder;
 import ua_parser.Client;
 import ua_parser.Parser;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Objects;
+
+import static com.insulin.shared.SecurityConstants.REFRESH_EXPIRATION_TIME;
+import static com.insulin.utils.RequestUtils.getRemoteIP;
 
 /**
  * Utility class with reusable methods related to authentication. Since the AuthController has as main scope to treat request of any kind,
@@ -21,27 +25,30 @@ public class AuthenticationUtils {
     }
 
     public static String getDeviceDetails(String userAgent) {
-        StringBuilder deviceDetails = new StringBuilder();
+        StringBuilderUtils deviceBuilder = new StringBuilderUtils();
         Client client = new Parser().parse(userAgent);
         if (Objects.nonNull(client)) {
-            deviceDetails.append(client.userAgent.family) //
-                    .append(" ").append(client.userAgent.major) //
-                    .append(".").append(client.userAgent.minor) //
-                    .append("-").append(client.os.family) //
-                    .append(" ").append(client.os.major) //
-                    .append(".").append(client.os.minor);
+            deviceBuilder.appendIfNotNull(client.userAgent.family, " ") //
+                    .appendIfNotNull(client.userAgent.major, ".") //
+                    .appendIfNotNull(client.userAgent.minor, "-") //
+                    .appendIfNotNull(client.os.family, " ") //
+                    .appendIfNotNull(client.os.major, ".") //
+                    .appendIfNotNull(client.os.minor, "");
         }
-        return deviceDetails.toString();
+        return deviceBuilder.getResult();
     }
 
     public static MetaInformation createMetaDataInformation(Long userId, HttpServletRequest request) {
         String randomToken = RandomStringUtils.randomAlphanumeric(25);
         String userAgent = request.getHeader("user-agent");
         String deviceDetails = getDeviceDetails(userAgent);
+        String ip = getRemoteIP(RequestContextHolder.currentRequestAttributes());
+        deviceDetails = deviceDetails + " " + ip;
 
         return MetaInformation.builder() //
                 .userId(userId) //
                 .refreshToken(randomToken) //
+                .expirationTime(REFRESH_EXPIRATION_TIME) // 7 days Expiration time, match the cookie duration)
                 .deviceInformation(deviceDetails) //
                 .build();
     }

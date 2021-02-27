@@ -23,13 +23,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @CacheEvict(value = "users", allEntries = true)
+    @CacheEvict(value = "users", allEntries = true, cacheManager = "cacheManager")
     public void deleteUser(Long id) {
         this.userRepository.deleteById(id);
     }
 
     @Override
-    @Cacheable(value = "users", key = "#id")
+    @Cacheable(value = "users", key = "#id", cacheManager = "cacheManager")
     public User getUserById(Long id) throws UserNotFoundException {
         Optional<User> currentUser = this.userRepository.findById(id);
         return currentUser.orElseThrow(() -> new UserNotFoundException("User not found for the provided id"));

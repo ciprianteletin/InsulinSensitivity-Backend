@@ -33,4 +33,14 @@ public class MetaInformationServiceImpl implements MetaInformationService {
     public MetaInformation findByUserIdAndRefreshToken(Long userId, String refreshToken) {
         return metaInformationRepository.findByUserIdAndRefreshToken(userId, refreshToken);
     }
+
+    @Override
+    public void deleteByUserIdAndDeviceDetails(Long userId, String deviceInformation) {
+        metaInformationRepository.deleteByUserIdAndDeviceInformation(userId, deviceInformation);
+    }
+
+    @Override
+    public MetaInformation findById(String id) {
+        return metaInformationRepository.findById(id);
+    }
 }

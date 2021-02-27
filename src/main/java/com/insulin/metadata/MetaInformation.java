@@ -1,16 +1,15 @@
 package com.insulin.metadata;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.Id;
+import lombok.*;
 import org.springframework.data.redis.core.RedisHash;
 import org.springframework.data.redis.core.TimeToLive;
+import org.springframework.data.redis.core.index.Indexed;
 
+import javax.persistence.Id;
 import java.io.Serializable;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
+
 
 /**
  * Class with the sole purpose to store details about the user: it's account id, from what device he accessed the application,
@@ -24,15 +23,19 @@ import java.util.concurrent.TimeUnit;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@ToString
 public class MetaInformation implements Serializable {
     @Id
-    private Long id;
+    private String id;
+    @Indexed
     private Long userId;
+    @Indexed
     private String deviceInformation;
+    @Indexed
     private String refreshToken;
 
     @TimeToLive(unit = TimeUnit.MILLISECONDS)
-    private Long expirationTime = 604_800_000L ; // 7 days Expiration time, match the cookie duration
+    private Long expirationTime;
 
     @Override
     public boolean equals(Object meta) {

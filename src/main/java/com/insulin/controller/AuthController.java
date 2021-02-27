@@ -17,12 +17,11 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.*;
 
 import javax.mail.MessagingException;
 import javax.servlet.http.Cookie;
@@ -35,7 +34,7 @@ import static com.insulin.utils.AuthenticationUtils.createMetaDataInformation;
 
 /**
  * Handles http request related to authentication process, including login, register, refreshToken, changePassword and so on.
- * Represents the gate between the user and the application, if he desires to use additional functionality
+ * Represents the gate between the user and the application, if he desires to use additional functionality.
  */
 @RestController
 @RequestMapping("")
@@ -62,7 +61,8 @@ public class AuthController {
         User loginUser = authService.findUserByUsernameOrEmail(user.getUsername());
         UserPrincipal userPrincipal = new UserPrincipal(loginUser);
         HttpHeaders jwtHeader = getJwtHeader(userPrincipal);
-        MetaInformation metaInformation = saveMetaDataInformation(user.getId(), request);
+        MetaInformation metaInformation = saveMetaDataInformation(loginUser.getId(), request);
+        System.out.println(metaInformationService.findById(metaInformation.getId()));
         passHttpOnlyCookie(metaInformation, response);
         return new ResponseEntity<>(loginUser, jwtHeader, HttpStatus.OK);
     }
@@ -72,6 +72,40 @@ public class AuthController {
             throws UserNotFoundException, EmailAlreadyExistentException, UsernameAlreadyExistentException, MessagingException {
         authService.register(completeUser);
         return HttpResponseUtils.buildHttpResponseEntity(HttpStatus.OK, "User registered successfully");
+    }
+
+    @GetMapping("/logout/{id}")
+    @PreAuthorize("hasAnyAuthority('PATIENT', 'MEDIC', 'ADMIN')")
+    public ResponseEntity<HttpResponse> logout(@PathVariable("id") Long id, HttpServletRequest request, HttpServletResponse response) {
+        MetaInformation metaInformation = createMetaDataInformation(id, request);
+        metaInformationService.deleteByUserIdAndDeviceDetails(id, metaInformation.getDeviceInformation());
+        deleteCookie(response);
+        return HttpResponseUtils.buildHttpResponseEntity(HttpStatus.OK, "User logged out successfully!");
+    }
+
+    /**
+     * Generates a new token based on the refreshToken and the user id. For this endpoint, the user must be logged in, so that
+     * there is no need to filter after the metaInformation. For autologin, the metaInformation and the refreshToken will be used.
+     * For this case, we take in consideration two cases:
+     * 1. The refreshToken and the id of the user are in the database. Case when, a new token is emitted.
+     * 2. The refreshToken and the id are expired, but the user is logged in, so that we will generate a new refresh token.
+     */
+    @GetMapping("/refresh/{id}")
+    @PreAuthorize("hasAnyAuthority('PATIENT', 'MEDIC', 'ADMIN')")
+    public ResponseEntity<HttpStatus> generateToken(@CookieValue("refreshToken") String refreshToken,
+                                                    @PathVariable("id") Long id,
+                                                    HttpServletRequest request,
+                                                    HttpServletResponse response,
+                                                    Authentication auth) {
+        MetaInformation dbMetaInformation = metaInformationService.findByUserIdAndRefreshToken(id, refreshToken);
+        String username = (String) auth.getPrincipal(); // can be email or actual username
+        UserPrincipal loggedUser = new UserPrincipal(authService.findUserByUsernameOrEmail(username));
+        if (dbMetaInformation == null) {
+            MetaInformation metaInformation = saveMetaDataInformation(id, request);
+            passHttpOnlyCookie(metaInformation, response);
+        }
+        HttpHeaders jwtHeader = getJwtHeader(loggedUser);
+        return new ResponseEntity<>(jwtHeader, HttpStatus.OK);
     }
 
     private MetaInformation saveMetaDataInformation(Long userId, HttpServletRequest request) {
