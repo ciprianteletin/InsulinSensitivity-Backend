@@ -24,13 +24,13 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import javax.mail.MessagingException;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
-import static com.insulin.shared.SecurityConstants.JWT_TOKEN_HEADER;
-import static com.insulin.utils.AuthenticationUtils.createMetaDataInformation;
+import static com.insulin.shared.SecurityConstants.*;
+import static com.insulin.utils.AuthenticationUtils.*;
+import static java.util.Objects.nonNull;
 
 /**
  * Handles http request related to authentication process, including login, register, refreshToken, changePassword and so on.
@@ -62,8 +62,7 @@ public class AuthController {
         UserPrincipal userPrincipal = new UserPrincipal(loginUser);
         HttpHeaders jwtHeader = getJwtHeader(userPrincipal);
         MetaInformation metaInformation = saveMetaDataInformation(loginUser.getId(), request);
-        System.out.println(metaInformationService.findById(metaInformation.getId()));
-        passHttpOnlyCookie(metaInformation, response);
+        passHttpOnlyCookie("refreshToken", metaInformation.getRefreshToken(), REFRESH_EXPIRATION_TIME_SEC, response);
         return new ResponseEntity<>(loginUser, jwtHeader, HttpStatus.OK);
     }
 
@@ -74,12 +73,61 @@ public class AuthController {
         return HttpResponseUtils.buildHttpResponseEntity(HttpStatus.OK, "User registered successfully");
     }
 
+    /**
+     * Update the user password in case he forgot the old one. For this operation, the user cannot be logged in.
+     */
+    @PostMapping("/resetPassword")
+    public ResponseEntity<HttpResponse> resetPassword(@Valid @RequestBody User user) {
+        authService.resetPassword(user);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    /**
+     * Send to the user an email to the provided mail address which will redirect the user to a form where
+     * he can reset the password. Each link is available to use for 3 hours before it will be
+     * unavailable.
+     */
+    @GetMapping("/forgotPassword/{email}")
+    public ResponseEntity<String> forgotPassword(@PathVariable String email, HttpServletResponse response) throws MessagingException {
+        String secretForgot = authService.redirectResetPassword(email);
+        passHttpOnlyCookie("forgotPassword", secretForgot, RESET_PASSWORD_LIFE, response);
+        return new ResponseEntity<>(secretForgot, HttpStatus.OK);
+    }
+
+    /**
+     * If a refreshToken is existent, it means that the user was connected few days ago, so we can
+     * use the auto-login functionality. Of course, we must check if the refreshToken matches the one
+     * from the database, in case if the token is stolen by someone who might try to harm the user.
+     * If there is no matching token, nothing will happen.
+     * <p>
+     * This request is called when the application start, or better to say, when the user
+     * opens the application.
+     */
+    @GetMapping("/autologin")
+    public ResponseEntity<User> autoLogin(@CookieValue(value = "refreshToken", required = false) String refreshToken,
+                                          HttpServletRequest request) throws UserNotFoundException {
+        if (refreshToken == null) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        MetaInformation metaInformation = createMetaDataInformation(null, request); //we don't know who the user is
+        MetaInformation storedInformation = metaInformationService.findByRefreshTokenAndDevice(refreshToken, metaInformation.getDeviceInformation());
+        if (nonNull(storedInformation) && refreshToken.equals(storedInformation.getRefreshToken())) {
+            //Then the user was logged on his device and has the good token.
+            User user = authService.findUserById(storedInformation.getUserId());
+            UserPrincipal userPrincipal = new UserPrincipal(user);
+            HttpHeaders jwtHeader = getJwtHeader(userPrincipal);
+            return new ResponseEntity<>(user, jwtHeader, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
     @GetMapping("/logout/{id}")
     @PreAuthorize("hasAnyAuthority('PATIENT', 'MEDIC', 'ADMIN')")
     public ResponseEntity<HttpResponse> logout(@PathVariable("id") Long id, HttpServletRequest request, HttpServletResponse response) {
         MetaInformation metaInformation = createMetaDataInformation(id, request);
         metaInformationService.deleteByUserIdAndDeviceDetails(id, metaInformation.getDeviceInformation());
-        deleteCookie(response);
+        deleteCookie("refreshToken", response);
+        deleteCookie("forgotPassword", response);
         return HttpResponseUtils.buildHttpResponseEntity(HttpStatus.OK, "User logged out successfully!");
     }
 
@@ -102,7 +150,7 @@ public class AuthController {
         UserPrincipal loggedUser = new UserPrincipal(authService.findUserByUsernameOrEmail(username));
         if (dbMetaInformation == null) {
             MetaInformation metaInformation = saveMetaDataInformation(id, request);
-            passHttpOnlyCookie(metaInformation, response);
+            passHttpOnlyCookie("refreshToken", metaInformation.getRefreshToken(), REFRESH_EXPIRATION_TIME_SEC, response);
         }
         HttpHeaders jwtHeader = getJwtHeader(loggedUser);
         return new ResponseEntity<>(jwtHeader, HttpStatus.OK);
@@ -112,34 +160,6 @@ public class AuthController {
         MetaInformation metaInformation = createMetaDataInformation(userId, request);
         metaInformationService.save(metaInformation);
         return metaInformation;
-    }
-
-    /**
-     * Creates a cookie for the refresh token with a duration of life of 7 days. By making it
-     * httpOnly, the cookie would be read only by the server side, making it secure against
-     * attacks like XSS
-     */
-    private void passHttpOnlyCookie(MetaInformation metaInformation, HttpServletResponse response) {
-        Cookie cookie = new Cookie("refreshToken", metaInformation.getRefreshToken());
-        cookie.setHttpOnly(true);
-        cookie.setSecure(false);
-        cookie.setMaxAge(7 * 24 * 60 * 60); //7 days in seconds
-        cookie.setPath("/"); //accessible everywhere, change for a stable path
-        response.addCookie(cookie);
-    }
-
-    /**
-     * For deleting a cookie, we must set the value as null to the same key and also
-     * set the life of the cookie as 0. The same set of property must be used for
-     * both cookies.
-     */
-    private void deleteCookie(HttpServletResponse response) {
-        Cookie cookie = new Cookie("refreshToken", null);
-        cookie.setHttpOnly(true);
-        cookie.setSecure(false);
-        cookie.setMaxAge(0);
-        cookie.setPath("/");
-        response.addCookie(cookie);
     }
 
     private HttpHeaders getJwtHeader(UserPrincipal userPrincipal) {

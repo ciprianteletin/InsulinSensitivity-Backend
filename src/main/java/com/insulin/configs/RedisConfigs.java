@@ -14,7 +14,7 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 import java.time.Duration;
 
-import static com.insulin.shared.SecurityConstants.REFRESH_EXPIRATION_TIME;
+import static com.insulin.shared.SecurityConstants.REFRESH_EXPIRATION_TIME_MS;
 
 @Configuration
 public class RedisConfigs {
@@ -47,7 +47,7 @@ public class RedisConfigs {
     public RedisCacheManager cacheManager(final RedisConnectionFactory connectionFactory) {
         RedisCacheWriter redisCacheWriter = RedisCacheWriter.lockingRedisCacheWriter(connectionFactory);
         RedisCacheConfiguration cacheConfiguration = RedisCacheConfiguration.defaultCacheConfig();
-        cacheConfiguration = cacheConfiguration.entryTtl(Duration.ofMillis(REFRESH_EXPIRATION_TIME));
+        cacheConfiguration = cacheConfiguration.entryTtl(Duration.ofMillis(REFRESH_EXPIRATION_TIME_MS));
         return new RedisCacheManager(redisCacheWriter, cacheConfiguration);
     }
 }

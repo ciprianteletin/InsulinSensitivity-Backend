@@ -12,6 +12,7 @@ import com.insulin.service.LoginAttemptService;
 import com.insulin.service.abstraction.AuthService;
 import com.insulin.utils.model.CompleteUser;
 import com.insulin.utils.abstractions.AbstractUserFactory;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,6 +29,7 @@ import java.time.LocalDate;
 
 import static com.insulin.shared.UserConstants.*;
 import static com.insulin.utils.AuthenticationUtils.checkIfEmail;
+import static com.insulin.utils.AuthenticationUtils.encryptPassword;
 import static java.util.Objects.isNull;
 
 @Service
@@ -84,6 +86,34 @@ public class AuthServiceImpl implements AuthService, UserDetailsService {
             throw new UsernameNotFoundException(USER_NOT_FOUND + ": " + text);
         }
         return user;
+    }
+
+    @Override
+    public User findUserById(Long id) throws UserNotFoundException {
+        return authRepository.findById(id) //
+                .orElseThrow(() -> new UserNotFoundException("User not found for the specified id. Auto-login failed"));
+    }
+
+    @Override
+    public void resetPassword(User user) {
+        User forgottenUser = this.findUserByUsernameOrEmail(user.getUsername());
+        if (forgottenUser == null) {
+            throw new UsernameNotFoundException("The provided username was not mapped to any user!");
+        }
+        forgottenUser.setPassword(encryptPassword(user.getPassword()));
+        authRepository.save(forgottenUser);
+    }
+
+    /**
+     * The secretParam usage is that it will be send as a httpOnly cookie, hence available only on the server.
+     * If the secret received from the client and the value from the cookie are not matching, the user will
+     * not be able to reset his password.
+     */
+    @Override
+    public String redirectResetPassword(String email) throws MessagingException {
+        String secretParam = RandomStringUtils.randomAlphanumeric(15);
+        emailService.sendResetPasswordEmail(email, secretParam);
+        return secretParam;
     }
 
     @Override

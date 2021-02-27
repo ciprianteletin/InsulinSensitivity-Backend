@@ -30,6 +30,10 @@ public class EmailService {
         sendMessage(email, String.format(DELETE_TEXT_MESSAGE, firstName), DELETE_SUBJECT);
     }
 
+    public void sendResetPasswordEmail(String email, String randomSecret) throws MessagingException {
+        sendMessage(email, String.format(RESET_PASSWORD_MESSAGE, RESET_PASSWORD_LINK + randomSecret), RESET_SUBJECT);
+    }
+
     /**
      * Generic method to send an email to an user, no matter of the scope of the message.
      * It is derived from the need of sending multiple emails with different messages (Register, delete)

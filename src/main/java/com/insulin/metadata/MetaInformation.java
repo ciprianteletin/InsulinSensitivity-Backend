@@ -33,6 +33,7 @@ public class MetaInformation implements Serializable {
     private String deviceInformation;
     @Indexed
     private String refreshToken;
+    private String ip;
 
     @TimeToLive(unit = TimeUnit.MILLISECONDS)
     private Long expirationTime;
@@ -45,6 +46,7 @@ public class MetaInformation implements Serializable {
         MetaInformation deviceMeta = (MetaInformation) meta;
         return Objects.equals(userId, deviceMeta.userId) && //
                 Objects.equals(refreshToken, deviceMeta.refreshToken) && //
-                Objects.equals(deviceInformation, deviceMeta.deviceInformation);
+                Objects.equals(deviceInformation, deviceMeta.deviceInformation) && //
+                Objects.equals(ip, deviceMeta.ip);
     }
 }

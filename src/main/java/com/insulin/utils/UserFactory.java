@@ -13,7 +13,7 @@ import java.time.LocalDate;
 
 @Component
 public class UserFactory implements AbstractUserFactory {
-    private BCryptPasswordEncoder encoder;
+    private final BCryptPasswordEncoder encoder;
 
     @Autowired
     public UserFactory(BCryptPasswordEncoder encoder) {

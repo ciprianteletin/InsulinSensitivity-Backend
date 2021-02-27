@@ -18,4 +18,10 @@ public interface AuthService {
     User findUserByEmail(String email);
 
     User findUserByUsernameOrEmail(String text);
+
+    User findUserById(Long id) throws UserNotFoundException;
+
+    void resetPassword(User user);
+
+    String redirectResetPassword(String email) throws MessagingException;
 }

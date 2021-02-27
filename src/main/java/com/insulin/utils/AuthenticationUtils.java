@@ -3,14 +3,17 @@ package com.insulin.utils;
 import com.insulin.metadata.MetaInformation;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.validator.routines.EmailValidator;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.context.request.RequestContextHolder;
 import ua_parser.Client;
 import ua_parser.Parser;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.Objects;
 
-import static com.insulin.shared.SecurityConstants.REFRESH_EXPIRATION_TIME;
+import static com.insulin.shared.SecurityConstants.REFRESH_EXPIRATION_TIME_MS;
 import static com.insulin.utils.RequestUtils.getRemoteIP;
 
 /**
@@ -19,9 +22,11 @@ import static com.insulin.utils.RequestUtils.getRemoteIP;
  */
 public class AuthenticationUtils {
     private static final EmailValidator emailValidator;
+    private static final BCryptPasswordEncoder encoder;
 
     static {
         emailValidator = EmailValidator.getInstance();
+        encoder = new BCryptPasswordEncoder();
     }
 
     public static String getDeviceDetails(String userAgent) {
@@ -43,17 +48,49 @@ public class AuthenticationUtils {
         String userAgent = request.getHeader("user-agent");
         String deviceDetails = getDeviceDetails(userAgent);
         String ip = getRemoteIP(RequestContextHolder.currentRequestAttributes());
-        deviceDetails = deviceDetails + " " + ip;
 
         return MetaInformation.builder() //
                 .userId(userId) //
                 .refreshToken(randomToken) //
-                .expirationTime(REFRESH_EXPIRATION_TIME) // 7 days Expiration time, match the cookie duration)
+                .expirationTime(REFRESH_EXPIRATION_TIME_MS) // 7 days Expiration time, match the cookie duration)
                 .deviceInformation(deviceDetails) //
+                .ip(ip) //
                 .build();
+    }
+
+    /**
+     * Creates a cookie for the refresh token with a duration of life of 7 days. By making it
+     * httpOnly, the cookie would be read only by the server side, making it secure against
+     * attacks like XSS
+     */
+    public static void passHttpOnlyCookie(String name, String value, int age, HttpServletResponse response) {
+        Cookie cookie = new Cookie(name, value);
+        cookie.setHttpOnly(true);
+        cookie.setSecure(false);
+        cookie.setMaxAge(age); //7 days in seconds
+        cookie.setPath("/"); //accessible everywhere, change for a stable path
+        response.addCookie(cookie);
+    }
+
+    /**
+     * For deleting a cookie, we must set the value as null to the same key and also
+     * set the life of the cookie as 0. The same set of property must be used for
+     * both cookies.
+     */
+    public static void deleteCookie(String name, HttpServletResponse response) {
+        Cookie cookie = new Cookie(name, null);
+        cookie.setHttpOnly(true);
+        cookie.setSecure(false);
+        cookie.setMaxAge(0);
+        cookie.setPath("/");
+        response.addCookie(cookie);
     }
 
     public static boolean checkIfEmail(String text) {
         return emailValidator.isValid(text);
+    }
+
+    public static String encryptPassword(String password) {
+        return encoder.encode(password);
     }
 }
