@@ -70,6 +70,12 @@ public class ExceptionCustomHandler {
         return buildHttpResponseEntity(HttpStatus.NOT_FOUND, exception.getMessage());
     }
 
+    @ExceptionHandler(InvalidEmailForgotPassword.class)
+    public ResponseEntity<HttpResponse> invalidEmailForgotPass(InvalidEmailForgotPassword exception) {
+        logger.error(exception.getMessage());
+        return buildHttpResponseEntity(HttpStatus.SERVICE_UNAVAILABLE, exception.getMessage());
+    }
+
     @ExceptionHandler(InvalidDataException.class)
     public ResponseEntity<HttpResponse> invalidDataException(InvalidDataException exception) {
         logger.error(exception.getMessage());
@@ -115,7 +121,7 @@ public class ExceptionCustomHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<HttpResponse> unexpectedException(Exception exception) {
         logger.error(exception.getMessage());
-        exception.printStackTrace(); //TODO remove once the app is stable (this line only)
+        exception.printStackTrace();
         return buildHttpResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR, INTERNAL_SERVER_ERROR);
     }
 }

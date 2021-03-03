@@ -1,9 +1,7 @@
 package com.insulin.controller;
 
 import com.insulin.configs.JwtTokenProvider;
-import com.insulin.exception.model.EmailAlreadyExistentException;
-import com.insulin.exception.model.UserNotFoundException;
-import com.insulin.exception.model.UsernameAlreadyExistentException;
+import com.insulin.exception.model.*;
 import com.insulin.metadata.MetaInformation;
 import com.insulin.model.User;
 import com.insulin.model.UserPrincipal;
@@ -77,7 +75,7 @@ public class AuthController {
      * Update the user password in case he forgot the old one. For this operation, the user cannot be logged in.
      */
     @PostMapping("/resetPassword")
-    public ResponseEntity<HttpResponse> resetPassword(@Valid @RequestBody User user) {
+    public ResponseEntity<HttpResponse> resetPassword(@Valid @RequestBody User user) throws EmailNotFoundException {
         authService.resetPassword(user);
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -88,10 +86,11 @@ public class AuthController {
      * unavailable.
      */
     @GetMapping("/forgotPassword/{email}")
-    public ResponseEntity<String> forgotPassword(@PathVariable String email, HttpServletResponse response) throws MessagingException {
+    public ResponseEntity<HttpResponse> forgotPassword(@PathVariable String email, HttpServletResponse response)
+            throws MessagingException, InvalidEmailForgotPassword {
         String secretForgot = authService.redirectResetPassword(email);
-        passHttpOnlyCookie("forgotPassword", secretForgot, RESET_PASSWORD_LIFE, response);
-        return new ResponseEntity<>(secretForgot, HttpStatus.OK);
+        passCookie("forgotPassword", secretForgot, RESET_PASSWORD_LIFE, response);
+        return HttpResponseUtils.buildHttpResponseEntity(HttpStatus.OK, "Reset password email sent!");
     }
 
     /**
@@ -126,7 +125,7 @@ public class AuthController {
     public ResponseEntity<HttpResponse> logout(@PathVariable("id") Long id, HttpServletRequest request, HttpServletResponse response) {
         MetaInformation metaInformation = createMetaDataInformation(id, request);
         metaInformationService.deleteByUserIdAndDeviceDetails(id, metaInformation.getDeviceInformation());
-        deleteCookie("refreshToken", response);
+        deleteHttpOnlyCookie("refreshToken", response);
         deleteCookie("forgotPassword", response);
         return HttpResponseUtils.buildHttpResponseEntity(HttpStatus.OK, "User logged out successfully!");
     }

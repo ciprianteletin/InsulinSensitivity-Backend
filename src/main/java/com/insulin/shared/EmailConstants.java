@@ -7,7 +7,7 @@ package com.insulin.shared;
 public class EmailConstants {
     public static final String SIMPLE_MAIL_TRANSFER_PROTOCOL = "smtps";
     public static final String FROM_EMAIL = "support@insulin.com";
-    public static final String RESET_PASSWORD_LINK = "http://localhost:4200/resetPassword?";
+    public static final String RESET_PASSWORD_LINK = "http://localhost:4200/resetPassword?code=";
     public static final String CC_EMAIL = "";
 
     public static final String EMAIL_SUBJECT = "Insulin Sensitivity - Welcome abroad!";

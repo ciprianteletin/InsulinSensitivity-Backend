@@ -1,8 +1,6 @@
 package com.insulin.service.implementation;
 
-import com.insulin.exception.model.EmailAlreadyExistentException;
-import com.insulin.exception.model.UserNotFoundException;
-import com.insulin.exception.model.UsernameAlreadyExistentException;
+import com.insulin.exception.model.*;
 import com.insulin.model.User;
 import com.insulin.model.UserDetail;
 import com.insulin.model.UserPrincipal;
@@ -95,10 +93,10 @@ public class AuthServiceImpl implements AuthService, UserDetailsService {
     }
 
     @Override
-    public void resetPassword(User user) {
-        User forgottenUser = this.findUserByUsernameOrEmail(user.getUsername());
+    public void resetPassword(User user) throws EmailNotFoundException {
+        User forgottenUser = this.findUserByEmail(user.getUsername());
         if (forgottenUser == null) {
-            throw new UsernameNotFoundException("The provided username was not mapped to any user!");
+            throw new EmailNotFoundException("The provided email was not mapped to any user!");
         }
         forgottenUser.setPassword(encryptPassword(user.getPassword()));
         authRepository.save(forgottenUser);
@@ -110,7 +108,11 @@ public class AuthServiceImpl implements AuthService, UserDetailsService {
      * not be able to reset his password.
      */
     @Override
-    public String redirectResetPassword(String email) throws MessagingException {
+    public String redirectResetPassword(String email) throws MessagingException, InvalidEmailForgotPassword {
+        User existUser = authRepository.findUserByEmail(email);
+        if (existUser == null) {
+            throw new InvalidEmailForgotPassword("The provided email does not exist!");
+        }
         String secretParam = RandomStringUtils.randomAlphanumeric(15);
         emailService.sendResetPasswordEmail(email, secretParam);
         return secretParam;

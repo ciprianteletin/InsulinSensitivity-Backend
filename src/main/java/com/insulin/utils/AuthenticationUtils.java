@@ -59,15 +59,14 @@ public class AuthenticationUtils {
     }
 
     /**
-     * Creates a cookie for the refresh token with a duration of life of 7 days. By making it
-     * httpOnly, the cookie would be read only by the server side, making it secure against
-     * attacks like XSS
+     * Creates a cookie which is httpOnly secure, meaning that only the browser can read it.
+     * This cookie is usually used for storing data in secured ways.
      */
     public static void passHttpOnlyCookie(String name, String value, int age, HttpServletResponse response) {
         Cookie cookie = new Cookie(name, value);
         cookie.setHttpOnly(true);
         cookie.setSecure(false);
-        cookie.setMaxAge(age); //7 days in seconds
+        cookie.setMaxAge(age);
         cookie.setPath("/"); //accessible everywhere, change for a stable path
         response.addCookie(cookie);
     }
@@ -77,9 +76,27 @@ public class AuthenticationUtils {
      * set the life of the cookie as 0. The same set of property must be used for
      * both cookies.
      */
-    public static void deleteCookie(String name, HttpServletResponse response) {
+    public static void deleteHttpOnlyCookie(String name, HttpServletResponse response) {
         Cookie cookie = new Cookie(name, null);
         cookie.setHttpOnly(true);
+        cookie.setSecure(false);
+        cookie.setMaxAge(0);
+        cookie.setPath("/");
+        response.addCookie(cookie);
+    }
+
+    public static void passCookie(String name, String value, int age, HttpServletResponse response) {
+        Cookie cookie = new Cookie(name, value);
+        cookie.setHttpOnly(false);
+        cookie.setSecure(false);
+        cookie.setMaxAge(age);
+        cookie.setPath("/");
+        response.addCookie(cookie);
+    }
+
+    public static void deleteCookie(String name, HttpServletResponse response) {
+        Cookie cookie = new Cookie(name, null);
+        cookie.setHttpOnly(false);
         cookie.setSecure(false);
         cookie.setMaxAge(0);
         cookie.setPath("/");

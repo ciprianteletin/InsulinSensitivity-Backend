@@ -1,8 +1,6 @@
 package com.insulin.service.abstraction;
 
-import com.insulin.exception.model.EmailAlreadyExistentException;
-import com.insulin.exception.model.UserNotFoundException;
-import com.insulin.exception.model.UsernameAlreadyExistentException;
+import com.insulin.exception.model.*;
 import com.insulin.model.User;
 import com.insulin.utils.model.CompleteUser;
 
@@ -21,7 +19,7 @@ public interface AuthService {
 
     User findUserById(Long id) throws UserNotFoundException;
 
-    void resetPassword(User user);
+    void resetPassword(User user) throws EmailNotFoundException;
 
-    String redirectResetPassword(String email) throws MessagingException;
+    String redirectResetPassword(String email) throws MessagingException, InvalidEmailForgotPassword;
 }
