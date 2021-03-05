@@ -8,6 +8,7 @@ import com.insulin.repository.AuthRepository;
 import com.insulin.service.EmailService;
 import com.insulin.service.LoginAttemptService;
 import com.insulin.service.abstraction.AuthService;
+import com.insulin.utils.AuthenticationUtils;
 import com.insulin.utils.model.CompleteUser;
 import com.insulin.utils.abstractions.AbstractUserFactory;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -94,7 +95,8 @@ public class AuthServiceImpl implements AuthService, UserDetailsService {
 
     @Override
     public void resetPassword(User user) throws EmailNotFoundException {
-        User forgottenUser = this.findUserByEmail(user.getUsername());
+        User forgottenUser = this.findUserByEmail( //
+                AuthenticationUtils.decryptText(user.getUsername()));
         if (forgottenUser == null) {
             throw new EmailNotFoundException("The provided email was not mapped to any user!");
         }
@@ -108,7 +110,7 @@ public class AuthServiceImpl implements AuthService, UserDetailsService {
      * not be able to reset his password.
      */
     @Override
-    public String redirectResetPassword(String email) throws MessagingException, InvalidEmailForgotPassword {
+    public String redirectResetPassword(String email) throws InvalidEmailForgotPassword {
         User existUser = authRepository.findUserByEmail(email);
         if (existUser == null) {
             throw new InvalidEmailForgotPassword("The provided email does not exist!");
@@ -120,7 +122,7 @@ public class AuthServiceImpl implements AuthService, UserDetailsService {
 
     @Override
     public void register(CompleteUser completeUser) throws UserNotFoundException, EmailAlreadyExistentException,
-            UsernameAlreadyExistentException, MessagingException {
+            UsernameAlreadyExistentException {
         validateNewUsernameAndEmail(completeUser.getUsername(), completeUser.getEmail());
         logger.info("Username and e-mail ok");
         User user = userFactory.createUser(completeUser);

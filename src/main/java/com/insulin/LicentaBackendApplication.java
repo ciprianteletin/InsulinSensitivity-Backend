@@ -2,6 +2,7 @@ package com.insulin;
 
 import org.apache.catalina.Context;
 import org.apache.tomcat.util.http.Rfc6265CookieProcessor;
+import org.jasypt.util.text.BasicTextEncryptor;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
@@ -22,6 +23,11 @@ public class LicentaBackendApplication {
     @Bean
     public BCryptPasswordEncoder getBCryptPasswordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public BasicTextEncryptor basicTextEncryptor() {
+        return new BasicTextEncryptor();
     }
 
     /**

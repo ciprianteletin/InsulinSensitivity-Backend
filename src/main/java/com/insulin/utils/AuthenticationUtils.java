@@ -3,6 +3,8 @@ package com.insulin.utils;
 import com.insulin.metadata.MetaInformation;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.validator.routines.EmailValidator;
+import org.jasypt.util.text.BasicTextEncryptor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.context.request.RequestContextHolder;
 import ua_parser.Client;
@@ -23,10 +25,13 @@ import static com.insulin.utils.RequestUtils.getRemoteIP;
 public class AuthenticationUtils {
     private static final EmailValidator emailValidator;
     private static final BCryptPasswordEncoder encoder;
+    private static final BasicTextEncryptor encrypter;
 
     static {
         emailValidator = EmailValidator.getInstance();
         encoder = new BCryptPasswordEncoder();
+        encrypter = new BasicTextEncryptor();
+        encrypter.setPassword("mySuperStrongPassword");
     }
 
     public static String getDeviceDetails(String userAgent) {
@@ -101,6 +106,14 @@ public class AuthenticationUtils {
         cookie.setMaxAge(0);
         cookie.setPath("/");
         response.addCookie(cookie);
+    }
+
+    public static String encryptText(String text) {
+        return encrypter.encrypt(text);
+    }
+
+    public static String decryptText(String text) {
+        return encrypter.decrypt(text);
     }
 
     public static boolean checkIfEmail(String text) {
