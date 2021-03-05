@@ -17,11 +17,11 @@ import java.util.concurrent.TimeUnit;
 public class LoginAttemptService {
     private static final int MAX_NUMBER_ATTEMPT = 5;
     private static final int ATTEMPT_INCREMENT = 1;
-    private LoadingCache<String, Integer> loginCache;
+    private final LoadingCache<String, Integer> loginCache;
 
     /**
      * Creates the cache, which is local in our system. The expiration time is set to 15 minutes
-     * and at any time, there are a maximum number of 100 users in cache
+     * and at any time, there are a maximum number of 100 users in cache.
      */
     public LoginAttemptService() {
         this.loginCache = CacheBuilder.newBuilder()

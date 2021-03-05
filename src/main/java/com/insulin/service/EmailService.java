@@ -1,5 +1,6 @@
 package com.insulin.service;
 
+import com.insulin.utils.ThreadManager;
 import com.sun.mail.smtp.SMTPTransport;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -17,33 +18,38 @@ import static com.insulin.shared.EmailConstants.*;
  */
 @Service
 public class EmailService {
+    private final ThreadManager threadManager = new ThreadManager();
     @Value("${email.username}")
     private String USERNAME;
     @Value("${email.password}")
     private String PASSWORD;
 
-    public void sendRegisterEmail(String firstName, String email) throws MessagingException {
-        sendMessage(email, String.format(REGISTER_TEXT_MESSAGE, firstName), EMAIL_SUBJECT);
+    public void sendRegisterEmail(String firstName, String email) {
+        threadManager.runCallableVoid(() -> //
+                sendMessage(email, String.format(REGISTER_TEXT_MESSAGE, firstName), EMAIL_SUBJECT));
     }
 
-    public void sendDeleteEmail(String firstName, String email) throws MessagingException {
-        sendMessage(email, String.format(DELETE_TEXT_MESSAGE, firstName), DELETE_SUBJECT);
+    public void sendDeleteEmail(String firstName, String email) {
+        threadManager.runCallableVoid(() ->  //
+                sendMessage(email, String.format(DELETE_TEXT_MESSAGE, firstName), DELETE_SUBJECT));
     }
 
-    public void sendResetPasswordEmail(String email, String randomSecret) throws MessagingException {
-        sendMessage(email, String.format(RESET_PASSWORD_MESSAGE, RESET_PASSWORD_LINK + randomSecret), RESET_SUBJECT);
+    public void sendResetPasswordEmail(String email, String randomSecret) {
+        threadManager.runCallableVoid(() -> //
+                sendMessage(email, String.format(RESET_PASSWORD_MESSAGE, RESET_PASSWORD_LINK + randomSecret), RESET_SUBJECT));
     }
 
     /**
      * Generic method to send an email to an user, no matter of the scope of the message.
      * It is derived from the need of sending multiple emails with different messages (Register, delete)
      */
-    private void sendMessage(String email, String textMessage, String subject) throws MessagingException {
+    private Void sendMessage(String email, String textMessage, String subject) throws MessagingException {
         Message message = createMessage(email, textMessage, subject);
         SMTPTransport smtpTransport = (SMTPTransport) getEmailSession().getTransport(SIMPLE_MAIL_TRANSFER_PROTOCOL);
         smtpTransport.connect(GMAIL_SMTP_SERVER, USERNAME, PASSWORD);
         smtpTransport.sendMessage(message, message.getAllRecipients());
         smtpTransport.close();
+        return null;
     }
 
     /**
