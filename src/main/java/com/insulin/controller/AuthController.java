@@ -74,9 +74,10 @@ public class AuthController {
     /**
      * Update the user password in case he forgot the old one. For this operation, the user cannot be logged in.
      */
-    @PostMapping("/resetPassword")
-    public ResponseEntity<HttpResponse> resetPassword(@Valid @RequestBody User user) throws EmailNotFoundException {
-        authService.resetPassword(user);
+    @GetMapping("/resetPassword/{code}/{password}")
+    public ResponseEntity<HttpResponse> resetPassword(@PathVariable String code, @PathVariable String password)
+            throws EmailNotFoundException, LinkExpiredException {
+        authService.resetPassword(password, code);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -86,10 +87,9 @@ public class AuthController {
      * unavailable.
      */
     @GetMapping("/forgotPassword/{email}")
-    public ResponseEntity<HttpResponse> forgotPassword(@PathVariable String email, HttpServletResponse response)
+    public ResponseEntity<HttpResponse> forgotPassword(@PathVariable String email)
             throws MessagingException, InvalidEmailForgotPassword {
-        String secretForgot = authService.redirectResetPassword(email);
-        passCookie("forgotPassword", secretForgot, RESET_PASSWORD_LIFE, response);
+        authService.redirectResetPassword(email);
         return HttpResponseUtils.buildHttpResponseEntity(HttpStatus.OK, "Reset password email sent!");
     }
 
@@ -126,7 +126,6 @@ public class AuthController {
         MetaInformation metaInformation = createMetaDataInformation(id, request);
         metaInformationService.deleteByUserIdAndDeviceDetails(id, metaInformation.getDeviceInformation());
         deleteHttpOnlyCookie("refreshToken", response);
-        deleteCookie("forgotPassword", response);
         return HttpResponseUtils.buildHttpResponseEntity(HttpStatus.OK, "User logged out successfully!");
     }
 

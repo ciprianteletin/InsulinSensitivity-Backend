@@ -37,7 +37,7 @@ public class EmailService {
 
     public void sendResetPasswordEmail(String email, String randomSecret) {
         threadManager.runCallableVoid(() ->
-                sendMessage(email, String.format(RESET_PASSWORD_MESSAGE, randomSecret, AuthenticationUtils.encryptText(email)), RESET_SUBJECT));
+                sendMessage(email, String.format(RESET_PASSWORD_MESSAGE, randomSecret), RESET_SUBJECT));
     }
 
     /**

@@ -28,7 +28,7 @@ public class EmailConstants {
             "We hope that someday you will come back, we are welcoming you anytime with our arms open. Until then, best of luck and thank you for all your " +
             "support.\n\nWe thank you for your trust,\nInsulin Sensitivity Team";
     public static final String RESET_PASSWORD_MESSAGE = "Dear Mr/Mrs,\n\nYou requested a link to reset your password. " +
-            "Click here: http://localhost:4200/resetPassword?code=%1$s&address=%2$s in order to change your password. " +
+            "Click here: http://localhost:4200/resetPassword/%s in order to change your password. " +
             "Please pay attention that the link is available only three hours! " +
             "You will be prompted to a form where you can insert your newly password.\nIf you did not request to change your password, please ignore the link from above.\n\n"
             + "Insulin Sensitivity team.";

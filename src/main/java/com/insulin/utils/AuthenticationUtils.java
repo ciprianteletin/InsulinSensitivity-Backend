@@ -4,7 +4,6 @@ import com.insulin.metadata.MetaInformation;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.jasypt.util.text.BasicTextEncryptor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.context.request.RequestContextHolder;
 import ua_parser.Client;
@@ -15,7 +14,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Objects;
 
-import static com.insulin.shared.SecurityConstants.REFRESH_EXPIRATION_TIME_MS;
 import static com.insulin.utils.RequestUtils.getRemoteIP;
 
 /**
@@ -57,7 +55,6 @@ public class AuthenticationUtils {
         return MetaInformation.builder() //
                 .userId(userId) //
                 .refreshToken(randomToken) //
-                .expirationTime(REFRESH_EXPIRATION_TIME_MS) // 7 days Expiration time, match the cookie duration)
                 .deviceInformation(deviceDetails) //
                 .ip(ip) //
                 .build();

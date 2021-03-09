@@ -1,13 +1,16 @@
 package com.insulin.service.implementation;
 
 import com.insulin.exception.model.*;
+import com.insulin.metadata.LostUser;
 import com.insulin.model.User;
 import com.insulin.model.UserDetail;
 import com.insulin.model.UserPrincipal;
 import com.insulin.repository.AuthRepository;
+import com.insulin.repository.LostUserRepository;
 import com.insulin.service.EmailService;
 import com.insulin.service.LoginAttemptService;
 import com.insulin.service.abstraction.AuthService;
+import com.insulin.service.abstraction.LostUserService;
 import com.insulin.utils.AuthenticationUtils;
 import com.insulin.utils.model.CompleteUser;
 import com.insulin.utils.abstractions.AbstractUserFactory;
@@ -22,7 +25,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import javax.mail.MessagingException;
 import javax.transaction.Transactional;
 import java.time.LocalDate;
 
@@ -40,14 +42,19 @@ public class AuthServiceImpl implements AuthService, UserDetailsService {
     private final AbstractUserFactory userFactory;
     private final LoginAttemptService loginAttemptService;
     private final EmailService emailService;
+    private final LostUserService lostUserService;
 
     @Autowired
-    public AuthServiceImpl(AuthRepository authRepository, AbstractUserFactory userFactory,
-                           LoginAttemptService loginAttemptService, EmailService emailService) {
+    public AuthServiceImpl(AuthRepository authRepository,
+                           AbstractUserFactory userFactory,
+                           LoginAttemptService loginAttemptService,
+                           EmailService emailService,
+                           LostUserService lostUserService) {
         this.authRepository = authRepository;
         this.userFactory = userFactory;
         this.loginAttemptService = loginAttemptService;
         this.emailService = emailService;
+        this.lostUserService = lostUserService;
     }
 
     /**
@@ -94,13 +101,13 @@ public class AuthServiceImpl implements AuthService, UserDetailsService {
     }
 
     @Override
-    public void resetPassword(User user) throws EmailNotFoundException {
-        User forgottenUser = this.findUserByEmail( //
-                AuthenticationUtils.decryptText(user.getUsername()));
+    public void resetPassword(String password, String code) throws EmailNotFoundException, LinkExpiredException {
+        String email = getEmailFromLostUser(code);
+        User forgottenUser = this.findUserByEmail(email);
         if (forgottenUser == null) {
             throw new EmailNotFoundException("The provided email was not mapped to any user!");
         }
-        forgottenUser.setPassword(encryptPassword(user.getPassword()));
+        forgottenUser.setPassword(encryptPassword(password));
         authRepository.save(forgottenUser);
     }
 
@@ -110,14 +117,14 @@ public class AuthServiceImpl implements AuthService, UserDetailsService {
      * not be able to reset his password.
      */
     @Override
-    public String redirectResetPassword(String email) throws InvalidEmailForgotPassword {
+    public void redirectResetPassword(String email) throws InvalidEmailForgotPassword {
         User existUser = authRepository.findUserByEmail(email);
         if (existUser == null) {
             throw new InvalidEmailForgotPassword("The provided email does not exist!");
         }
         String secretParam = RandomStringUtils.randomAlphanumeric(15);
         emailService.sendResetPasswordEmail(email, secretParam);
-        return secretParam;
+        lostUserService.save(email, secretParam);
     }
 
     @Override
@@ -141,6 +148,14 @@ public class AuthServiceImpl implements AuthService, UserDetailsService {
     @Override
     public User findUserByEmail(String email) {
         return authRepository.findUserByEmail(email);
+    }
+
+    private String getEmailFromLostUser(String code) throws LinkExpiredException {
+        LostUser lostUser = lostUserService.findByCode(code);
+        if (lostUser == null) {
+            throw new LinkExpiredException("Reset password link has expired!");
+        }
+        return AuthenticationUtils.decryptText(lostUser.getEmail());
     }
 
     private void validateNewUsernameAndEmail(String username, String email)

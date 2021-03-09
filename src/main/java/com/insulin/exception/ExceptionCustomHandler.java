@@ -82,6 +82,12 @@ public class ExceptionCustomHandler {
         return buildHttpResponseEntity(HttpStatus.BAD_REQUEST, exception.getMessage());
     }
 
+    @ExceptionHandler(LinkExpiredException.class)
+    public ResponseEntity<HttpResponse> linkExpiredException(LinkExpiredException exception) {
+        logger.error(exception.getMessage());
+        return buildHttpResponseEntity(HttpStatus.UNAUTHORIZED, exception.getMessage());
+    }
+
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<HttpResponse> constraintException(ConstraintViolationException exception) {
         logger.error(exception.getMessage());

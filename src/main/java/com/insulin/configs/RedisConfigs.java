@@ -9,6 +9,7 @@ import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.repository.configuration.EnableRedisRepositories;
 import org.springframework.data.redis.serializer.JdkSerializationRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
@@ -17,8 +18,8 @@ import java.time.Duration;
 import static com.insulin.shared.SecurityConstants.REFRESH_EXPIRATION_TIME_MS;
 
 @Configuration
+@EnableRedisRepositories
 public class RedisConfigs {
-
     /**
      * Creates a configuration setup for a connection with Redis database, mentioning the port number
      * and the host name.

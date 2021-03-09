@@ -10,6 +10,8 @@ import java.io.Serializable;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
+import static com.insulin.shared.SecurityConstants.REFRESH_EXPIRATION_TIME_SEC;
+
 
 /**
  * Class with the sole purpose to store details about the user: it's account id, from what device he accessed the application,
@@ -18,7 +20,7 @@ import java.util.concurrent.TimeUnit;
  * the user tries to connect to the application after two days of the last login date, the application will auto-login
  * the user without the need to login manually.
  */
-@RedisHash("MetaInformation")
+@RedisHash(value = "MetaInformation", timeToLive = REFRESH_EXPIRATION_TIME_SEC)
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -34,9 +36,6 @@ public class MetaInformation implements Serializable {
     @Indexed
     private String refreshToken;
     private String ip;
-
-    @TimeToLive(unit = TimeUnit.MILLISECONDS)
-    private Long expirationTime;
 
     @Override
     public boolean equals(Object meta) {

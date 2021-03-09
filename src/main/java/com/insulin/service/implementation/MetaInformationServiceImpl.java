@@ -8,6 +8,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class MetaInformationServiceImpl implements MetaInformationService {
     private final MetaInformationRepository metaInformationRepository;
@@ -37,10 +39,12 @@ public class MetaInformationServiceImpl implements MetaInformationService {
     @Override
     public void deleteByUserIdAndDeviceDetails(Long userId, String deviceInformation) {
         metaInformationRepository.deleteByUserIdAndDeviceInformation(userId, deviceInformation);
+        logger.info("Deleted metaInformation with success!");
     }
 
     @Override
     public MetaInformation findById(String id) {
-        return metaInformationRepository.findById(id);
+        Optional<MetaInformation> metaInf = metaInformationRepository.findById(id);
+        return metaInf.orElse(null);
     }
 }
