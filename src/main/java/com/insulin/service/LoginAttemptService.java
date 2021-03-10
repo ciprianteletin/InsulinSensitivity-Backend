@@ -5,8 +5,11 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import org.springframework.stereotype.Service;
 
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+
+import static com.google.common.collect.Maps.newHashMap;
 
 /**
  * Service used in order to verify the number of failed attempts of login by an user. If the user fail
@@ -18,6 +21,7 @@ public class LoginAttemptService {
     private static final int MAX_NUMBER_ATTEMPT = 5;
     private static final int ATTEMPT_INCREMENT = 1;
     private final LoadingCache<String, Integer> loginCache;
+    private final Map<String, Boolean> markedUser = newHashMap();
 
     /**
      * Creates the cache, which is local in our system. The expiration time is set to 15 minutes
@@ -33,6 +37,10 @@ public class LoginAttemptService {
                         return 0;
                     }
                 });
+    }
+
+    public Boolean addMarkedUser(String username) {
+        return this.markedUser.putIfAbsent(username, true);
     }
 
     /**

@@ -14,8 +14,7 @@ import java.util.List;
  * The last four methods are returning true, as we are not placing restrictions, like locking accounts.
  */
 public class UserPrincipal implements UserDetails {
-    private User user;
-    private boolean noActiveCaptcha = true;
+    private final User user;
 
     public UserPrincipal(User user) {
         this.user = user;
@@ -48,7 +47,7 @@ public class UserPrincipal implements UserDetails {
 
     @Override
     public boolean isAccountNonLocked() {
-        return noActiveCaptcha;
+        return true;
     }
 
     @Override
@@ -59,13 +58,5 @@ public class UserPrincipal implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
-    }
-
-    public void setNoActiveCaptcha(boolean captcha) {
-        this.noActiveCaptcha = captcha;
-    }
-
-    public boolean isNoActiveCaptcha() {
-        return noActiveCaptcha;
     }
 }

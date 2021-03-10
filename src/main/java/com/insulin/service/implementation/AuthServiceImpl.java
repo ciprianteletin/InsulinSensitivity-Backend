@@ -6,9 +6,7 @@ import com.insulin.model.User;
 import com.insulin.model.UserDetail;
 import com.insulin.model.UserPrincipal;
 import com.insulin.repository.AuthRepository;
-import com.insulin.repository.LostUserRepository;
 import com.insulin.service.EmailService;
-import com.insulin.service.LoginAttemptService;
 import com.insulin.service.abstraction.AuthService;
 import com.insulin.service.abstraction.LostUserService;
 import com.insulin.utils.AuthenticationUtils;
@@ -40,19 +38,16 @@ public class AuthServiceImpl implements AuthService, UserDetailsService {
     private final Logger logger = LoggerFactory.getLogger(getClass());
     private final AuthRepository authRepository;
     private final AbstractUserFactory userFactory;
-    private final LoginAttemptService loginAttemptService;
     private final EmailService emailService;
     private final LostUserService lostUserService;
 
     @Autowired
     public AuthServiceImpl(AuthRepository authRepository,
                            AbstractUserFactory userFactory,
-                           LoginAttemptService loginAttemptService,
                            EmailService emailService,
                            LostUserService lostUserService) {
         this.authRepository = authRepository;
         this.userFactory = userFactory;
-        this.loginAttemptService = loginAttemptService;
         this.emailService = emailService;
         this.lostUserService = lostUserService;
     }
@@ -66,7 +61,6 @@ public class AuthServiceImpl implements AuthService, UserDetailsService {
         User user = findUserByUsernameOrEmail(username);
         logger.info("User found for username: " + username);
         UserPrincipal principal = new UserPrincipal(user);
-        validateLoginAttempt(principal);
         user.getDetails()
                 .setLastLoginDateDisplay(user.getDetails().getLastLoginDate()); //last login
         user.getDetails().setLastLoginDate(LocalDate.now()); // current login, now
@@ -173,15 +167,6 @@ public class AuthServiceImpl implements AuthService, UserDetailsService {
         if (!isNull(userByEmail)) {
             logger.error("Email already existent!");
             throw new EmailAlreadyExistentException(EMAIL_ALREADY_EXISTENT);
-        }
-    }
-
-    private void validateLoginAttempt(UserPrincipal userPrincipal) {
-        logger.info("Validating the user authentication");
-        if (userPrincipal.isNoActiveCaptcha()) {
-            userPrincipal.setNoActiveCaptcha(!loginAttemptService.isExceededMaxAttempts(userPrincipal.getUsername()));
-        } else {
-            loginAttemptService.evictUserFromLoginCache(userPrincipal.getUsername());
         }
     }
 }
