@@ -22,8 +22,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import java.util.List;
 
-import static com.insulin.shared.SecurityConstants.JWT_TOKEN_HEADER;
-import static com.insulin.shared.SecurityConstants.PUBLIC_URLS;
+import static com.insulin.shared.SecurityConstants.*;
 import static java.util.Arrays.*;
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
@@ -90,7 +89,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     private CorsConfiguration createCorsConfig(HttpServletRequest request) {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowedHeaders(List.of("Authorization", "Cache-Control", "Content-Type"));
-        config.addExposedHeader(JWT_TOKEN_HEADER);
+        config.setExposedHeaders(List.of(JWT_TOKEN_HEADER, CAPTCHA_HEADER));
         config.setAllowedMethods(asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.addAllowedOrigin("http://localhost:4200");
         config.setAllowCredentials(true);

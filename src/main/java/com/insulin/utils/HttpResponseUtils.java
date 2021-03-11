@@ -1,6 +1,7 @@
 package com.insulin.utils;
 
 import com.insulin.shared.HttpResponse;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -14,6 +15,11 @@ public class HttpResponseUtils {
     public static ResponseEntity<HttpResponse> buildHttpResponseEntity(HttpStatus status, String message) {
         HttpResponse httpResponse = buildHttpResponse(status, message);
         return new ResponseEntity<>(httpResponse, status);
+    }
+
+    public static ResponseEntity<HttpResponse> buildHttpResponseWithHeader(HttpStatus status, String message, HttpHeaders headers) {
+        HttpResponse httpResponse = buildHttpResponse(status, message);
+        return new ResponseEntity<>(httpResponse, headers, status);
     }
 
     public static HttpResponse buildHttpResponse(HttpStatus status, String message) {

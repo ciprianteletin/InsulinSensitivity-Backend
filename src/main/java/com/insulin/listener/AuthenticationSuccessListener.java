@@ -27,7 +27,7 @@ public class AuthenticationSuccessListener {
         if (principal instanceof UserPrincipal) {
             UserPrincipal user = (UserPrincipal) principal;
             logger.info("Authentication with success!");
-            loginAttemptService.evictUserFromLoginCache(user.getUsername());
+            loginAttemptService.evictUserFromLoginCaches(user.getUsername());
         }
     }
 }

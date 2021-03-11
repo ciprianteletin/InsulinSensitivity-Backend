@@ -21,7 +21,6 @@ public class LoginAttemptService {
     private static final int MAX_NUMBER_ATTEMPT = 5;
     private static final int ATTEMPT_INCREMENT = 1;
     private final LoadingCache<String, Integer> loginCache;
-    private final Map<String, Boolean> markedUser = newHashMap();
 
     /**
      * Creates the cache, which is local in our system. The expiration time is set to 15 minutes
@@ -39,14 +38,10 @@ public class LoginAttemptService {
                 });
     }
 
-    public Boolean addMarkedUser(String username) {
-        return this.markedUser.putIfAbsent(username, true);
-    }
-
     /**
      * If the authentication is successful, the user will be removed from the cache.
      */
-    public void evictUserFromLoginCache(String username) {
+    public void evictUserFromLoginCaches(String username) {
         loginCache.invalidate(username);
     }
 

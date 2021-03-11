@@ -8,6 +8,7 @@ import com.insulin.utils.model.CaptchaModel;
 import org.hibernate.exception.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -22,7 +23,9 @@ import java.io.IOException;
 import java.lang.reflect.UndeclaredThrowableException;
 
 import static com.insulin.shared.ExceptionConstants.*;
+import static com.insulin.shared.SecurityConstants.CAPTCHA_HEADER;
 import static com.insulin.utils.HttpResponseUtils.buildHttpResponseEntity;
+import static com.insulin.utils.HttpResponseUtils.buildHttpResponseWithHeader;
 
 /**
  * Special class which has the role to 'handle' all the exceptions and to return a specific, easy to understand message to the user.
@@ -126,11 +129,13 @@ public class ExceptionCustomHandler {
     }
 
     @ExceptionHandler(UndeclaredThrowableException.class)
-    public ResponseEntity<CaptchaModel> undeclaredException(UndeclaredThrowableException exception) {
+    public ResponseEntity<HttpResponse> undeclaredException(UndeclaredThrowableException exception) {
         if (exception.getUndeclaredThrowable() instanceof ActivateCaptchaException) {
-            return this.activateCaptchaCode();
+            HttpHeaders errorHeader = new HttpHeaders();
+            errorHeader.set(CAPTCHA_HEADER, "activate");
+            return buildHttpResponseWithHeader(HttpStatus.BAD_REQUEST, INCORRECT_CREDENTIALS, errorHeader);
         }
-        return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        return buildHttpResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR, INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(Exception.class)

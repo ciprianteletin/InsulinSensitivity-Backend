@@ -27,15 +27,14 @@ public class AuthenticationFailureListener {
         if (principal instanceof String) {
             String username = (String) principal;
             logger.info("Authentication failed!");
-            addCaptchaIfNeeded(username);
+            checkIfCaptchaNeeded(username);
             loginAttemptService.addUserToLoginCache(username);
         }
     }
 
-    private void addCaptchaIfNeeded(String username) throws ActivateCaptchaException {
+    private void checkIfCaptchaNeeded(String username) throws ActivateCaptchaException {
         if (loginAttemptService.isExceededMaxAttempts(username)) {
-            Optional.ofNullable(loginAttemptService.addMarkedUser(username))
-                    .orElseThrow(() -> new ActivateCaptchaException("Exceeded numbers of login attempts!"));
+            throw new ActivateCaptchaException("Exceeded number of login attempts!");
         }
     }
 }
