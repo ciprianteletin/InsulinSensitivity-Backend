@@ -98,22 +98,23 @@ public class AuthServiceImpl implements AuthService, UserDetailsService {
     public void resetPassword(String password, String code) throws EmailNotFoundException, LinkExpiredException {
         String email = getEmailFromLostUser(code);
         User forgottenUser = this.findUserByEmail(email);
-        if (forgottenUser == null) {
+        if (isNull(forgottenUser)) {
             throw new EmailNotFoundException("The provided email was not mapped to any user!");
         }
         forgottenUser.setPassword(encryptPassword(password));
         authRepository.save(forgottenUser);
+        lostUserService.deleteByEmail(email);
     }
 
     /**
-     * The secretParam usage is that it will be send as a httpOnly cookie, hence available only on the server.
-     * If the secret received from the client and the value from the cookie are not matching, the user will
-     * not be able to reset his password.
+     * The secretCode and the email are saved inside the database so that we can check easily
+     * if the secretCode from the link matches the one stored inside the database.
+     * Once used, this information will be removed.
      */
     @Override
     public void redirectResetPassword(String email) throws InvalidEmailForgotPassword {
         User existUser = authRepository.findUserByEmail(email);
-        if (existUser == null) {
+        if (isNull(existUser)) {
             throw new InvalidEmailForgotPassword("The provided email does not exist!");
         }
         String secretParam = RandomStringUtils.randomAlphanumeric(15);
@@ -146,7 +147,7 @@ public class AuthServiceImpl implements AuthService, UserDetailsService {
 
     private String getEmailFromLostUser(String code) throws LinkExpiredException {
         LostUser lostUser = lostUserService.findByCode(code);
-        if (lostUser == null) {
+        if (isNull(lostUser)) {
             throw new LinkExpiredException("Reset password link has expired!");
         }
         return AuthenticationUtils.decryptText(lostUser.getEmail());

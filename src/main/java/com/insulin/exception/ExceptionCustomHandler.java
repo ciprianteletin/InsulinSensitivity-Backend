@@ -2,7 +2,6 @@ package com.insulin.exception;
 
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.insulin.exception.model.*;
-import com.insulin.service.LoginAttemptService;
 import com.insulin.shared.HttpResponse;
 import com.insulin.utils.model.CaptchaModel;
 import org.hibernate.exception.ConstraintViolationException;

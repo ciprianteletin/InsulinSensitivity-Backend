@@ -3,6 +3,9 @@ package com.insulin.repository;
 import com.insulin.metadata.MetaInformation;
 import org.springframework.data.repository.CrudRepository;
 
+import java.util.List;
+import java.util.Optional;
+
 /**
  * Manipulate the metaInformation in the database by using basic CRUD operation and operations that
  * require additional filtering. The MetaInformation is stored inside Redis in-memory database,
@@ -12,6 +15,10 @@ import org.springframework.data.repository.CrudRepository;
  */
 public interface MetaInformationRepository extends CrudRepository<MetaInformation, String> {
     MetaInformation findByRefreshTokenAndDeviceInformation(String refreshToken, String device);
+
     MetaInformation findByUserIdAndRefreshToken(Long userId, String refreshToken);
-    void deleteByUserIdAndDeviceInformation(Long userId, String deviceInformation);
+
+    Optional<MetaInformation> findByUserIdAndDeviceInformation(Long userId, String deviceInformation);
+
+    List<MetaInformation> findByUserId(Long userId);
 }

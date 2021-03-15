@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -38,8 +39,18 @@ public class MetaInformationServiceImpl implements MetaInformationService {
 
     @Override
     public void deleteByUserIdAndDeviceDetails(Long userId, String deviceInformation) {
-        metaInformationRepository.deleteByUserIdAndDeviceInformation(userId, deviceInformation);
+        Optional<MetaInformation> metaInformation = metaInformationRepository //
+                .findByUserIdAndDeviceInformation(userId, deviceInformation);
+        // Even if the metaInf should be present, a defensive approach is preferred.
+        metaInformation.ifPresent(metaInf -> metaInformationRepository.deleteById(metaInf.getId()));
         logger.info("Deleted metaInformation with success!");
+    }
+
+    @Override
+    public void deleteByUserId(Long userId) {
+        List<MetaInformation> metaInformations = metaInformationRepository.findByUserId(userId);
+        logger.info("Extracted metaInformation by userId!");
+        metaInformations.forEach(metaInf -> metaInformationRepository.deleteById(metaInf.getId()));
     }
 
     @Override

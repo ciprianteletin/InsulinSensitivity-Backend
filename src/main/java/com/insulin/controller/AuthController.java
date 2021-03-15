@@ -28,6 +28,7 @@ import javax.validation.Valid;
 
 import static com.insulin.shared.SecurityConstants.*;
 import static com.insulin.utils.AuthenticationUtils.*;
+import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
 /**
@@ -108,8 +109,9 @@ public class AuthController {
         if (refreshToken == null) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
-        MetaInformation metaInformation = createMetaDataInformation(null, request); //we don't know who the user is
-        MetaInformation storedInformation = metaInformationService.findByRefreshTokenAndDevice(refreshToken, metaInformation.getDeviceInformation());
+        MetaInformation metaInformation = createMetaDataInformation(null, request); // we don't know who the user is
+        MetaInformation storedInformation = metaInformationService //
+                .findByRefreshTokenAndDevice(refreshToken, metaInformation.getDeviceInformation());
         if (nonNull(storedInformation) && refreshToken.equals(storedInformation.getRefreshToken())) {
             //Then the user was logged on his device and has the good token.
             User user = authService.findUserById(storedInformation.getUserId());
@@ -143,10 +145,11 @@ public class AuthController {
                                                     HttpServletRequest request,
                                                     HttpServletResponse response,
                                                     Authentication auth) {
-        MetaInformation dbMetaInformation = metaInformationService.findByUserIdAndRefreshToken(id, refreshToken);
+        MetaInformation dbMetaInformation = metaInformationService //
+                .findByUserIdAndRefreshToken(id, refreshToken);
         String username = (String) auth.getPrincipal(); // can be email or actual username
         UserPrincipal loggedUser = new UserPrincipal(authService.findUserByUsernameOrEmail(username));
-        if (dbMetaInformation == null) {
+        if (isNull(dbMetaInformation)) {
             MetaInformation metaInformation = saveMetaDataInformation(id, request);
             passHttpOnlyCookie("refreshToken", metaInformation.getRefreshToken(), REFRESH_EXPIRATION_TIME_SEC, response);
         }

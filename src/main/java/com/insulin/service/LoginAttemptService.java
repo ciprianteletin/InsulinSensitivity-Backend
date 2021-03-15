@@ -5,11 +5,8 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import org.springframework.stereotype.Service;
 
-import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
-
-import static com.google.common.collect.Maps.newHashMap;
 
 /**
  * Service used in order to verify the number of failed attempts of login by an user. If the user fail

@@ -7,5 +7,6 @@ public interface MetaInformationService {
     MetaInformation findByRefreshTokenAndDevice(String refreshToken, String device);
     MetaInformation findByUserIdAndRefreshToken(Long userId, String refreshToken);
     void deleteByUserIdAndDeviceDetails(Long userId, String deviceInformation);
+    void deleteByUserId(Long userId);
     MetaInformation findById(String id);
 }

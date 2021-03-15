@@ -3,7 +3,6 @@ package com.insulin.controller;
 import com.insulin.exception.model.InvalidDataException;
 import com.insulin.exception.model.UserNotFoundException;
 import com.insulin.model.User;
-import com.insulin.service.EmailService;
 import com.insulin.service.abstraction.UserService;
 import com.insulin.shared.HttpResponse;
 import com.insulin.utils.HttpResponseUtils;
@@ -16,39 +15,40 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
-import javax.mail.MessagingException;
+import javax.servlet.http.HttpServletRequest;
+
+import static java.util.Objects.isNull;
 
 @RestController
 @RequestMapping("/user")
 public class UserController {
     private final Logger logger = LoggerFactory.getLogger(getClass());
     private final UserService userService;
-    private final EmailService emailService;
 
     @Autowired
-    public UserController(UserService userService, EmailService emailService) {
+    public UserController(UserService userService) {
         this.userService = userService;
-        this.emailService = emailService;
     }
 
     @DeleteMapping("/delete/{id}")
     @PreAuthorize("hasAnyAuthority('PATIENT', 'MEDIC', 'ADMIN')")
-    public ResponseEntity<HttpResponse> deleteUserById(@PathVariable("id") Long id, Authentication auth)
-            throws UserNotFoundException, MessagingException, InvalidDataException {
+    public ResponseEntity<HttpResponse> deleteUserById(@PathVariable("id") Long id,
+                                                       Authentication auth,
+                                                       HttpServletRequest request)
+            throws UserNotFoundException, InvalidDataException {
         String principal = (String) auth.getPrincipal();
         User currentUser = this.userService.getUserById(id);
-        if (currentUser == null) {
+        if (isNull(currentUser)) {
             logger.error("The provided id is invalid. User not found");
             throw new UserNotFoundException("The provided id does not map to any user");
         }
+
         if (!principal.equals(currentUser.getUsername())) {
             logger.error("A user could not delete another user account!");
             throw new InvalidDataException("The id does not match to the current account!");
         }
 
-        this.emailService.sendDeleteEmail(currentUser.getDetails().getFirstName(), currentUser.getDetails().getEmail());
-        logger.info("Delete message has been emitted");
-        this.userService.deleteUser(id);
+        this.userService.deleteUser(currentUser, request);
         return HttpResponseUtils.buildHttpResponseEntity(HttpStatus.OK, "User deleted with success");
     }
 
