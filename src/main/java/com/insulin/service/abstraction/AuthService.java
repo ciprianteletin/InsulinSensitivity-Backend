@@ -19,7 +19,7 @@ public interface AuthService {
 
     User findUserById(Long id) throws UserNotFoundException;
 
-    void resetPassword(String password, String code) throws EmailNotFoundException, LinkExpiredException;
+    void resetPassword(String password, String code) throws EmailNotFoundException, LinkExpiredException, OldPasswordException;
 
     void redirectResetPassword(String email) throws MessagingException, InvalidEmailForgotPassword;
 }

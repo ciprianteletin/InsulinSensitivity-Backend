@@ -26,6 +26,7 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.time.LocalDate;
 
+import static com.insulin.shared.ExceptionConstants.OLD_PASSWORD;
 import static com.insulin.shared.UserConstants.*;
 import static com.insulin.utils.AuthenticationUtils.checkIfEmail;
 import static com.insulin.utils.AuthenticationUtils.encryptPassword;
@@ -95,13 +96,17 @@ public class AuthServiceImpl implements AuthService, UserDetailsService {
     }
 
     @Override
-    public void resetPassword(String password, String code) throws EmailNotFoundException, LinkExpiredException {
+    public void resetPassword(String password, String code) throws EmailNotFoundException, LinkExpiredException, OldPasswordException {
         String email = getEmailFromLostUser(code);
         User forgottenUser = this.findUserByEmail(email);
         if (isNull(forgottenUser)) {
             throw new EmailNotFoundException("The provided email was not mapped to any user!");
         }
-        forgottenUser.setPassword(encryptPassword(password));
+        String encryptedPassword = encryptPassword(password);
+        if (encryptedPassword.equals(forgottenUser.getPassword())) {
+            throw new OldPasswordException(OLD_PASSWORD);
+        }
+        forgottenUser.setPassword(encryptedPassword);
         authRepository.save(forgottenUser);
         lostUserService.deleteByEmail(email);
     }

@@ -8,4 +8,5 @@ public class ExceptionConstants {
     public static final String FILE_ERROR = "Error occurred while processing a file";
     public static final String NOT_ENOUGH_PERMISSION = "You do not have enough permissions";
     public static final String INVALID_FIELD = "Invalid field inserted, please enter valid data";
+    public static final String OLD_PASSWORD = "The new password must be different from the old one!";
 }

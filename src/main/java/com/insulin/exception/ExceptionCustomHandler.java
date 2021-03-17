@@ -42,6 +42,12 @@ public class ExceptionCustomHandler {
         return buildHttpResponseEntity(HttpStatus.BAD_REQUEST, INVALID_FIELD);
     }
 
+    @ExceptionHandler(OldPasswordException.class)
+    public ResponseEntity<HttpResponse> oldPasswordException(OldPasswordException exception) {
+        logger.error(exception.getMessage());
+        return buildHttpResponseEntity(HttpStatus.BAD_REQUEST, OLD_PASSWORD);
+    }
+
     @ExceptionHandler(EmailAlreadyExistentException.class)
     public ResponseEntity<HttpResponse> emailExistentException(EmailAlreadyExistentException exception) {
         logger.error(exception.getMessage());

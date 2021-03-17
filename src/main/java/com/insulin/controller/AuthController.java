@@ -77,7 +77,7 @@ public class AuthController {
      */
     @GetMapping("/resetPassword/{code}/{password}")
     public ResponseEntity<HttpResponse> resetPassword(@PathVariable String code, @PathVariable String password)
-            throws EmailNotFoundException, LinkExpiredException {
+            throws EmailNotFoundException, LinkExpiredException, OldPasswordException {
         authService.resetPassword(password, code);
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -122,6 +122,11 @@ public class AuthController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
+    /**
+     * The logout process deletes everything related to the metaInformation of the user, so that if
+     * he decide to logout manually, the autologin process should not be applied. For this method,
+     * the user must be logged in. The refreshToken is also removed.
+     */
     @GetMapping("/logout/{id}")
     @PreAuthorize("hasAnyAuthority('PATIENT', 'MEDIC', 'ADMIN')")
     public ResponseEntity<HttpResponse> logout(@PathVariable("id") Long id, HttpServletRequest request, HttpServletResponse response) {
