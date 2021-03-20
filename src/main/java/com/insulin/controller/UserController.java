@@ -57,4 +57,10 @@ public class UserController {
     public ResponseEntity<User> getUserById(@PathVariable("id") Long id) throws UserNotFoundException {
         return new ResponseEntity<>(userService.getUserById(id), HttpStatus.OK);
     }
+
+    @GetMapping("/ip/{userId}")
+    @PreAuthorize("hasAnyAuthority('PATIENT', 'MEDIC', 'ADMIN')")
+    public ResponseEntity<String> getUserIP(@PathVariable("userId") Long userId) {
+        return new ResponseEntity<>(userService.getUserIpAddress(userId), HttpStatus.OK);
+    }
 }

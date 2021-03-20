@@ -61,7 +61,7 @@ public class AuthController {
         UserPrincipal userPrincipal = new UserPrincipal(loginUser);
         HttpHeaders jwtHeader = getJwtHeader(userPrincipal);
         MetaInformation metaInformation = saveMetaDataInformation(loginUser.getId(), request);
-        passHttpOnlyCookie("refreshToken", metaInformation.getRefreshToken(), REFRESH_EXPIRATION_TIME_SEC, response);
+        passHttpOnlyCookie(REFRESH_TOKEN_NAME, metaInformation.getRefreshToken(), REFRESH_EXPIRATION_TIME_SEC, response);
         return new ResponseEntity<>(loginUser, jwtHeader, HttpStatus.OK);
     }
 
@@ -132,7 +132,7 @@ public class AuthController {
     public ResponseEntity<HttpResponse> logout(@PathVariable("id") Long id, HttpServletRequest request, HttpServletResponse response) {
         MetaInformation metaInformation = createMetaDataInformation(id, request);
         metaInformationService.deleteByUserIdAndDeviceDetails(id, metaInformation.getDeviceInformation());
-        deleteHttpOnlyCookie("refreshToken", response);
+        deleteHttpOnlyCookie(REFRESH_TOKEN_NAME, response);
         return HttpResponseUtils.buildHttpResponseEntity(HttpStatus.OK, "User logged out successfully!");
     }
 
@@ -156,7 +156,7 @@ public class AuthController {
         UserPrincipal loggedUser = new UserPrincipal(authService.findUserByUsernameOrEmail(username));
         if (isNull(dbMetaInformation)) {
             MetaInformation metaInformation = saveMetaDataInformation(id, request);
-            passHttpOnlyCookie("refreshToken", metaInformation.getRefreshToken(), REFRESH_EXPIRATION_TIME_SEC, response);
+            passHttpOnlyCookie(REFRESH_TOKEN_NAME, metaInformation.getRefreshToken(), REFRESH_EXPIRATION_TIME_SEC, response);
         }
         HttpHeaders jwtHeader = getJwtHeader(loggedUser);
         return new ResponseEntity<>(jwtHeader, HttpStatus.OK);

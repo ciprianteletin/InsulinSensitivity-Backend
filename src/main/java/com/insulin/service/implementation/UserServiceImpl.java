@@ -1,6 +1,7 @@
 package com.insulin.service.implementation;
 
 import com.insulin.exception.model.UserNotFoundException;
+import com.insulin.metadata.MetaInformation;
 import com.insulin.model.User;
 import com.insulin.repository.UserRepository;
 import com.insulin.service.EmailService;
@@ -56,5 +57,13 @@ public class UserServiceImpl implements UserService {
     public User getUserById(Long id) throws UserNotFoundException {
         Optional<User> currentUser = this.userRepository.findById(id);
         return currentUser.orElseThrow(() -> new UserNotFoundException("User not found for the provided id"));
+    }
+
+    @Override
+    public String getUserIpAddress(Long id) {
+        Optional<MetaInformation> metaInformation = metaInformationService.findByUserId(id) //
+                .stream().findAny();
+        return metaInformation.map(MetaInformation::getIp) //
+                .orElse("Invalid IP!");
     }
 }

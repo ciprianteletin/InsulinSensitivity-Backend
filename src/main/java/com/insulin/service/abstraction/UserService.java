@@ -14,4 +14,6 @@ public interface UserService {
     void deleteUser(User user, HttpServletRequest request);
 
     User getUserById(Long id) throws UserNotFoundException;
+
+    String getUserIpAddress(Long id);
 }

@@ -12,6 +12,7 @@ import ua_parser.Parser;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Arrays;
 import java.util.Objects;
 
 import static com.insulin.utils.RequestUtils.getRemoteIP;
@@ -70,6 +71,7 @@ public class AuthenticationUtils {
         cookie.setSecure(false);
         cookie.setMaxAge(age);
         cookie.setPath("/"); //accessible everywhere, change for a stable path
+        cookie.setDomain("localhost");
         response.addCookie(cookie);
     }
 
@@ -84,6 +86,7 @@ public class AuthenticationUtils {
         cookie.setSecure(false);
         cookie.setMaxAge(0);
         cookie.setPath("/");
+        cookie.setDomain("localhost");
         response.addCookie(cookie);
     }
 

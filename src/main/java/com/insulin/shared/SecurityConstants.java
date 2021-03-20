@@ -12,6 +12,7 @@ public class SecurityConstants {
     public static final String TOKEN_PREFIX = "Bearer "; // what kind of token we have
     public static final String JWT_TOKEN_HEADER = "Jwt-Token"; // for header
     public static final String CAPTCHA_HEADER = "Activate-Captcha";
+    public static final String REFRESH_TOKEN_NAME = "refreshToken";
     public static final String TOKEN_CANNOT_BE_VERIFIED = "Token cannot be verified"; // error message
     public static final String ISSUER = "Insulin Sensitivity INC"; // who create it
     public static final String AUDIENCE = "Users"; // optional

@@ -58,4 +58,9 @@ public class MetaInformationServiceImpl implements MetaInformationService {
         Optional<MetaInformation> metaInf = metaInformationRepository.findById(id);
         return metaInf.orElse(null);
     }
+
+    @Override
+    public List<MetaInformation> findByUserId(Long id) {
+        return metaInformationRepository.findByUserId(id);
+    }
 }
