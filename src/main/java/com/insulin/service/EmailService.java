@@ -1,6 +1,5 @@
 package com.insulin.service;
 
-import com.insulin.utils.AuthenticationUtils;
 import com.insulin.utils.ThreadManager;
 import com.sun.mail.smtp.SMTPTransport;
 import org.springframework.beans.factory.annotation.Value;
