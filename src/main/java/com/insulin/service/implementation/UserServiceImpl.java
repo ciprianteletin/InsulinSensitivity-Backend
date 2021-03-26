@@ -13,11 +13,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import java.util.Optional;
+
+import static com.insulin.shared.UserConstants.USERNAME_NOT_FOUND;
+import static com.insulin.shared.UserConstants.USER_NOT_FOUND;
 
 @Service
 @Transactional
@@ -60,7 +64,16 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public String getUserIpAddress(Long id) {
+    public User getUserByUsername(String username) {
+        Optional<User> currentUser = this.userRepository.findByUsername(username);
+        return currentUser.orElseThrow(() -> new UsernameNotFoundException(USERNAME_NOT_FOUND));
+    }
+
+    @Override
+    public String getUserIpAddress(String username) throws UserNotFoundException {
+        Optional<User> user = userRepository.findByUsername(username);
+        Long id = user.orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND)) //
+                .getId();
         Optional<MetaInformation> metaInformation = metaInformationService.findByUserId(id) //
                 .stream().findAny();
         return metaInformation.map(MetaInformation::getIp) //

@@ -15,5 +15,7 @@ public interface UserService {
 
     User getUserById(Long id) throws UserNotFoundException;
 
-    String getUserIpAddress(Long id);
+    User getUserByUsername(String username);
+
+    String getUserIpAddress(String username) throws UserNotFoundException;
 }

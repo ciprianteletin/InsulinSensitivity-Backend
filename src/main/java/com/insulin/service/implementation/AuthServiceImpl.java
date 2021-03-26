@@ -26,6 +26,7 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.time.LocalDate;
 
+import static com.insulin.shared.ExceptionConstants.INVALID_DATA;
 import static com.insulin.shared.ExceptionConstants.OLD_PASSWORD;
 import static com.insulin.shared.UserConstants.*;
 import static com.insulin.utils.AuthenticationUtils.checkIfEmail;

@@ -52,15 +52,24 @@ public class UserController {
         return HttpResponseUtils.buildHttpResponseEntity(HttpStatus.OK, "User deleted with success");
     }
 
+    @GetMapping("username/{username}")
+    @PreAuthorize("hasAnyAuthority('PATIENT', 'MEDIC', 'ADMIN')")
+    public ResponseEntity<User> getUserByUsername(@PathVariable("username") String username) {
+        return new ResponseEntity<>(userService.getUserByUsername(username), HttpStatus.OK);
+    }
+
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('PATIENT', 'MEDIC', 'ADMIN')")
     public ResponseEntity<User> getUserById(@PathVariable("id") Long id) throws UserNotFoundException {
         return new ResponseEntity<>(userService.getUserById(id), HttpStatus.OK);
     }
 
-    @GetMapping("/ip/{userId}")
+    @GetMapping("/ip")
     @PreAuthorize("hasAnyAuthority('PATIENT', 'MEDIC', 'ADMIN')")
-    public ResponseEntity<String> getUserIP(@PathVariable("userId") Long userId) {
-        return new ResponseEntity<>(userService.getUserIpAddress(userId), HttpStatus.OK);
+    public ResponseEntity<String> getUserIP(Authentication authentication) throws UserNotFoundException {
+        String username = (String) authentication.getPrincipal();
+        return new ResponseEntity<>(userService.getUserIpAddress(username), HttpStatus.OK);
     }
 }
+
+// TODO check updated password with the old one.
