@@ -1,13 +1,12 @@
 package com.insulin.utils.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.insulin.validation.BirthDay;
 import com.insulin.validation.Phone;
 import com.sun.istack.NotNull;
 import lombok.*;
 
 import javax.validation.constraints.Email;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.Size;
 
 
@@ -50,9 +49,8 @@ public class CompleteUser {
     private String phoneNr;
     @JsonProperty
     @NotNull
-    @Min(value = 16)
-    @Max(value = 100)
-    private int age;
+    @BirthDay
+    private String birthDay;
     @JsonProperty
     @NotNull
     private Character gender;

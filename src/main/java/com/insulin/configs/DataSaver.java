@@ -53,7 +53,7 @@ public class DataSaver implements CommandLineRunner {
                 .email("ciprian_teletin@yahoo.com") //
                 .phoneNr("0712345678") //
                 .joinDate(LocalDate.now()) //
-                .age(21) //
+                .birthDay("22/07/1999") //
                 .gender('M') //
                 .build();
     }

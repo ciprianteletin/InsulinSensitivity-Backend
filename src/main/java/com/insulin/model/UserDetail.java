@@ -7,15 +7,13 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
+import com.insulin.validation.BirthDay;
 import com.insulin.validation.Phone;
 import com.sun.istack.NotNull;
 import lombok.*;
 
 import javax.persistence.*;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.*;
 import java.io.Serializable;
 import java.time.LocalDate;
 
@@ -53,11 +51,10 @@ public class UserDetail implements Serializable {
     @Column(nullable = false)
     @NotNull
     private Character gender;
-    @Column(nullable = false)
+    @Column(name = "birth_day", nullable = false)
     @NotNull
-    @Min(value = 16)
-    @Max(value = 100)
-    private int age;
+    @BirthDay
+    private String birthDay;
     private String profileImageUrl;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")

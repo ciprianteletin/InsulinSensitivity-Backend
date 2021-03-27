@@ -36,7 +36,7 @@ public class UserFactory implements AbstractUserFactory {
                 .lastName(completeUser.getLastName()) //
                 .email(completeUser.getEmail()) //
                 .phoneNr(completeUser.getPhoneNr()) //
-                .age(completeUser.getAge()) //
+                .birthDay(completeUser.getBirthDay()) //
                 .gender(completeUser.getGender()) //
                 .joinDate(LocalDate.now()) //
                 .build();
