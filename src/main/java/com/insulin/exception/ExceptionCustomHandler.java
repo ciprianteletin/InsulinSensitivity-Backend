@@ -78,6 +78,12 @@ public class ExceptionCustomHandler {
         return buildHttpResponseEntity(HttpStatus.NOT_FOUND, exception.getMessage());
     }
 
+    @ExceptionHandler(PhoneNumberUniqueException.class)
+    public ResponseEntity<HttpResponse> uniquePhoneNumber(PhoneNumberUniqueException exception) {
+        logger.error(exception.getMessage());
+        return buildHttpResponseEntity(HttpStatus.BAD_REQUEST, exception.getMessage());
+    }
+
     @ExceptionHandler(InvalidEmailForgotPassword.class)
     public ResponseEntity<HttpResponse> invalidEmailForgotPass(InvalidEmailForgotPassword exception) {
         logger.error(exception.getMessage());

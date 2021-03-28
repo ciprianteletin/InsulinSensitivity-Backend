@@ -14,6 +14,6 @@ public interface AuthRepository extends JpaRepository<User, Long> {
     User findUserByUsername(String username);
 
     @Query(value = "SELECT us.id, us.username, us.password, us.role FROM users as us " +
-            "INNER JOIN user_details as ud ON us.id = ud.user_id WHERE ud.email = ?1" , nativeQuery = true)
+            "INNER JOIN user_details as ud ON us.id = ud.user_id WHERE ud.email = ?1", nativeQuery = true)
     User findUserByEmail(String email);
 }

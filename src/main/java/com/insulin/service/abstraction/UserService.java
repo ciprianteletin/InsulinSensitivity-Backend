@@ -1,7 +1,11 @@
 package com.insulin.service.abstraction;
 
+import com.insulin.exception.model.EmailAlreadyExistentException;
+import com.insulin.exception.model.PhoneNumberUniqueException;
 import com.insulin.exception.model.UserNotFoundException;
+import com.insulin.exception.model.UsernameAlreadyExistentException;
 import com.insulin.model.User;
+import com.insulin.utils.model.BasicUserInfo;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -18,4 +22,7 @@ public interface UserService {
     User getUserByUsername(String username);
 
     String getUserIpAddress(String username) throws UserNotFoundException;
+
+    void updateUser(Long id, BasicUserInfo basicUserInfo)
+            throws UserNotFoundException, EmailAlreadyExistentException, UsernameAlreadyExistentException, PhoneNumberUniqueException;
 }

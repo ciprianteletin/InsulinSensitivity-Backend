@@ -67,7 +67,8 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<HttpResponse> registerUser(@Valid @RequestBody CompleteUser completeUser)
-            throws UserNotFoundException, EmailAlreadyExistentException, UsernameAlreadyExistentException, MessagingException {
+            throws UserNotFoundException, EmailAlreadyExistentException,
+            UsernameAlreadyExistentException, MessagingException, PhoneNumberUniqueException {
         authService.register(completeUser);
         return HttpResponseUtils.buildHttpResponseEntity(HttpStatus.OK, "User registered successfully");
     }

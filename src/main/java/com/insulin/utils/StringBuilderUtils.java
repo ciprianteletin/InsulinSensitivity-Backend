@@ -3,7 +3,7 @@ package com.insulin.utils;
 import static java.util.Objects.nonNull;
 
 public class StringBuilderUtils {
-    private StringBuilder stringBuilder;
+    private final StringBuilder stringBuilder;
 
     public StringBuilderUtils() {
         stringBuilder = new StringBuilder();

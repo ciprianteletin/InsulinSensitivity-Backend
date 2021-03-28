@@ -1,17 +1,24 @@
 package com.insulin.service.implementation;
 
+import com.insulin.exception.model.EmailAlreadyExistentException;
+import com.insulin.exception.model.PhoneNumberUniqueException;
 import com.insulin.exception.model.UserNotFoundException;
+import com.insulin.exception.model.UsernameAlreadyExistentException;
 import com.insulin.metadata.MetaInformation;
 import com.insulin.model.User;
+import com.insulin.model.UserDetail;
 import com.insulin.repository.UserRepository;
 import com.insulin.service.EmailService;
 import com.insulin.service.abstraction.LostUserService;
 import com.insulin.service.abstraction.MetaInformationService;
 import com.insulin.service.abstraction.UserService;
+import com.insulin.utils.ValidationUtils;
+import com.insulin.utils.model.BasicUserInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -31,16 +38,19 @@ public class UserServiceImpl implements UserService {
     private final EmailService emailService;
     private final MetaInformationService metaInformationService;
     private final LostUserService lostUserService;
+    private final ValidationUtils validationUtils;
 
     @Autowired
     public UserServiceImpl(UserRepository userRepository,
                            EmailService emailService,
                            MetaInformationService metaInformationService,
-                           LostUserService lostUserService) {
+                           LostUserService lostUserService,
+                           ValidationUtils validationUtils) {
         this.userRepository = userRepository;
         this.emailService = emailService;
         this.metaInformationService = metaInformationService;
         this.lostUserService = lostUserService;
+        this.validationUtils = validationUtils;
     }
 
     @Override
@@ -78,5 +88,56 @@ public class UserServiceImpl implements UserService {
                 .stream().findAny();
         return metaInformation.map(MetaInformation::getIp) //
                 .orElse("Invalid IP!");
+    }
+
+    @Override
+    @CachePut(value = "users", key = "#id", cacheManager = "cacheManager")
+    public void updateUser(Long id, BasicUserInfo basicUserInfo)
+            throws UserNotFoundException, EmailAlreadyExistentException,
+            UsernameAlreadyExistentException, PhoneNumberUniqueException {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND));
+        this.checkUserInformation(user, basicUserInfo);
+        this.userRepository.save(user);
+    }
+
+    private void checkUserInformation(User user, BasicUserInfo basicUserInfo)
+            throws UserNotFoundException, UsernameAlreadyExistentException,
+            EmailAlreadyExistentException, PhoneNumberUniqueException {
+        UserDetail userDetail = user.getDetails();
+
+        String updatedUsername = basicUserInfo.getUsername();
+        this.checkAndSetUsername(user, updatedUsername);
+
+        String updatedEmail = basicUserInfo.getEmail();
+        this.checkAndSetEmail(userDetail, updatedEmail);
+
+        String phoneNr = basicUserInfo.getPhoneNr();
+        this.checkAndSetPhoneNr(userDetail, phoneNr);
+    }
+
+    private void checkAndSetUsername(User user, String updatedUsername)
+            throws UserNotFoundException, UsernameAlreadyExistentException {
+        if (!user.getUsername().equals(updatedUsername)) {
+            this.validationUtils.validateNewUsername(updatedUsername);
+            user.setUsername(updatedUsername);
+        }
+    }
+
+    private void checkAndSetEmail(UserDetail userDetail, String updatedEmail)
+            throws EmailAlreadyExistentException, UserNotFoundException {
+        if (!userDetail.getEmail().equals(updatedEmail)) {
+            this.validationUtils.validateNewEmail(updatedEmail);
+            lostUserService.deleteByEmail(userDetail.getEmail());
+            userDetail.setEmail(updatedEmail);
+        }
+    }
+
+    private void checkAndSetPhoneNr(UserDetail userDetail, String phoneNr)
+            throws PhoneNumberUniqueException {
+        if (!userDetail.getPhoneNr().equals(phoneNr)) {
+            this.validationUtils.validatePhoneNumber(phoneNr);
+            userDetail.setPhoneNr(phoneNr);
+        }
     }
 }

@@ -10,10 +10,10 @@ import com.insulin.service.EmailService;
 import com.insulin.service.abstraction.AuthService;
 import com.insulin.service.abstraction.LostUserService;
 import com.insulin.utils.AuthenticationUtils;
+import com.insulin.utils.ValidationUtils;
 import com.insulin.utils.model.CompleteUser;
 import com.insulin.utils.abstractions.AbstractUserFactory;
 import org.apache.commons.lang3.RandomStringUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +26,6 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.time.LocalDate;
 
-import static com.insulin.shared.ExceptionConstants.INVALID_DATA;
 import static com.insulin.shared.ExceptionConstants.OLD_PASSWORD;
 import static com.insulin.shared.UserConstants.*;
 import static com.insulin.utils.AuthenticationUtils.checkIfEmail;
@@ -42,16 +41,19 @@ public class AuthServiceImpl implements AuthService, UserDetailsService {
     private final AbstractUserFactory userFactory;
     private final EmailService emailService;
     private final LostUserService lostUserService;
+    private final ValidationUtils validationUtils;
 
     @Autowired
     public AuthServiceImpl(AuthRepository authRepository,
                            AbstractUserFactory userFactory,
                            EmailService emailService,
-                           LostUserService lostUserService) {
+                           LostUserService lostUserService,
+                           ValidationUtils validationUtils) {
         this.authRepository = authRepository;
         this.userFactory = userFactory;
         this.emailService = emailService;
         this.lostUserService = lostUserService;
+        this.validationUtils = validationUtils;
     }
 
     /**
@@ -130,8 +132,9 @@ public class AuthServiceImpl implements AuthService, UserDetailsService {
 
     @Override
     public void register(CompleteUser completeUser) throws UserNotFoundException, EmailAlreadyExistentException,
-            UsernameAlreadyExistentException {
-        validateNewUsernameAndEmail(completeUser.getUsername(), completeUser.getEmail());
+            UsernameAlreadyExistentException, PhoneNumberUniqueException {
+        validationUtils.validateCompleteInformation(completeUser.getUsername(),
+                completeUser.getEmail(), completeUser.getPhoneNr());
         logger.info("Username and e-mail ok");
         User user = userFactory.createUser(completeUser);
         UserDetail userDetail = userFactory.createUserDetails(completeUser);
@@ -157,23 +160,5 @@ public class AuthServiceImpl implements AuthService, UserDetailsService {
             throw new LinkExpiredException("Reset password link has expired!");
         }
         return AuthenticationUtils.decryptText(lostUser.getEmail());
-    }
-
-    private void validateNewUsernameAndEmail(String username, String email)
-            throws UserNotFoundException, UsernameAlreadyExistentException, EmailAlreadyExistentException {
-        if (!StringUtils.isNotEmpty(username) || !StringUtils.isNotEmpty(email)) {
-            logger.error("Empty username or email!");
-            throw new UserNotFoundException(INVALID_DATA);
-        }
-        User userByUsername = findUserByUsername(username);
-        if (!isNull(userByUsername)) {
-            logger.error("Username already existent!");
-            throw new UsernameAlreadyExistentException(USERNAME_ALREADY_EXISTENT);
-        }
-        User userByEmail = findUserByEmail(email);
-        if (!isNull(userByEmail)) {
-            logger.error("Email already existent!");
-            throw new EmailAlreadyExistentException(EMAIL_ALREADY_EXISTENT);
-        }
     }
 }
