@@ -9,7 +9,7 @@ import org.springframework.data.repository.CrudRepository;
  * have a fast way to access data.
  */
 public interface LostUserRepository extends CrudRepository<LostUser, String> {
-    void deleteByEmail(String email);
+    LostUser findByEmail(String email);
 
     LostUser findByCode(String code);
 }

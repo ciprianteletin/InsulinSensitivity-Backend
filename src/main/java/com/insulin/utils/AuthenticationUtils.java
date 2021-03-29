@@ -1,10 +1,14 @@
 package com.insulin.utils;
 
 import com.insulin.metadata.MetaInformation;
+import com.insulin.model.User;
+import com.insulin.utils.model.BasicUserInfo;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.jasypt.util.text.BasicTextEncryptor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.web.context.request.RequestContextHolder;
 import ua_parser.Client;
 import ua_parser.Parser;
@@ -58,6 +62,19 @@ public class AuthenticationUtils {
                 .deviceInformation(deviceDetails) //
                 .ip(ip) //
                 .build();
+    }
+
+    public static boolean verifyPrincipalChange(User user, BasicUserInfo basicInfo) {
+        String principal = (String) SecurityContextHolder.getContext() //
+                .getAuthentication() //
+                .getPrincipal();
+        String username = user.getUsername();
+        return (Objects.equals(username, principal) && !Objects.equals(username, basicInfo.getUsername()));
+    }
+
+    public static void updatePrincipal(User user) {
+        PreAuthenticatedAuthenticationToken token = new PreAuthenticatedAuthenticationToken(user.getUsername(), user.getPassword());
+        SecurityContextHolder.getContext().setAuthentication(token);
     }
 
     /**

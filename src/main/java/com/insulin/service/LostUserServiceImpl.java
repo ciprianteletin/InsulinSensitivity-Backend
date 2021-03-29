@@ -29,12 +29,18 @@ public class LostUserServiceImpl implements LostUserService {
     }
 
     @Override
-    public void deleteByEmail(String email) {
-        lostUserRepository.deleteByEmail(email);
+    public void deleteById(String id) {
+        lostUserRepository.deleteById(id);
     }
 
     @Override
     public LostUser findByCode(String code) {
         return lostUserRepository.findByCode(code);
+    }
+
+    @Override
+    public void deleteByEmail(String email) {
+        LostUser lostUser = lostUserRepository.findByEmail(email);
+        lostUserRepository.delete(lostUser);
     }
 }

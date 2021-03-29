@@ -26,6 +26,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
+import java.time.LocalDate;
+
 import static com.insulin.shared.SecurityConstants.*;
 import static com.insulin.utils.AuthenticationUtils.*;
 import static java.util.Objects.isNull;
@@ -116,6 +118,7 @@ public class AuthController {
         if (nonNull(storedInformation) && refreshToken.equals(storedInformation.getRefreshToken())) {
             //Then the user was logged on his device and has the good token.
             User user = authService.findUserById(storedInformation.getUserId());
+            updateUserDetails(user);
             UserPrincipal userPrincipal = new UserPrincipal(user);
             HttpHeaders jwtHeader = getJwtHeader(userPrincipal);
             return new ResponseEntity<>(user, jwtHeader, HttpStatus.OK);
@@ -161,6 +164,12 @@ public class AuthController {
         }
         HttpHeaders jwtHeader = getJwtHeader(loggedUser);
         return new ResponseEntity<>(jwtHeader, HttpStatus.OK);
+    }
+
+    private void updateUserDetails(User user) {
+        user.getDetails()
+                .setLastLoginDateDisplay(user.getDetails().getLastLoginDate()); //last login
+        user.getDetails().setLastLoginDate(LocalDate.now());
     }
 
     private MetaInformation saveMetaDataInformation(Long userId, HttpServletRequest request) {

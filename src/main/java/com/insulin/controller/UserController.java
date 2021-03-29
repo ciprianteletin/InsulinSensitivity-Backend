@@ -2,6 +2,7 @@ package com.insulin.controller;
 
 import com.insulin.exception.model.*;
 import com.insulin.model.User;
+import com.insulin.model.UserPrincipal;
 import com.insulin.service.abstraction.UserService;
 import com.insulin.shared.HttpResponse;
 import com.insulin.utils.HttpResponseUtils;
@@ -73,7 +74,7 @@ public class UserController {
             throw new UserNotFoundException("The provided id does not map to any user");
         }
 
-        if (!principal.equals(currentUser.getUsername())) {
+        if (!principal.equals(currentUser.getUsername()) || !principal.equals(currentUser.getDetails().getEmail())) {
             logger.error("A user could not delete another user account!");
             throw new InvalidDataException("The id does not match to the current account!");
         }

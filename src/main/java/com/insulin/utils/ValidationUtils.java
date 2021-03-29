@@ -11,6 +11,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import static com.insulin.shared.ExceptionConstants.*;
@@ -22,11 +23,15 @@ public class ValidationUtils {
     private final Logger logger = LoggerFactory.getLogger(getClass());
     private final AuthRepository authRepository;
     private final UserRepository userRepository;
+    private final BCryptPasswordEncoder passwordEncoder;
 
     @Autowired
-    public ValidationUtils(AuthRepository authRepository, UserRepository userRepository) {
+    public ValidationUtils(AuthRepository authRepository,
+                           UserRepository userRepository,
+                           BCryptPasswordEncoder passwordEncoder) {
         this.authRepository = authRepository;
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public void validateCompleteInformation(String username, String email, String phoneNumber)
@@ -73,5 +78,9 @@ public class ValidationUtils {
             logger.error("Email already existent!");
             throw new EmailAlreadyExistentException(EMAIL_ALREADY_EXISTENT);
         }
+    }
+
+    public boolean checkSamePassword(String password, String encodedPassword) {
+        return passwordEncoder.matches(password, encodedPassword);
     }
 }

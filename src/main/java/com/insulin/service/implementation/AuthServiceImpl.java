@@ -9,11 +9,13 @@ import com.insulin.repository.AuthRepository;
 import com.insulin.service.EmailService;
 import com.insulin.service.abstraction.AuthService;
 import com.insulin.service.abstraction.LostUserService;
+import com.insulin.service.abstraction.UserManagerService;
 import com.insulin.utils.AuthenticationUtils;
 import com.insulin.utils.ValidationUtils;
 import com.insulin.utils.model.CompleteUser;
 import com.insulin.utils.abstractions.AbstractUserFactory;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,8 +29,6 @@ import javax.transaction.Transactional;
 import java.time.LocalDate;
 
 import static com.insulin.shared.ExceptionConstants.OLD_PASSWORD;
-import static com.insulin.shared.UserConstants.*;
-import static com.insulin.utils.AuthenticationUtils.checkIfEmail;
 import static com.insulin.utils.AuthenticationUtils.encryptPassword;
 import static java.util.Objects.isNull;
 
@@ -42,18 +42,21 @@ public class AuthServiceImpl implements AuthService, UserDetailsService {
     private final EmailService emailService;
     private final LostUserService lostUserService;
     private final ValidationUtils validationUtils;
+    private final UserManagerService userManagerService;
 
     @Autowired
     public AuthServiceImpl(AuthRepository authRepository,
                            AbstractUserFactory userFactory,
                            EmailService emailService,
                            LostUserService lostUserService,
-                           ValidationUtils validationUtils) {
+                           ValidationUtils validationUtils,
+                           UserManagerService userManagerService) {
         this.authRepository = authRepository;
         this.userFactory = userFactory;
         this.emailService = emailService;
         this.lostUserService = lostUserService;
         this.validationUtils = validationUtils;
+        this.userManagerService = userManagerService;
     }
 
     /**
@@ -75,21 +78,7 @@ public class AuthServiceImpl implements AuthService, UserDetailsService {
 
     @Override
     public User findUserByUsernameOrEmail(String text) {
-        User user;
-        if (checkIfEmail(text)) {
-            user = authRepository.findUserByEmail(text);
-            if (isNull(user)) {
-                logger.error(USER_NOT_FOUND + ": " + text);
-                throw new UsernameNotFoundException(USER_NOT_FOUND + " for email address " + text);
-            }
-            return user;
-        }
-        user = authRepository.findUserByUsername(text);
-        if (user == null) {
-            logger.error(USER_NOT_FOUND + ": " + text);
-            throw new UsernameNotFoundException(USER_NOT_FOUND + ": " + text);
-        }
-        return user;
+        return userManagerService.findUserByUsernameOrEmail(text);
     }
 
     @Override
@@ -100,18 +89,19 @@ public class AuthServiceImpl implements AuthService, UserDetailsService {
 
     @Override
     public void resetPassword(String password, String code) throws EmailNotFoundException, LinkExpiredException, OldPasswordException {
-        String email = getEmailFromLostUser(code);
+        ImmutablePair<String, String> lostUserInfoPair = getEmailFromLostUser(code);
+        String email = AuthenticationUtils.decryptText(lostUserInfoPair.getRight());
         User forgottenUser = this.findUserByEmail(email);
         if (isNull(forgottenUser)) {
             throw new EmailNotFoundException("The provided email was not mapped to any user!");
         }
-        String encryptedPassword = encryptPassword(password);
-        if (encryptedPassword.equals(forgottenUser.getPassword())) {
+        if (this.validationUtils.checkSamePassword(password, forgottenUser.getPassword())) {
             throw new OldPasswordException(OLD_PASSWORD);
         }
+        String encryptedPassword = encryptPassword(password);
         forgottenUser.setPassword(encryptedPassword);
         authRepository.save(forgottenUser);
-        lostUserService.deleteByEmail(email);
+        lostUserService.deleteById(lostUserInfoPair.getLeft());
     }
 
     /**
@@ -154,11 +144,11 @@ public class AuthServiceImpl implements AuthService, UserDetailsService {
         return authRepository.findUserByEmail(email);
     }
 
-    private String getEmailFromLostUser(String code) throws LinkExpiredException {
+    private ImmutablePair<String, String> getEmailFromLostUser(String code) throws LinkExpiredException {
         LostUser lostUser = lostUserService.findByCode(code);
         if (isNull(lostUser)) {
             throw new LinkExpiredException("Reset password link has expired!");
         }
-        return AuthenticationUtils.decryptText(lostUser.getEmail());
+        return new ImmutablePair<>(lostUser.getId(), lostUser.getEmail());
     }
 }

@@ -1,5 +1,6 @@
 package com.insulin.configs;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
@@ -40,12 +41,13 @@ public class RedisConfigs {
         template.setHashKeySerializer(new StringRedisSerializer());
         template.setHashValueSerializer(new JdkSerializationRedisSerializer());
         template.setValueSerializer(new JdkSerializationRedisSerializer());
+        template.setEnableTransactionSupport(false);
         template.afterPropertiesSet();
         return template;
     }
 
     @Bean
-    public RedisCacheManager cacheManager(final RedisConnectionFactory connectionFactory) {
+    public RedisCacheManager cacheManager(@Qualifier("jedisConnectionFactory") final RedisConnectionFactory connectionFactory) {
         RedisCacheWriter redisCacheWriter = RedisCacheWriter.lockingRedisCacheWriter(connectionFactory);
         RedisCacheConfiguration cacheConfiguration = RedisCacheConfiguration.defaultCacheConfig();
         cacheConfiguration = cacheConfiguration.entryTtl(Duration.ofMillis(REFRESH_EXPIRATION_TIME_MS));

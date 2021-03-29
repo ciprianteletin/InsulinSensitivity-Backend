@@ -11,6 +11,7 @@ import com.insulin.repository.UserRepository;
 import com.insulin.service.EmailService;
 import com.insulin.service.abstraction.LostUserService;
 import com.insulin.service.abstraction.MetaInformationService;
+import com.insulin.service.abstraction.UserManagerService;
 import com.insulin.service.abstraction.UserService;
 import com.insulin.utils.ValidationUtils;
 import com.insulin.utils.model.BasicUserInfo;
@@ -29,6 +30,8 @@ import java.util.Optional;
 
 import static com.insulin.shared.UserConstants.USERNAME_NOT_FOUND;
 import static com.insulin.shared.UserConstants.USER_NOT_FOUND;
+import static com.insulin.utils.AuthenticationUtils.updatePrincipal;
+import static com.insulin.utils.AuthenticationUtils.verifyPrincipalChange;
 
 @Service
 @Transactional
@@ -39,18 +42,21 @@ public class UserServiceImpl implements UserService {
     private final MetaInformationService metaInformationService;
     private final LostUserService lostUserService;
     private final ValidationUtils validationUtils;
+    private final UserManagerService userManagerService;
 
     @Autowired
     public UserServiceImpl(UserRepository userRepository,
                            EmailService emailService,
                            MetaInformationService metaInformationService,
                            LostUserService lostUserService,
-                           ValidationUtils validationUtils) {
+                           ValidationUtils validationUtils,
+                           UserManagerService userManagerService) {
         this.userRepository = userRepository;
         this.emailService = emailService;
         this.metaInformationService = metaInformationService;
         this.lostUserService = lostUserService;
         this.validationUtils = validationUtils;
+        this.userManagerService = userManagerService;
     }
 
     @Override
@@ -80,10 +86,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public String getUserIpAddress(String username) throws UserNotFoundException {
-        Optional<User> user = userRepository.findByUsername(username);
-        Long id = user.orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND)) //
-                .getId();
+    public String getUserIpAddress(String username) {
+        User user = userManagerService.findUserByUsernameOrEmail(username); // can be username or email
+        Long id = user.getId();
         Optional<MetaInformation> metaInformation = metaInformationService.findByUserId(id) //
                 .stream().findAny();
         return metaInformation.map(MetaInformation::getIp) //
@@ -97,7 +102,11 @@ public class UserServiceImpl implements UserService {
             UsernameAlreadyExistentException, PhoneNumberUniqueException {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND));
+        boolean modifyPrincipal = verifyPrincipalChange(user, basicUserInfo);
         this.checkUserInformation(user, basicUserInfo);
+        if (modifyPrincipal) {
+            updatePrincipal(user);
+        }
         this.userRepository.save(user);
     }
 
