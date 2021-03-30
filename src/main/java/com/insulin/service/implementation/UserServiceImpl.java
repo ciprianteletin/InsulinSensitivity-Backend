@@ -104,10 +104,10 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND));
         boolean modifyPrincipal = verifyPrincipalChange(user, basicUserInfo);
         this.checkUserInformation(user, basicUserInfo);
+        this.userRepository.save(user);
         if (modifyPrincipal) {
             updatePrincipal(user);
         }
-        this.userRepository.save(user);
     }
 
     private void checkUserInformation(User user, BasicUserInfo basicUserInfo)
