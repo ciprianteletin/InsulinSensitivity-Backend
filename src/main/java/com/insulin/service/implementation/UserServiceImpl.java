@@ -1,9 +1,6 @@
 package com.insulin.service.implementation;
 
-import com.insulin.exception.model.EmailAlreadyExistentException;
-import com.insulin.exception.model.PhoneNumberUniqueException;
-import com.insulin.exception.model.UserNotFoundException;
-import com.insulin.exception.model.UsernameAlreadyExistentException;
+import com.insulin.exception.model.*;
 import com.insulin.metadata.MetaInformation;
 import com.insulin.model.User;
 import com.insulin.model.UserDetail;
@@ -13,8 +10,10 @@ import com.insulin.service.abstraction.LostUserService;
 import com.insulin.service.abstraction.MetaInformationService;
 import com.insulin.service.abstraction.UserManagerService;
 import com.insulin.service.abstraction.UserService;
+import com.insulin.utils.AuthenticationUtils;
 import com.insulin.utils.ValidationUtils;
 import com.insulin.utils.model.BasicUserInfo;
+import com.insulin.utils.model.UserPasswordInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -108,6 +107,17 @@ public class UserServiceImpl implements UserService {
         if (modifyPrincipal) {
             updatePrincipal(user);
         }
+    }
+
+    @Override
+    public void updatePassword(User user, String principal, UserPasswordInfo userPasswordInfo) throws OldPasswordException {
+        AuthenticationUtils.validateUserAuthenticity(user, principal);
+        String newPassword = userPasswordInfo.getNewPassword();
+        this.validationUtils.validateIdenticalPassword(user.getPassword(), userPasswordInfo.getPassword());
+        this.validationUtils.validatePasswordNotIdentical(user.getPassword(), newPassword);
+        newPassword = AuthenticationUtils.encryptPassword(newPassword);
+        user.setPassword(newPassword);
+        userRepository.save(user);
     }
 
     private void checkUserInformation(User user, BasicUserInfo basicUserInfo)

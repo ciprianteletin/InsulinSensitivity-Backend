@@ -6,6 +6,7 @@ import com.insulin.service.abstraction.UserService;
 import com.insulin.shared.HttpResponse;
 import com.insulin.utils.HttpResponseUtils;
 import com.insulin.utils.model.BasicUserInfo;
+import com.insulin.utils.model.UserPasswordInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,6 +58,16 @@ public class UserController {
                                                               @Valid @RequestBody BasicUserInfo basicUserInfo)
             throws UserNotFoundException, EmailAlreadyExistentException, UsernameAlreadyExistentException, PhoneNumberUniqueException {
         this.userService.updateUser(id, basicUserInfo);
+        return HttpResponseUtils.buildHttpResponseEntity(HttpStatus.OK, USER_UPDATED);
+    }
+
+    @PutMapping("updatePassword")
+    @PreAuthorize("hasAnyAuthority('PATIENT', 'MEDIC', 'ADMIN')")
+    public ResponseEntity<HttpResponse> updateUserPassword(@Valid @RequestBody UserPasswordInfo userPasswordInfo,
+                                                           Authentication authentication) throws OldPasswordException {
+        User user = userService.getUserByUsername(userPasswordInfo.getUsername());
+        String principal = (String) authentication.getPrincipal();
+        this.userService.updatePassword(user, principal, userPasswordInfo);
         return HttpResponseUtils.buildHttpResponseEntity(HttpStatus.OK, USER_UPDATED);
     }
 

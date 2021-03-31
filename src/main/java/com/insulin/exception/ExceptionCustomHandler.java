@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
@@ -40,6 +41,12 @@ public class ExceptionCustomHandler {
     public ResponseEntity<HttpResponse> invalidField(MethodArgumentNotValidException exception) {
         logger.error(exception.getMessage());
         return buildHttpResponseEntity(HttpStatus.BAD_REQUEST, INVALID_FIELD);
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<HttpResponse> accessDenied(AccessDeniedException exception) {
+        logger.error(exception.getMessage());
+        return buildHttpResponseEntity(HttpStatus.UNAUTHORIZED, exception.getMessage());
     }
 
     @ExceptionHandler(OldPasswordException.class)

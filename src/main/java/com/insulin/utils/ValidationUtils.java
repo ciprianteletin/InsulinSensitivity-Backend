@@ -1,9 +1,6 @@
 package com.insulin.utils;
 
-import com.insulin.exception.model.EmailAlreadyExistentException;
-import com.insulin.exception.model.PhoneNumberUniqueException;
-import com.insulin.exception.model.UserNotFoundException;
-import com.insulin.exception.model.UsernameAlreadyExistentException;
+import com.insulin.exception.model.*;
 import com.insulin.model.User;
 import com.insulin.repository.AuthRepository;
 import com.insulin.repository.UserRepository;
@@ -11,6 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
@@ -77,6 +75,18 @@ public class ValidationUtils {
         if (!isNull(userByEmail)) {
             logger.error("Email already existent!");
             throw new EmailAlreadyExistentException(EMAIL_ALREADY_EXISTENT);
+        }
+    }
+
+    public void validatePasswordNotIdentical(String encodedPassword, String password) throws OldPasswordException {
+        if(checkSamePassword(password,encodedPassword)) {
+            throw new OldPasswordException(OLD_PASSWORD);
+        }
+    }
+
+    public void validateIdenticalPassword(String encodedPassword, String password) {
+        if(!checkSamePassword(password, encodedPassword)) {
+            throw new AccessDeniedException(NOT_ENOUGH_PERMISSION);
         }
     }
 

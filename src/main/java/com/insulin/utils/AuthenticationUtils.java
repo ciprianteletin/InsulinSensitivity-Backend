@@ -6,6 +6,7 @@ import com.insulin.utils.model.BasicUserInfo;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.jasypt.util.text.BasicTextEncryptor;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
@@ -18,13 +19,15 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Objects;
 
+import static com.insulin.shared.ExceptionConstants.NOT_ENOUGH_PERMISSION;
 import static com.insulin.utils.RequestUtils.getRemoteIP;
 
 /**
  * Utility class with reusable methods related to authentication. Since the AuthController has as main scope to treat request of any kind,
  * adding new functionality would break Single Resp. Principle, hence creating a new class.
+ * The class itself is final and with a private constructor, avoiding any unwanted instance and inheritance from this class.
  */
-public class AuthenticationUtils {
+public final class AuthenticationUtils {
     private static final EmailValidator emailValidator;
     private static final BCryptPasswordEncoder encoder;
     private static final BasicTextEncryptor encrypter;
@@ -35,6 +38,8 @@ public class AuthenticationUtils {
         encrypter = new BasicTextEncryptor();
         encrypter.setPassword("mySuperStrongPassword");
     }
+
+    private AuthenticationUtils() {}
 
     public static String getDeviceDetails(String userAgent) {
         StringBuilderUtils deviceBuilder = new StringBuilderUtils();
@@ -122,6 +127,12 @@ public class AuthenticationUtils {
         cookie.setMaxAge(0);
         cookie.setPath("/");
         response.addCookie(cookie);
+    }
+
+    public static void validateUserAuthenticity(User user, String principal) {
+        if (!user.getUsername().equals(principal)) {
+            throw new AccessDeniedException(NOT_ENOUGH_PERMISSION);
+        }
     }
 
     public static String encryptText(String text) {
