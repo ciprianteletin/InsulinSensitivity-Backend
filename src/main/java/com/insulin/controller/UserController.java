@@ -2,7 +2,6 @@ package com.insulin.controller;
 
 import com.insulin.exception.model.*;
 import com.insulin.model.User;
-import com.insulin.model.UserPrincipal;
 import com.insulin.service.abstraction.UserService;
 import com.insulin.shared.HttpResponse;
 import com.insulin.utils.HttpResponseUtils;

@@ -5,13 +5,16 @@ import com.insulin.model.User;
 import com.insulin.utils.model.CompleteUser;
 
 import javax.mail.MessagingException;
+import java.util.Optional;
 
 public interface AuthService {
+
+    void save(User user);
 
     void register(CompleteUser completeUser)
             throws UserNotFoundException, EmailAlreadyExistentException, UsernameAlreadyExistentException, MessagingException, PhoneNumberUniqueException;
 
-    User findUserByUsername(String username);
+    Optional<User> findUserByUsername(String username);
 
     User findUserByEmail(String email);
 

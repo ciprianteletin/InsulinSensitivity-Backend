@@ -27,6 +27,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.time.LocalDate;
+import java.util.Optional;
 
 import static com.insulin.shared.ExceptionConstants.OLD_PASSWORD;
 import static com.insulin.utils.AuthenticationUtils.encryptPassword;
@@ -121,6 +122,11 @@ public class AuthServiceImpl implements AuthService, UserDetailsService {
     }
 
     @Override
+    public void save(User user) {
+        authRepository.save(user);
+    }
+
+    @Override
     public void register(CompleteUser completeUser) throws UserNotFoundException, EmailAlreadyExistentException,
             UsernameAlreadyExistentException, PhoneNumberUniqueException {
         validationUtils.validateCompleteInformation(completeUser.getUsername(),
@@ -135,8 +141,8 @@ public class AuthServiceImpl implements AuthService, UserDetailsService {
     }
 
     @Override
-    public User findUserByUsername(String username) {
-        return authRepository.findUserByUsername(username);
+    public Optional<User> findUserByUsername(String username) {
+        return Optional.ofNullable(authRepository.findUserByUsername(username));
     }
 
     @Override

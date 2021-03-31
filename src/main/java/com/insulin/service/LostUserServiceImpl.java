@@ -7,6 +7,8 @@ import com.insulin.utils.AuthenticationUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class LostUserServiceImpl implements LostUserService {
     private final LostUserRepository lostUserRepository;
@@ -40,7 +42,7 @@ public class LostUserServiceImpl implements LostUserService {
 
     @Override
     public void deleteByEmail(String email) {
-        LostUser lostUser = lostUserRepository.findByEmail(email);
-        lostUserRepository.delete(lostUser);
+        Optional<LostUser> lostUser = Optional.ofNullable(lostUserRepository.findByEmail(email));
+        lostUser.ifPresent(lostUserRepository::delete);
     }
 }

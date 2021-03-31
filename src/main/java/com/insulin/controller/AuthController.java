@@ -28,7 +28,9 @@ import javax.validation.Valid;
 
 import java.time.LocalDate;
 
+import static com.insulin.shared.ExceptionConstants.UPDATE_DENIED;
 import static com.insulin.shared.SecurityConstants.*;
+import static com.insulin.shared.UserConstants.USER_NOT_FOUND;
 import static com.insulin.utils.AuthenticationUtils.*;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
@@ -127,6 +129,29 @@ public class AuthController {
     }
 
     /**
+     * Method used in the case of updating the username of the account, so that the Jwt-Token will contain accurate
+     * information. The difference between this method and "refresh/{id}" is that this one does not re-create the
+     * meta data information if it's null.
+     */
+    @GetMapping("/updateToken/{username}")
+    public ResponseEntity<HttpStatus> updateToken(@CookieValue(value = "refreshToken", required = false) String refreshToken,
+                                                  @PathVariable("username") String username) throws UserNotFoundException, UpdateDeniedException {
+        if (refreshToken == null) {
+            throw new UpdateDeniedException(UPDATE_DENIED);
+        }
+        User user = authService.findUserByUsername(username)
+                .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND));
+        MetaInformation storedInformation = metaInformationService
+                .findByUserIdAndRefreshToken(user.getId(), refreshToken);
+        if (nonNull(storedInformation) && refreshToken.equals(storedInformation.getRefreshToken())) {
+            UserPrincipal principal = new UserPrincipal(user);
+            HttpHeaders jwtHeader = getJwtHeader(principal);
+            return new ResponseEntity<>(jwtHeader, HttpStatus.OK);
+        }
+        throw new UpdateDeniedException(UPDATE_DENIED);
+    }
+
+    /**
      * The logout process deletes everything related to the metaInformation of the user, so that if
      * he decide to logout manually, the autologin process should not be applied. For this method,
      * the user must be logged in. The refreshToken is also removed.
@@ -170,6 +195,7 @@ public class AuthController {
         user.getDetails()
                 .setLastLoginDateDisplay(user.getDetails().getLastLoginDate()); //last login
         user.getDetails().setLastLoginDate(LocalDate.now());
+        authService.save(user);
     }
 
     private MetaInformation saveMetaDataInformation(Long userId, HttpServletRequest request) {

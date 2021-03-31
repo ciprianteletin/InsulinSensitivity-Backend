@@ -102,6 +102,12 @@ public class ExceptionCustomHandler {
         return buildHttpResponseEntity(HttpStatus.BAD_REQUEST, exception.getMessage());
     }
 
+    @ExceptionHandler(UpdateDeniedException.class)
+    public ResponseEntity<HttpResponse> deniedUpdateException(InvalidDataException exception) {
+        logger.error(exception.getMessage());
+        return buildHttpResponseEntity(HttpStatus.BAD_REQUEST, exception.getMessage());
+    }
+
     @ExceptionHandler(LinkExpiredException.class)
     public ResponseEntity<HttpResponse> linkExpiredException(LinkExpiredException exception) {
         logger.error(exception.getMessage());
