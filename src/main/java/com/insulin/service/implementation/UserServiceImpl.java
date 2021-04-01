@@ -29,8 +29,7 @@ import java.util.Optional;
 
 import static com.insulin.shared.UserConstants.USERNAME_NOT_FOUND;
 import static com.insulin.shared.UserConstants.USER_NOT_FOUND;
-import static com.insulin.utils.AuthenticationUtils.updatePrincipal;
-import static com.insulin.utils.AuthenticationUtils.verifyPrincipalChange;
+import static com.insulin.utils.AuthenticationUtils.*;
 
 @Service
 @Transactional
@@ -60,7 +59,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @CacheEvict(value = "users", allEntries = true, cacheManager = "cacheManager")
-    public void deleteUser(User currentUser, HttpServletRequest request) {
+    public void deleteUser(User currentUser, String principal, HttpServletRequest request) {
+        validateUserAuthenticity(currentUser, principal);
         this.emailService.sendDeleteEmail(currentUser.getDetails().getFirstName(), currentUser.getDetails().getEmail());
         logger.info("Delete message has been emitted");
         Long id = currentUser.getId();
@@ -94,9 +94,12 @@ public class UserServiceImpl implements UserService {
                 .orElse("Invalid IP!");
     }
 
+    /**
+     * Update the user information. After update, a value must be returned so that the cache will be updated.
+     */
     @Override
     @CachePut(value = "users", key = "#id", cacheManager = "cacheManager")
-    public void updateUser(Long id, BasicUserInfo basicUserInfo)
+    public User updateUser(Long id, BasicUserInfo basicUserInfo)
             throws UserNotFoundException, EmailAlreadyExistentException,
             UsernameAlreadyExistentException, PhoneNumberUniqueException {
         User user = userRepository.findById(id)
@@ -107,11 +110,12 @@ public class UserServiceImpl implements UserService {
         if (modifyPrincipal) {
             updatePrincipal(user);
         }
+        return user;
     }
 
     @Override
     public void updatePassword(User user, String principal, UserPasswordInfo userPasswordInfo) throws OldPasswordException {
-        AuthenticationUtils.validateUserAuthenticity(user, principal);
+        validateUserAuthenticity(user, principal);
         String newPassword = userPasswordInfo.getNewPassword();
         this.validationUtils.validateIdenticalPassword(user.getPassword(), userPasswordInfo.getPassword());
         this.validationUtils.validatePasswordNotIdentical(user.getPassword(), newPassword);

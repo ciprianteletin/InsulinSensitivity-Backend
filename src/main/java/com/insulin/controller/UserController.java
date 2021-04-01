@@ -20,7 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import static com.insulin.shared.UserConstants.USER_UPDATED;
-import static java.util.Objects.isNull;
+import static com.insulin.utils.ValidationUtils.*;
 
 @RestController
 @RequestMapping("/user")
@@ -58,6 +58,7 @@ public class UserController {
                                                               @Valid @RequestBody BasicUserInfo basicUserInfo)
             throws UserNotFoundException, EmailAlreadyExistentException, UsernameAlreadyExistentException, PhoneNumberUniqueException {
         this.userService.updateUser(id, basicUserInfo);
+        logger.info("User updated!");
         return HttpResponseUtils.buildHttpResponseEntity(HttpStatus.OK, USER_UPDATED);
     }
 
@@ -68,6 +69,7 @@ public class UserController {
         User user = userService.getUserByUsername(userPasswordInfo.getUsername());
         String principal = (String) authentication.getPrincipal();
         this.userService.updatePassword(user, principal, userPasswordInfo);
+        logger.info("Password updated!");
         return HttpResponseUtils.buildHttpResponseEntity(HttpStatus.OK, USER_UPDATED);
     }
 
@@ -76,22 +78,11 @@ public class UserController {
     public ResponseEntity<HttpResponse> deleteUserById(@PathVariable("id") Long id,
                                                        Authentication auth,
                                                        HttpServletRequest request)
-            throws UserNotFoundException, InvalidDataException {
+            throws UserNotFoundException {
         String principal = (String) auth.getPrincipal();
         User currentUser = this.userService.getUserById(id);
-        if (isNull(currentUser)) {
-            logger.error("The provided id is invalid. User not found");
-            throw new UserNotFoundException("The provided id does not map to any user");
-        }
-
-        if (!principal.equals(currentUser.getUsername()) || !principal.equals(currentUser.getDetails().getEmail())) {
-            logger.error("A user could not delete another user account!");
-            throw new InvalidDataException("The id does not match to the current account!");
-        }
-
-        this.userService.deleteUser(currentUser, request);
+        validateNonNullUser(currentUser);
+        this.userService.deleteUser(currentUser, principal, request);
         return HttpResponseUtils.buildHttpResponseEntity(HttpStatus.OK, "User deleted with success");
     }
 }
-
-// TODO check updated password with the old one.

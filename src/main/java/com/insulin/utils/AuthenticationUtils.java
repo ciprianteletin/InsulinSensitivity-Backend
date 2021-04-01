@@ -6,6 +6,8 @@ import com.insulin.utils.model.BasicUserInfo;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.jasypt.util.text.BasicTextEncryptor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -30,16 +32,18 @@ import static com.insulin.utils.RequestUtils.getRemoteIP;
 public final class AuthenticationUtils {
     private static final EmailValidator emailValidator;
     private static final BCryptPasswordEncoder encoder;
-    private static final BasicTextEncryptor encrypter;
+    private static final BasicTextEncryptor encryptor;
+    private static final Logger logger = LoggerFactory.getLogger(AuthenticationUtils.class);
 
     static {
         emailValidator = EmailValidator.getInstance();
         encoder = new BCryptPasswordEncoder();
-        encrypter = new BasicTextEncryptor();
-        encrypter.setPassword("mySuperStrongPassword");
+        encryptor = new BasicTextEncryptor();
+        encryptor.setPassword("mySuperStrongPassword");
     }
 
-    private AuthenticationUtils() {}
+    private AuthenticationUtils() {
+    }
 
     public static String getDeviceDetails(String userAgent) {
         StringBuilderUtils deviceBuilder = new StringBuilderUtils();
@@ -130,17 +134,18 @@ public final class AuthenticationUtils {
     }
 
     public static void validateUserAuthenticity(User user, String principal) {
-        if (!user.getUsername().equals(principal)) {
+        if (!user.getUsername().equals(principal) && !user.getDetails().getEmail().equals(principal)) {
+            logger.error("Not enough permission to delete the password!");
             throw new AccessDeniedException(NOT_ENOUGH_PERMISSION);
         }
     }
 
     public static String encryptText(String text) {
-        return encrypter.encrypt(text);
+        return encryptor.encrypt(text);
     }
 
     public static String decryptText(String text) {
-        return encrypter.decrypt(text);
+        return encryptor.decrypt(text);
     }
 
     public static boolean checkIfEmail(String text) {

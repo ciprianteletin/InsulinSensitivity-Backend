@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletRequest;
  * "A class must have one and only one role inside an application"
  */
 public interface UserService {
-    void deleteUser(User user, HttpServletRequest request);
+    void deleteUser(User user, String principal, HttpServletRequest request);
 
     User getUserById(Long id) throws UserNotFoundException;
 
@@ -21,7 +21,7 @@ public interface UserService {
 
     String getUserIpAddress(String username) throws UserNotFoundException;
 
-    void updateUser(Long id, BasicUserInfo basicUserInfo)
+    User updateUser(Long id, BasicUserInfo basicUserInfo)
             throws UserNotFoundException, EmailAlreadyExistentException, UsernameAlreadyExistentException, PhoneNumberUniqueException;
 
     void updatePassword(User user, String principal, UserPasswordInfo userPasswordInfo) throws OldPasswordException;

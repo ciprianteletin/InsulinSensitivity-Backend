@@ -18,7 +18,7 @@ import static java.util.Objects.isNull;
 
 @Component
 public class ValidationUtils {
-    private final Logger logger = LoggerFactory.getLogger(getClass());
+    private static final Logger logger = LoggerFactory.getLogger(ValidationUtils.class);
     private final AuthRepository authRepository;
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder;
@@ -78,14 +78,21 @@ public class ValidationUtils {
         }
     }
 
+    public static void validateNonNullUser(User user) throws UserNotFoundException {
+        if (isNull(user)) {
+            logger.error("The provided id is invalid. User not found");
+            throw new UserNotFoundException("The provided id does not map to any user");
+        }
+    }
+
     public void validatePasswordNotIdentical(String encodedPassword, String password) throws OldPasswordException {
-        if(checkSamePassword(password,encodedPassword)) {
+        if (checkSamePassword(password, encodedPassword)) {
             throw new OldPasswordException(OLD_PASSWORD);
         }
     }
 
     public void validateIdenticalPassword(String encodedPassword, String password) {
-        if(!checkSamePassword(password, encodedPassword)) {
+        if (!checkSamePassword(password, encodedPassword)) {
             throw new AccessDeniedException(NOT_ENOUGH_PERMISSION);
         }
     }
