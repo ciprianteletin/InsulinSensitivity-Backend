@@ -1,6 +1,6 @@
 package com.insulin.model.form;
 
-import com.insulin.formula.Cederholm;
+import com.insulin.formula.*;
 import com.insulin.functional.CalculateIndex;
 
 import java.util.Map;
@@ -38,11 +38,60 @@ public final class Formula {
      */
     private void prepopulateMap() {
         addCederholm();
+        addGutt();
+        addMatsuda();
+        addHoma();
+        addHomaB();
+        addLogHoma();
+        addQuicki();
+        addRevised();
     }
 
     private void addCederholm() {
         String key = "cederholm";
         CalculateIndex calculateIndex = new Cederholm();
+        formulaCalculator.put(key, calculateIndex);
+    }
+
+    private void addGutt() {
+        String key = "gutt";
+        CalculateIndex calculateIndex = new Gutt();
+        formulaCalculator.put(key, calculateIndex);
+    }
+
+    private void addMatsuda() {
+        String key = "matsuda";
+        CalculateIndex calculateIndex = new Matsuda();
+        formulaCalculator.put(key, calculateIndex);
+    }
+
+    private void addHoma() {
+        String key = "homa";
+        CalculateIndex calculateIndex = new Homa();
+        formulaCalculator.put(key, calculateIndex);
+    }
+
+    private void addHomaB() {
+        String key = "homab";
+        CalculateIndex calculateIndex = new HomaB();
+        formulaCalculator.put(key, calculateIndex);
+    }
+
+    private void addLogHoma() {
+        String key = "loghoma";
+        CalculateIndex calculateIndex = new LogHoma();
+        formulaCalculator.put(key, calculateIndex);
+    }
+
+    private void addQuicki() {
+        String key = "quicki";
+        CalculateIndex calculateIndex = new Quicki();
+        formulaCalculator.put(key, calculateIndex);
+    }
+
+    private void addRevised() {
+        String key = "revised";
+        CalculateIndex calculateIndex = new RevisedQuicki();
         formulaCalculator.put(key, calculateIndex);
     }
 }

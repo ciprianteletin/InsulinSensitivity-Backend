@@ -6,24 +6,23 @@ import com.insulin.model.form.InsulinMandatory;
 import com.insulin.model.form.MandatoryInsulinInformation;
 
 import static com.insulin.formula.ValueConverter.*;
-import static java.lang.Math.log;
+import static com.insulin.formula.ValueConverter.insulinMean;
 
-public class Cederholm implements CalculateIndex {
+public class Matsuda implements CalculateIndex {
     @Override
     public double calculate(MandatoryInsulinInformation mandatoryInformation) {
         GlucoseMandatory glucoseMandatory = mandatoryInformation.getGlucoseMandatory();
         InsulinMandatory insulinMandatory = mandatoryInformation.getInsulinMandatory();
 
         glucoseMandatory = glucoseConverter(glucoseMandatory,
-                mandatoryInformation.getPlaceholders().getGlucosePlaceholder(), "mmol/L");
+                mandatoryInformation.getPlaceholders().getGlucosePlaceholder(), "mg/dL");
         insulinMandatory = insulinConverter(insulinMandatory,
                 mandatoryInformation.getPlaceholders().getInsulinPlaceholder(), "μIU/mL");
 
         double meanGlucose = glucoseMean(glucoseMandatory);
         double meanInsulin = insulinMean(insulinMandatory);
-        return (75000 +
-                (glucoseMandatory.getFastingGlucose() - glucoseMandatory.getGlucoseOneTwenty())
-                        * 1.15 * 180 * 0.19 * mandatoryInformation.getOptionalInformation().getWeight()
-        ) / (120 * meanGlucose * log(meanInsulin));
+
+        return 10000 / (Math.sqrt(glucoseMandatory.getFastingGlucose()) * insulinMandatory.getFastingInsulin()
+                * meanGlucose * meanInsulin);
     }
 }
