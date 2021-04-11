@@ -22,5 +22,16 @@ public class GlucoseMandatory {
     private double glucoseSix;
     @NotNull
     @Min(value = 0)
-    private double glucoseOneTwo;
+    private double glucoseOneTwenty;
+
+    public void convert(String placeholder) {
+        double conversionRate = 18.0;
+        if (placeholder.equals("mg/dL")) {
+            conversionRate = 1.0 / conversionRate;
+        }
+        fastingGlucose *= conversionRate;
+        glucoseThree *= conversionRate;
+        glucoseSix *= conversionRate;
+        glucoseOneTwenty *= conversionRate;
+    }
 }

@@ -22,5 +22,16 @@ public class InsulinMandatory {
     private double insulinSix;
     @NotNull
     @Min(value = 0)
-    private double insulinOneTwo;
+    private double insulinOneTwenty;
+
+    public void convert(String placeholder) {
+        double conversionRate = 6.0;
+        if (placeholder.equals("pmol/L")) {
+            conversionRate = 1.0 / conversionRate;
+        }
+        fastingInsulin *= conversionRate;
+        insulinThree *= conversionRate;
+        insulinSix *= conversionRate;
+        insulinOneTwenty *= conversionRate;
+    }
 }
