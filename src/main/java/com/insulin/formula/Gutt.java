@@ -6,7 +6,8 @@ import com.insulin.model.form.InsulinMandatory;
 import com.insulin.model.form.MandatoryInsulinInformation;
 
 import static com.insulin.formula.ValueConverter.*;
-import static com.insulin.formula.ValueConverter.insulinMean;
+import static com.insulin.utils.FormulaUtils.glucoseMean;
+import static com.insulin.utils.FormulaUtils.insulinMean;
 import static java.lang.Math.log;
 
 public class Gutt implements CalculateIndex {

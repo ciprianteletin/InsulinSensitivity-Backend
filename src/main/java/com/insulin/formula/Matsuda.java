@@ -5,8 +5,10 @@ import com.insulin.model.form.GlucoseMandatory;
 import com.insulin.model.form.InsulinMandatory;
 import com.insulin.model.form.MandatoryInsulinInformation;
 
+import static com.insulin.formula.NumericConstants.TEN_FOUR;
 import static com.insulin.formula.ValueConverter.*;
-import static com.insulin.formula.ValueConverter.insulinMean;
+import static com.insulin.utils.FormulaUtils.glucoseMean;
+import static com.insulin.utils.FormulaUtils.insulinMean;
 
 public class Matsuda implements CalculateIndex {
     @Override
@@ -22,7 +24,7 @@ public class Matsuda implements CalculateIndex {
         double meanGlucose = glucoseMean(glucoseMandatory);
         double meanInsulin = insulinMean(insulinMandatory);
 
-        return 10000 / (Math.sqrt(glucoseMandatory.getFastingGlucose()) * insulinMandatory.getFastingInsulin()
+        return TEN_FOUR / (Math.sqrt(glucoseMandatory.getFastingGlucose()) * insulinMandatory.getFastingInsulin()
                 * meanGlucose * meanInsulin);
     }
 }

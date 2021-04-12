@@ -10,6 +10,10 @@ import static com.insulin.utils.model.MandatoryInfoBuildUtils.*;
  * one unit of measurement to another one.
  */
 public final class ValueConverter {
+    public static final int GLUCOSE_CONVERT = 18;
+    public static final int INSULIN_CONVERT = 6;
+    private static final double NEFA_CONVERT = 0.35;
+    private static final double TRYGLICERIDE_CONVERT = 0.01129;
 
     private ValueConverter() {
 
@@ -41,9 +45,9 @@ public final class ValueConverter {
             return value;
         }
         if ("mg/dL".equals(to)) {
-            return value * 18;
+            return value * GLUCOSE_CONVERT;
         }
-        return value / 18;
+        return value / GLUCOSE_CONVERT;
     }
 
     public static double convertSingleInsulin
@@ -52,25 +56,22 @@ public final class ValueConverter {
             return value;
         }
         if ("pmol/L".equals(to)) {
-            return value * 6;
+            return value * INSULIN_CONVERT;
         }
-        return value / 6;
+        return value / INSULIN_CONVERT;
     }
 
     public static double convertNefa(double nefa, String from) {
         if (from.equals("mmol/L")) {
             return nefa;
         }
-        return nefa * 0.35;
+        return nefa * NEFA_CONVERT;
     }
 
-    public static double glucoseMean(GlucoseMandatory glucoseMandatory) {
-        return (glucoseMandatory.getFastingGlucose() + glucoseMandatory.getGlucoseThree()
-                + glucoseMandatory.getGlucoseSix() + glucoseMandatory.getGlucoseOneTwenty()) / 4;
-    }
-
-    public static double insulinMean(InsulinMandatory insulinMandatory) {
-        return (insulinMandatory.getFastingInsulin() + insulinMandatory.getInsulinThree()
-                + insulinMandatory.getInsulinSix() + insulinMandatory.getInsulinOneTwenty()) / 4;
+    public static double convertTrygliceride(double value, String from) {
+        if (from.equals("mmol/L")) {
+            return value;
+        }
+        return value * TRYGLICERIDE_CONVERT;
     }
 }

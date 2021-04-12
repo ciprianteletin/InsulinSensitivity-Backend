@@ -5,6 +5,8 @@ import lombok.*;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
+import static com.insulin.formula.ValueConverter.INSULIN_CONVERT;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -25,7 +27,7 @@ public class InsulinMandatory {
     private double insulinOneTwenty;
 
     public void convert(String placeholder) {
-        double conversionRate = 6.0;
+        double conversionRate = INSULIN_CONVERT;
         if (placeholder.equals("pmol/L")) {
             conversionRate = 1.0 / conversionRate;
         }

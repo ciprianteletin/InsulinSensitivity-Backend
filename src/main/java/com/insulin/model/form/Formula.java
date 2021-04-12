@@ -41,10 +41,12 @@ public final class Formula {
         addGutt();
         addMatsuda();
         addHoma();
-        addHomaB();
-        addLogHoma();
         addQuicki();
         addRevised();
+        addAvignon();
+        addBelfiore();
+        addStumvoll();
+        addMcAuley();
     }
 
     private void addCederholm() {
@@ -69,6 +71,8 @@ public final class Formula {
         String key = "homa";
         CalculateIndex calculateIndex = new Homa();
         formulaCalculator.put(key, calculateIndex);
+        addHomaB();
+        addLogHoma();
     }
 
     private void addHomaB() {
@@ -92,6 +96,41 @@ public final class Formula {
     private void addRevised() {
         String key = "revised";
         CalculateIndex calculateIndex = new RevisedQuicki();
+        formulaCalculator.put(key, calculateIndex);
+    }
+
+    private void addAvignon() {
+        String key = "avignon";
+        CalculateIndex calculateIndex = new Avignon();
+        formulaCalculator.put(key, calculateIndex);
+    }
+
+    private void addBelfiore() {
+        String key = "belfiore";
+        CalculateIndex calculateIndex = new Belfiore();
+        formulaCalculator.put(key, calculateIndex);
+    }
+
+    private void addStumvoll() {
+        addStumvollV1();
+        addStumvollV2();
+    }
+
+    private void addStumvollV1() {
+        String key = "stumvoll1";
+        CalculateIndex calculateIndex = new StumvollV1();
+        formulaCalculator.put(key, calculateIndex);
+    }
+
+    private void addStumvollV2() {
+        String key = "stumvoll2";
+        CalculateIndex calculateIndex = new StumvollV2();
+        formulaCalculator.put(key, calculateIndex);
+    }
+
+    private void addMcAuley() {
+        String key = "mcauley";
+        CalculateIndex calculateIndex = new McAuley();
         formulaCalculator.put(key, calculateIndex);
     }
 }
