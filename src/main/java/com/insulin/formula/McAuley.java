@@ -5,12 +5,14 @@ import com.insulin.model.form.MandatoryInsulinInformation;
 
 import static com.insulin.formula.ValueConverter.convertSingleInsulin;
 import static com.insulin.formula.ValueConverter.convertTrygliceride;
+import static com.insulin.validation.FormulaValidation.validateTrygliceride;
 import static java.lang.Math.log;
 import static java.lang.Math.pow;
 
 public class McAuley implements CalculateIndex {
     @Override
     public double calculate(MandatoryInsulinInformation mandatoryInformation) {
+        validateTrygliceride(mandatoryInformation.getOptionalInformation(), "mcAuley");
         double fastingInsulin = mandatoryInformation
                 .getInsulinMandatory()
                 .getFastingInsulin();

@@ -6,11 +6,13 @@ import com.insulin.model.form.MandatoryInsulinInformation;
 
 import static com.insulin.formula.ValueConverter.*;
 import static com.insulin.utils.FormulaUtils.*;
+import static com.insulin.validation.FormulaValidation.validateWeightAndHeight;
 
 
 public class StumvollV1 implements CalculateIndex {
     @Override
     public double calculate(MandatoryInsulinInformation mandatoryInformation) {
+        validateWeightAndHeight(mandatoryInformation.getOptionalInformation(), "stumvoll");
         InsulinMandatory insulinMandatory = mandatoryInformation.getInsulinMandatory();
 
         double insulin120 = convertSingleInsulin(insulinMandatory.getInsulinOneTwenty(),

@@ -97,6 +97,12 @@ public class ExceptionCustomHandler {
         return buildHttpResponseEntity(HttpStatus.SERVICE_UNAVAILABLE, exception.getMessage());
     }
 
+    @ExceptionHandler(InputIndexException.class)
+    public ResponseEntity<HttpResponse> inputIndex(InputIndexException exception) {
+        logger.error(exception.getMessage());
+        return buildHttpResponseEntity(HttpStatus.BAD_REQUEST, exception.getMessage());
+    }
+
     @ExceptionHandler(ActivateCaptchaException.class)
     public ResponseEntity<CaptchaModel> activateCaptchaCode() {
         logger.info("Activate cache for the current user!");

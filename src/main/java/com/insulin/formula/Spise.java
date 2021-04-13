@@ -6,11 +6,15 @@ import com.insulin.model.form.OptionalInsulinInformation;
 
 import static com.insulin.formula.ValueConverter.convertHDL;
 import static com.insulin.utils.FormulaUtils.*;
+import static com.insulin.validation.FormulaValidation.validateTyroAndHdl;
+import static com.insulin.validation.FormulaValidation.validateWeightAndHeight;
 import static java.lang.Math.pow;
 
 public class Spise implements CalculateIndex {
     @Override
     public double calculate(MandatoryInsulinInformation mandatoryInformation) {
+        validateWeightAndHeight(mandatoryInformation.getOptionalInformation(), "spice");
+        validateTyroAndHdl(mandatoryInformation.getOptionalInformation(), "spise");
         OptionalInsulinInformation optionalInformation = mandatoryInformation.getOptionalInformation();
         double hdl = optionalInformation.getHdl();
         hdl = convertHDL(hdl, mandatoryInformation.getPlaceholders().getGlucosePlaceholder());

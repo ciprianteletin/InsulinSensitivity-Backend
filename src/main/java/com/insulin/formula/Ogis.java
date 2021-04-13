@@ -9,12 +9,14 @@ import com.insulin.model.form.OptionalInsulinInformation;
 import static com.insulin.formula.NumericConstants.TEN_FOUR;
 import static com.insulin.formula.ValueConverter.glucoseConverter;
 import static com.insulin.formula.ValueConverter.insulinConverter;
+import static com.insulin.validation.FormulaValidation.validateWeightAndHeight;
 import static java.lang.Math.pow;
 import static java.lang.Math.sqrt;
 
 public class Ogis implements CalculateIndex {
     @Override
     public double calculate(MandatoryInsulinInformation mandatoryInformation) {
+        validateWeightAndHeight(mandatoryInformation.getOptionalInformation(), "ogis");
         GlucoseMandatory glucoseMandatory = mandatoryInformation.getGlucoseMandatory();
         InsulinMandatory insulinMandatory = mandatoryInformation.getInsulinMandatory();
 

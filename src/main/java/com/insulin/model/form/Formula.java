@@ -48,6 +48,7 @@ public final class Formula {
         addStumvoll();
         addMcAuley();
         addSpise();
+        addOgis();
     }
 
     private void addCederholm() {

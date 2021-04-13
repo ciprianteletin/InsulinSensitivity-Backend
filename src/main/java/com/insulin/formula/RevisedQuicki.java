@@ -4,11 +4,13 @@ import com.insulin.functional.CalculateIndex;
 import com.insulin.model.form.MandatoryInsulinInformation;
 
 import static com.insulin.formula.ValueConverter.*;
+import static com.insulin.validation.FormulaValidation.validateNefa;
 import static java.lang.Math.log;
 
 public class RevisedQuicki implements CalculateIndex {
     @Override
     public double calculate(MandatoryInsulinInformation mandatoryInformation) {
+        validateNefa(mandatoryInformation.getOptionalInformation(), "revised quicki");
         double fastingGlucose = convertSingleGlucose(
                 mandatoryInformation.getGlucoseMandatory().getFastingGlucose(),
                 mandatoryInformation.getPlaceholders().getGlucosePlaceholder(),

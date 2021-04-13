@@ -8,11 +8,13 @@ import com.insulin.model.form.MandatoryInsulinInformation;
 import static com.insulin.formula.ValueConverter.*;
 import static com.insulin.utils.FormulaUtils.glucoseMean;
 import static com.insulin.utils.FormulaUtils.insulinMean;
+import static com.insulin.validation.FormulaValidation.validateWeight;
 import static java.lang.Math.log;
 
 public class Cederholm implements CalculateIndex {
     @Override
     public double calculate(MandatoryInsulinInformation mandatoryInformation) {
+        validateWeight(mandatoryInformation.getOptionalInformation(), "cederholm");
         GlucoseMandatory glucoseMandatory = mandatoryInformation.getGlucoseMandatory();
         InsulinMandatory insulinMandatory = mandatoryInformation.getInsulinMandatory();
 
