@@ -74,4 +74,11 @@ public final class ValueConverter {
         }
         return value * TRYGLICERIDE_CONVERT;
     }
+
+    public static double convertHDL(double value, String from) {
+        if (from.equals("mmol/L")) {
+            return value;
+        }
+        return value / 38.67;
+    }
 }

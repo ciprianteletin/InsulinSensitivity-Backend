@@ -47,6 +47,7 @@ public final class Formula {
         addBelfiore();
         addStumvoll();
         addMcAuley();
+        addSpise();
     }
 
     private void addCederholm() {
@@ -131,6 +132,18 @@ public final class Formula {
     private void addMcAuley() {
         String key = "mcauley";
         CalculateIndex calculateIndex = new McAuley();
+        formulaCalculator.put(key, calculateIndex);
+    }
+
+    private void addSpise() {
+        String key = "spise";
+        CalculateIndex calculateIndex = new Spise();
+        formulaCalculator.put(key, calculateIndex);
+    }
+
+    private void addOgis() {
+        String key = "ogis";
+        CalculateIndex calculateIndex = new Ogis();
         formulaCalculator.put(key, calculateIndex);
     }
 }
