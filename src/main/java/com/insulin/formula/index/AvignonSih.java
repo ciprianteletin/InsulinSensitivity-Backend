@@ -1,11 +1,11 @@
 package com.insulin.formula.index;
 
-import com.insulin.functional.CalculateIndex;
+import com.insulin.interfaces.CalculateIndex;
 import com.insulin.model.form.GlucoseMandatory;
 import com.insulin.model.form.InsulinMandatory;
 import com.insulin.model.form.MandatoryInsulinInformation;
 
-import static com.insulin.shared.NumericConstants.TEN_EIGHT;
+import static com.insulin.shared.constants.NumericConstants.TEN_EIGHT;
 import static com.insulin.formula.ValueConverter.glucoseConverter;
 import static com.insulin.formula.ValueConverter.insulinConverter;
 
@@ -17,9 +17,9 @@ public class AvignonSih implements CalculateIndex {
         double vd = 150. / mandatoryInformation.getOptionalInformation().getWeight();
 
         glucoseMandatory = glucoseConverter(glucoseMandatory,
-                mandatoryInformation.getPlaceholders().getGlucosePlaceholder(), "mmol/L");
+                mandatoryInformation.getPlaceholders(), "mmol/L");
         insulinMandatory = insulinConverter(insulinMandatory,
-                mandatoryInformation.getPlaceholders().getInsulinPlaceholder(), "μIU/mL");
+                mandatoryInformation.getPlaceholders(), "μIU/mL");
 
         return TEN_EIGHT / (glucoseMandatory.getGlucoseOneTwenty() * insulinMandatory.getInsulinOneTwenty() * vd);
     }

@@ -1,6 +1,6 @@
 package com.insulin.service.abstraction;
 
-import com.insulin.exception.model.*;
+import com.insulin.exceptions.model.*;
 import com.insulin.model.User;
 import com.insulin.utils.model.BasicUserInfo;
 import com.insulin.utils.model.UserPasswordInfo;

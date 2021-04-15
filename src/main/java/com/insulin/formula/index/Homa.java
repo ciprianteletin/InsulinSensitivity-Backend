@@ -1,6 +1,6 @@
 package com.insulin.formula.index;
 
-import com.insulin.functional.CalculateIndex;
+import com.insulin.interfaces.CalculateIndex;
 import com.insulin.model.form.MandatoryInsulinInformation;
 
 import static com.insulin.formula.ValueConverter.convertSingleGlucose;

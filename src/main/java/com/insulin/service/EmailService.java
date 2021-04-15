@@ -11,7 +11,7 @@ import javax.mail.internet.MimeMessage;
 import java.util.Date;
 import java.util.Properties;
 
-import static com.insulin.shared.EmailConstants.*;
+import static com.insulin.shared.constants.EmailConstants.*;
 
 /**
  * Service class used in order to send e-mails to the user, for example, when creating a new account.

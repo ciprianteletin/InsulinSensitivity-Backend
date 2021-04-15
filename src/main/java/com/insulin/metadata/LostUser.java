@@ -8,7 +8,7 @@ import javax.persistence.Id;
 import java.io.Serializable;
 import java.util.Objects;
 
-import static com.insulin.shared.SecurityConstants.RESET_PASSWORD_LIFE;
+import static com.insulin.shared.constants.SecurityConstants.RESET_PASSWORD_LIFE;
 
 /**
  * Represents a user which wants to reset it's password. It has a time to live of three

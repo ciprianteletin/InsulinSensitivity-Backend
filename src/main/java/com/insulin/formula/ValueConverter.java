@@ -2,8 +2,9 @@ package com.insulin.formula;
 
 import com.insulin.model.form.GlucoseMandatory;
 import com.insulin.model.form.InsulinMandatory;
+import com.insulin.model.form.Placeholders;
 
-import static com.insulin.utils.model.MandatoryInfoBuildUtils.*;
+import static com.insulin.utils.MandatoryInfoBuildUtils.*;
 
 /**
  * Static class used extensively for conversion from
@@ -20,7 +21,8 @@ public final class ValueConverter {
     }
 
     public static GlucoseMandatory glucoseConverter
-            (GlucoseMandatory glucoseOriginal, String from, String to) {
+            (GlucoseMandatory glucoseOriginal, Placeholders placeholders, String to) {
+        String from = placeholders.getGlucosePlaceholder();
         if (from.equals(to)) {
             return glucoseOriginal;
         }
@@ -30,7 +32,8 @@ public final class ValueConverter {
     }
 
     public static InsulinMandatory insulinConverter
-            (InsulinMandatory insulinOriginal, String from, String to) {
+            (InsulinMandatory insulinOriginal, Placeholders placeholders, String to) {
+        String from = placeholders.getInsulinPlaceholder();
         if (from.equals(to)) {
             return insulinOriginal;
         }

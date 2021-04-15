@@ -16,7 +16,7 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 import java.time.Duration;
 
-import static com.insulin.shared.SecurityConstants.REFRESH_EXPIRATION_TIME_MS;
+import static com.insulin.shared.constants.SecurityConstants.REFRESH_EXPIRATION_TIME_MS;
 
 @Configuration
 @EnableRedisRepositories

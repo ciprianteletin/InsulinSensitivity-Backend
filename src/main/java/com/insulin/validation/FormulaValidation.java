@@ -1,6 +1,6 @@
 package com.insulin.validation;
 
-import com.insulin.exception.model.InputIndexException;
+import com.insulin.exceptions.model.InputIndexException;
 import com.insulin.model.form.OptionalInsulinInformation;
 
 import java.text.MessageFormat;

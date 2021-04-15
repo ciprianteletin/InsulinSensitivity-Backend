@@ -1,6 +1,6 @@
 package com.insulin.formula.result;
 
-import com.insulin.functional.Interpreter;
+import com.insulin.interfaces.Interpreter;
 import com.insulin.model.form.GlucoseMandatory;
 
 public class ImpairedFastingPost implements Interpreter {

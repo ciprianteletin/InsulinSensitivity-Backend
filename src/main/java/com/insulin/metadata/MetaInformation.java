@@ -2,15 +2,13 @@ package com.insulin.metadata;
 
 import lombok.*;
 import org.springframework.data.redis.core.RedisHash;
-import org.springframework.data.redis.core.TimeToLive;
 import org.springframework.data.redis.core.index.Indexed;
 
 import javax.persistence.Id;
 import java.io.Serializable;
 import java.util.Objects;
-import java.util.concurrent.TimeUnit;
 
-import static com.insulin.shared.SecurityConstants.REFRESH_EXPIRATION_TIME_SEC;
+import static com.insulin.shared.constants.SecurityConstants.REFRESH_EXPIRATION_TIME_SEC;
 
 
 /**

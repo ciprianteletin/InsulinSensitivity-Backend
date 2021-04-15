@@ -1,8 +1,8 @@
 package com.insulin.configs;
 
-import com.insulin.filter.JwtAccessDeniedHandler;
-import com.insulin.filter.JwtAuthenticationEntryPoint;
-import com.insulin.filter.JwtAuthorizationFilter;
+import com.insulin.filters.JwtAccessDeniedHandler;
+import com.insulin.filters.JwtAuthenticationEntryPoint;
+import com.insulin.filters.JwtAuthorizationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -22,7 +22,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import java.util.List;
 
-import static com.insulin.shared.SecurityConstants.*;
+import static com.insulin.shared.constants.SecurityConstants.*;
 import static java.util.Arrays.*;
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 

@@ -1,6 +1,6 @@
 package com.insulin.utils;
 
-import com.insulin.exception.model.*;
+import com.insulin.exceptions.model.*;
 import com.insulin.model.User;
 import com.insulin.repository.AuthRepository;
 import com.insulin.repository.UserRepository;
@@ -12,8 +12,8 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
-import static com.insulin.shared.ExceptionConstants.*;
-import static com.insulin.shared.UserConstants.*;
+import static com.insulin.shared.constants.ExceptionConstants.*;
+import static com.insulin.shared.constants.UserConstants.*;
 import static java.util.Objects.isNull;
 
 @Component

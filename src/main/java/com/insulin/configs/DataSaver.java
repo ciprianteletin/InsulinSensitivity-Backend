@@ -10,7 +10,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.time.LocalDate;
 
-import static com.insulin.enumeration.Role.*;
+import static com.insulin.enumerations.Role.*;
 
 /**
  * Configured a class that at startup insert a default user account which can be used for testing / debug purposes.

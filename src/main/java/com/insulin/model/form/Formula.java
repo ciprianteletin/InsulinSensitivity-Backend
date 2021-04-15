@@ -1,7 +1,7 @@
 package com.insulin.model.form;
 
 import com.insulin.formula.index.*;
-import com.insulin.functional.CalculateIndex;
+import com.insulin.interfaces.CalculateIndex;
 
 import java.util.Map;
 

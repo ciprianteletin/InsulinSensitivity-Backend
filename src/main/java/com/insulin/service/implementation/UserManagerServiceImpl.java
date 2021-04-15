@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import static com.insulin.shared.UserConstants.USER_NOT_FOUND;
+import static com.insulin.shared.constants.UserConstants.USER_NOT_FOUND;
 import static com.insulin.utils.AuthenticationUtils.checkIfEmail;
 import static java.util.Objects.isNull;
 

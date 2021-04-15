@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import static com.insulin.shared.SecurityConstants.*;
+import static com.insulin.shared.constants.SecurityConstants.*;
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.*;
 

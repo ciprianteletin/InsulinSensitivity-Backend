@@ -1,6 +1,6 @@
 package com.insulin.utils;
 
-import com.insulin.enumeration.Role;
+import com.insulin.enumerations.Role;
 import com.insulin.model.User;
 import com.insulin.model.UserDetail;
 import com.insulin.utils.abstractions.AbstractUserFactory;

@@ -1,12 +1,12 @@
 package com.insulin.formula.index;
 
-import com.insulin.functional.CalculateIndex;
+import com.insulin.interfaces.CalculateIndex;
 import com.insulin.model.form.GlucoseMandatory;
 import com.insulin.model.form.InsulinMandatory;
 import com.insulin.model.form.MandatoryInsulinInformation;
 import com.insulin.model.form.OptionalInsulinInformation;
 
-import static com.insulin.shared.NumericConstants.TEN_FOUR;
+import static com.insulin.shared.constants.NumericConstants.TEN_FOUR;
 import static com.insulin.formula.ValueConverter.glucoseConverter;
 import static com.insulin.formula.ValueConverter.insulinConverter;
 import static com.insulin.validation.FormulaValidation.validateWeightAndHeight;
@@ -21,9 +21,9 @@ public class Ogis implements CalculateIndex {
         InsulinMandatory insulinMandatory = mandatoryInformation.getInsulinMandatory();
 
         glucoseMandatory = glucoseConverter(glucoseMandatory,
-                mandatoryInformation.getPlaceholders().getGlucosePlaceholder(), "mmol/L");
+                mandatoryInformation.getPlaceholders(), "mmol/L");
         insulinMandatory = insulinConverter(insulinMandatory,
-                mandatoryInformation.getPlaceholders().getInsulinPlaceholder(), "pmol/L");
+                mandatoryInformation.getPlaceholders(), "pmol/L");
 
         double glucoseNine = (glucoseMandatory.getGlucoseOneTwenty() + glucoseMandatory.getGlucoseSix()) / 2;
         double insulinNine = (insulinMandatory.getInsulinOneTwenty() + insulinMandatory.getInsulinSix()) / 2;

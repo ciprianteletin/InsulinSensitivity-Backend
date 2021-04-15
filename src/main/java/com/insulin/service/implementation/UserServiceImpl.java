@@ -1,6 +1,6 @@
 package com.insulin.service.implementation;
 
-import com.insulin.exception.model.*;
+import com.insulin.exceptions.model.*;
 import com.insulin.metadata.MetaInformation;
 import com.insulin.model.User;
 import com.insulin.model.UserDetail;
@@ -27,8 +27,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import java.util.Optional;
 
-import static com.insulin.shared.UserConstants.USERNAME_NOT_FOUND;
-import static com.insulin.shared.UserConstants.USER_NOT_FOUND;
+import static com.insulin.shared.constants.UserConstants.USERNAME_NOT_FOUND;
+import static com.insulin.shared.constants.UserConstants.USER_NOT_FOUND;
 import static com.insulin.utils.AuthenticationUtils.*;
 
 @Service

@@ -21,7 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Objects;
 
-import static com.insulin.shared.ExceptionConstants.NOT_ENOUGH_PERMISSION;
+import static com.insulin.shared.constants.ExceptionConstants.NOT_ENOUGH_PERMISSION;
 import static com.insulin.utils.RequestUtils.getRemoteIP;
 
 /**

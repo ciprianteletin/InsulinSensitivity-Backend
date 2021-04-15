@@ -1,6 +1,6 @@
 package com.insulin.service.implementation;
 
-import com.insulin.exception.model.*;
+import com.insulin.exceptions.model.*;
 import com.insulin.metadata.LostUser;
 import com.insulin.model.User;
 import com.insulin.model.UserDetail;
@@ -29,7 +29,7 @@ import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.Optional;
 
-import static com.insulin.shared.ExceptionConstants.OLD_PASSWORD;
+import static com.insulin.shared.constants.ExceptionConstants.OLD_PASSWORD;
 import static com.insulin.utils.AuthenticationUtils.encryptPassword;
 import static java.util.Objects.isNull;
 
