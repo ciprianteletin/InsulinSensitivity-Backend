@@ -19,6 +19,6 @@ public class ImpairedGlucoseTolerance implements Interpreter {
 
     @Override
     public String getName() {
-        return "Impaired Glucose Tolerance";
+        return "Impaired Glucose Tolerance: Prediabetes";
     }
 }

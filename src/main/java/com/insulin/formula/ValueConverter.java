@@ -13,6 +13,11 @@ import static com.insulin.utils.MandatoryInfoBuildUtils.*;
 public final class ValueConverter {
     public static final int GLUCOSE_CONVERT = 18;
     public static final int INSULIN_CONVERT = 6;
+    public static final String PLUS_MINUS = "±";
+    public static final String LESS_THAN = "<";
+    public static final String APPROXIMATE = "≅";
+    public static final String GREATER_THAN = ">";
+    public static final String DASH = "-";
     private static final double NEFA_CONVERT = 0.35;
     private static final double TRYGLICERIDE_CONVERT = 0.01129;
 

@@ -1,12 +1,13 @@
 package com.insulin.formula.index;
 
 import com.insulin.interfaces.CalculateIndex;
+import com.insulin.interfaces.IndexInterpreter;
 import com.insulin.model.form.MandatoryInsulinInformation;
 
 import static com.insulin.formula.ValueConverter.convertSingleGlucose;
 import static com.insulin.formula.ValueConverter.convertSingleInsulin;
 
-public class HomaB implements CalculateIndex {
+public class HomaB implements CalculateIndex, IndexInterpreter {
     @Override
     public double calculate(MandatoryInsulinInformation mandatoryInformation) {
         double fastingGlucose = convertSingleGlucose(
@@ -19,5 +20,15 @@ public class HomaB implements CalculateIndex {
                 "μIU/mL");
 
         return (20 * fastingInsulin) / (fastingGlucose - 3.5);
+    }
+
+    @Override
+    public String interpret(double result) {
+        return "-";
+    }
+
+    @Override
+    public String getInterval() {
+        return "-";
     }
 }

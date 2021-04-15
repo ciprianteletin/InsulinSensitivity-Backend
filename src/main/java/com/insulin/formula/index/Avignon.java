@@ -20,11 +20,11 @@ public class Avignon implements CalculateIndex, IndexInterpreter {
 
     @Override
     public String interpret(double result) {
-        return null;
+        return "-";
     }
 
     @Override
     public String getInterval() {
-        return null;
+        return "-";
     }
 }

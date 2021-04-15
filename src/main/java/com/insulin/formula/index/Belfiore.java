@@ -1,15 +1,17 @@
 package com.insulin.formula.index;
 
 import com.insulin.interfaces.CalculateIndex;
+import com.insulin.interfaces.IndexInterpreter;
 import com.insulin.model.form.GlucoseMandatory;
 import com.insulin.model.form.InsulinMandatory;
 import com.insulin.model.form.MandatoryInsulinInformation;
 
+import static com.insulin.formula.RangeChecker.checkLowerBound;
+import static com.insulin.formula.RangeChecker.checkUpperBound;
+import static com.insulin.formula.ValueConverter.*;
 import static com.insulin.shared.constants.NumericConstants.*;
-import static com.insulin.formula.ValueConverter.glucoseConverter;
-import static com.insulin.formula.ValueConverter.insulinConverter;
 
-public class Belfiore implements CalculateIndex {
+public class Belfiore implements CalculateIndex, IndexInterpreter {
     @Override
     public double calculate(MandatoryInsulinInformation mandatoryInformation) {
         GlucoseMandatory glucoseMandatory = mandatoryInformation.getGlucoseMandatory();
@@ -29,5 +31,24 @@ public class Belfiore implements CalculateIndex {
         double insulinNormal = 0.5 * FASTING_INSULIN_UI + INSULIN_SIX_UI + INSULIN_ONE_TWENTY_UI;
 
         return 2 / ((glucoseSubject / glucoseNormal) * (insulinSubject / insulinNormal) + 1);
+    }
+
+    @Override
+    public String interpret(double result) {
+        double errorValue = 0.27;
+        double lowerBound = 1 + errorValue;
+        double upperBound = 1 - errorValue;
+        if (checkLowerBound(lowerBound, result)) {
+            return "Insulin resistance";
+        }
+        if (checkUpperBound(upperBound, result)) {
+            return "Type 2 diabetes";
+        }
+        return "Healthy";
+    }
+
+    @Override
+    public String getInterval() {
+        return APPROXIMATE + "1";
     }
 }

@@ -1,6 +1,7 @@
 package com.insulin.formula.index;
 
 import com.insulin.interfaces.CalculateIndex;
+import com.insulin.interfaces.IndexInterpreter;
 import com.insulin.model.form.GlucoseMandatory;
 import com.insulin.model.form.InsulinMandatory;
 import com.insulin.model.form.MandatoryInsulinInformation;
@@ -13,7 +14,7 @@ import static com.insulin.validation.FormulaValidation.validateWeightAndHeight;
 import static java.lang.Math.pow;
 import static java.lang.Math.sqrt;
 
-public class Ogis implements CalculateIndex {
+public class Ogis implements CalculateIndex, IndexInterpreter {
     @Override
     public double calculate(MandatoryInsulinInformation mandatoryInformation) {
         validateWeightAndHeight(mandatoryInformation.getOptionalInformation(), "ogis");
@@ -42,5 +43,15 @@ public class Ogis implements CalculateIndex {
         double temp2 = (pp5 * (glucoseNine - glc) + 1) * temp1;
 
         return (temp2 + sqrt(pow(temp2, 2) + 4 * pp5 * pp6 * (glucoseNine - glc) * temp1)) / 2;
+    }
+
+    @Override
+    public String interpret(double result) {
+        return "-";
+    }
+
+    @Override
+    public String getInterval() {
+        return "-";
     }
 }

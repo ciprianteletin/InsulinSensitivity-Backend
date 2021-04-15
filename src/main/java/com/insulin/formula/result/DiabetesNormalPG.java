@@ -3,6 +3,9 @@ package com.insulin.formula.result;
 import com.insulin.interfaces.Interpreter;
 import com.insulin.model.form.GlucoseMandatory;
 
+import static com.insulin.formula.RangeChecker.checkLowerBound;
+import static com.insulin.formula.RangeChecker.checkUpperBound;
+
 public class DiabetesNormalPG implements Interpreter {
     @Override
     public boolean interpret(GlucoseMandatory glucoseMandatory) {
@@ -12,7 +15,8 @@ public class DiabetesNormalPG implements Interpreter {
         double fastingGlucose = glucoseMandatory.getFastingGlucose();
         double glucoseTwoH = glucoseMandatory.getGlucoseOneTwenty();
 
-        return lowerLimitFastingGlucose < fastingGlucose && glucoseTwoH < upperLimitPostGlucose2h;
+        return checkUpperBound(upperLimitPostGlucose2h, glucoseTwoH) && //
+                checkLowerBound(lowerLimitFastingGlucose, fastingGlucose);
     }
 
     @Override
