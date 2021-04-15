@@ -1,16 +1,15 @@
-package com.insulin.formula;
+package com.insulin.formula.index;
 
 import com.insulin.functional.CalculateIndex;
 import com.insulin.model.form.MandatoryInsulinInformation;
 
-import static com.insulin.formula.ValueConverter.*;
-import static com.insulin.validation.FormulaValidation.validateNefa;
+import static com.insulin.formula.ValueConverter.convertSingleGlucose;
+import static com.insulin.formula.ValueConverter.convertSingleInsulin;
 import static java.lang.Math.log;
 
-public class RevisedQuicki implements CalculateIndex {
+public class Quicki implements CalculateIndex {
     @Override
     public double calculate(MandatoryInsulinInformation mandatoryInformation) {
-        validateNefa(mandatoryInformation.getOptionalInformation(), "revised quicki");
         double fastingGlucose = convertSingleGlucose(
                 mandatoryInformation.getGlucoseMandatory().getFastingGlucose(),
                 mandatoryInformation.getPlaceholders().getGlucosePlaceholder(),
@@ -19,9 +18,7 @@ public class RevisedQuicki implements CalculateIndex {
                 mandatoryInformation.getInsulinMandatory().getFastingInsulin(),
                 mandatoryInformation.getPlaceholders().getInsulinPlaceholder(),
                 "μIU/mL");
-        double nefa = convertNefa(mandatoryInformation.getOptionalInformation().getNefa(),
-                mandatoryInformation.getPlaceholders().getGlucosePlaceholder());
 
-        return 1.0 / (log(fastingGlucose) + log(fastingInsulin) + log(nefa));
+        return 1.0 / (log(fastingGlucose) + log(fastingInsulin));
     }
 }

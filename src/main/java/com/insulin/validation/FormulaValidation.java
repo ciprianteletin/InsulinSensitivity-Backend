@@ -7,6 +7,14 @@ import java.text.MessageFormat;
 
 import static java.util.Objects.isNull;
 
+/**
+ * Utils function for validation of optional information regarding index formulas.
+ * This was done because compared to GlucoseMandatory/InsulinMandatory, there is
+ * no validation to prevent null values, only range constraints.
+ * <p>
+ * Although the values are required from the GUI, one can trick the GUI and send
+ * null values, case when this kind of validation is needed.
+ */
 public final class FormulaValidation {
     private static final String SINGLE_NULL = "Expected value for field {0} used for index {1}";
     private static final String DOUBLE_VALUES = "Null value detected for {0} or {1} for index {2}";

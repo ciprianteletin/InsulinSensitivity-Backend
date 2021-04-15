@@ -1,6 +1,6 @@
 package com.insulin.model.form;
 
-import com.insulin.formula.*;
+import com.insulin.formula.index.*;
 import com.insulin.functional.CalculateIndex;
 
 import java.util.Map;
@@ -34,7 +34,7 @@ public final class Formula {
 
     /**
      * Void method with a lot of function calls for every index.
-     * Helps to populate the map with desired formulas.
+     * Helps to populate the map with all formulas.
      */
     private void prepopulateMap() {
         addCederholm();

@@ -1,4 +1,4 @@
-package com.insulin.formula;
+package com.insulin.formula.index;
 
 import com.insulin.functional.CalculateIndex;
 import com.insulin.model.form.GlucoseMandatory;
@@ -11,23 +11,26 @@ import static com.insulin.utils.FormulaUtils.insulinMean;
 import static com.insulin.validation.FormulaValidation.validateWeight;
 import static java.lang.Math.log;
 
-public class Cederholm implements CalculateIndex {
+public class Gutt implements CalculateIndex {
     @Override
     public double calculate(MandatoryInsulinInformation mandatoryInformation) {
-        validateWeight(mandatoryInformation.getOptionalInformation(), "cederholm");
+        validateWeight(mandatoryInformation.getOptionalInformation(), "gutt");
         GlucoseMandatory glucoseMandatory = mandatoryInformation.getGlucoseMandatory();
         InsulinMandatory insulinMandatory = mandatoryInformation.getInsulinMandatory();
 
-        glucoseMandatory = glucoseConverter(glucoseMandatory,
-                mandatoryInformation.getPlaceholders().getGlucosePlaceholder(), "mmol/L");
+
+        GlucoseMandatory copyGlucose = glucoseConverter(glucoseMandatory,
+                mandatoryInformation.getPlaceholders().getGlucosePlaceholder(), "mg/dL");
         insulinMandatory = insulinConverter(insulinMandatory,
                 mandatoryInformation.getPlaceholders().getInsulinPlaceholder(), "μIU/mL");
+        glucoseMandatory = glucoseConverter(glucoseMandatory,
+                mandatoryInformation.getPlaceholders().getGlucosePlaceholder(), "mmol/L");
 
         double meanGlucose = glucoseMean(glucoseMandatory);
         double meanInsulin = insulinMean(insulinMandatory);
-        return (75000 +
-                (glucoseMandatory.getFastingGlucose() - glucoseMandatory.getGlucoseOneTwenty())
-                        * 1.15 * 180 * 0.19 * mandatoryInformation.getOptionalInformation().getWeight()
+
+        return (75000 + (copyGlucose.getFastingGlucose() - copyGlucose.getGlucoseOneTwenty())
+                * 0.19 * mandatoryInformation.getOptionalInformation().getWeight()
         ) / (120 * meanGlucose * log(meanInsulin));
     }
 }

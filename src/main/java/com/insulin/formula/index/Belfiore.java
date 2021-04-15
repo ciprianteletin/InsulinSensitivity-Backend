@@ -1,11 +1,11 @@
-package com.insulin.formula;
+package com.insulin.formula.index;
 
 import com.insulin.functional.CalculateIndex;
 import com.insulin.model.form.GlucoseMandatory;
 import com.insulin.model.form.InsulinMandatory;
 import com.insulin.model.form.MandatoryInsulinInformation;
 
-import static com.insulin.formula.NumericConstants.*;
+import static com.insulin.shared.NumericConstants.*;
 import static com.insulin.formula.ValueConverter.glucoseConverter;
 import static com.insulin.formula.ValueConverter.insulinConverter;
 

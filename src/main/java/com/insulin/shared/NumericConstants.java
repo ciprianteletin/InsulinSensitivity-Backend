@@ -1,4 +1,4 @@
-package com.insulin.formula;
+package com.insulin.shared;
 
 public class NumericConstants {
     public static final int TEN_FOUR = 10_000;
