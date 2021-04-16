@@ -28,9 +28,4 @@ public final class FormulaUtils {
 
         return weight / pow(height, 2);
     }
-
-    public static String getEarlyResult(MandatoryInsulinInformation mandatoryInformation) {
-
-        return null;
-    }
 }

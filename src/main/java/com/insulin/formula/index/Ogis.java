@@ -1,22 +1,23 @@
 package com.insulin.formula.index;
 
+import com.insulin.enumerations.Severity;
 import com.insulin.interfaces.CalculateIndex;
 import com.insulin.interfaces.IndexInterpreter;
-import com.insulin.model.form.GlucoseMandatory;
-import com.insulin.model.form.InsulinMandatory;
-import com.insulin.model.form.MandatoryInsulinInformation;
-import com.insulin.model.form.OptionalInsulinInformation;
+import com.insulin.model.form.*;
+import org.springframework.data.util.Pair;
 
 import static com.insulin.shared.constants.NumericConstants.TEN_FOUR;
 import static com.insulin.formula.ValueConverter.glucoseConverter;
 import static com.insulin.formula.ValueConverter.insulinConverter;
+import static com.insulin.utils.IndexUtils.buildIndexResult;
+import static com.insulin.utils.IndexUtils.defaultPair;
 import static com.insulin.validation.FormulaValidation.validateWeightAndHeight;
 import static java.lang.Math.pow;
 import static java.lang.Math.sqrt;
 
 public class Ogis implements CalculateIndex, IndexInterpreter {
     @Override
-    public double calculate(MandatoryInsulinInformation mandatoryInformation) {
+    public IndexResult calculate(MandatoryInsulinInformation mandatoryInformation) {
         validateWeightAndHeight(mandatoryInformation.getOptionalInformation(), "ogis");
         GlucoseMandatory glucoseMandatory = mandatoryInformation.getGlucoseMandatory();
         InsulinMandatory insulinMandatory = mandatoryInformation.getInsulinMandatory();
@@ -42,12 +43,13 @@ public class Ogis implements CalculateIndex, IndexInterpreter {
                 (insulinNine - insulinMandatory.getFastingInsulin() + pp2);
         double temp2 = (pp5 * (glucoseNine - glc) + 1) * temp1;
 
-        return (temp2 + sqrt(pow(temp2, 2) + 4 * pp5 * pp6 * (glucoseNine - glc) * temp1)) / 2;
+        double result = (temp2 + sqrt(pow(temp2, 2) + 4 * pp5 * pp6 * (glucoseNine - glc) * temp1)) / 2;
+        return buildIndexResult(result, interpret(result));
     }
 
     @Override
-    public String interpret(double result) {
-        return "-";
+    public Pair<String, Severity> interpret(double result) {
+        return defaultPair();
     }
 
     @Override

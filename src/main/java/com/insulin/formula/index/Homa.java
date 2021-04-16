@@ -1,16 +1,20 @@
 package com.insulin.formula.index;
 
+import com.insulin.enumerations.Severity;
 import com.insulin.interfaces.CalculateIndex;
 import com.insulin.interfaces.IndexInterpreter;
+import com.insulin.model.form.IndexResult;
 import com.insulin.model.form.MandatoryInsulinInformation;
+import org.springframework.data.util.Pair;
 
 import static com.insulin.formula.RangeChecker.checkInBetween;
 import static com.insulin.formula.RangeChecker.checkLowerBound;
 import static com.insulin.formula.ValueConverter.*;
+import static com.insulin.utils.IndexUtils.*;
 
 public class Homa implements CalculateIndex, IndexInterpreter {
     @Override
-    public double calculate(MandatoryInsulinInformation mandatoryInformation) {
+    public IndexResult calculate(MandatoryInsulinInformation mandatoryInformation) {
         double fastingGlucose = convertSingleGlucose(
                 mandatoryInformation.getGlucoseMandatory().getFastingGlucose(),
                 mandatoryInformation.getPlaceholders().getGlucosePlaceholder(),
@@ -20,21 +24,22 @@ public class Homa implements CalculateIndex, IndexInterpreter {
                 mandatoryInformation.getPlaceholders().getInsulinPlaceholder(),
                 "μIU/mL");
 
-        return (fastingGlucose * fastingInsulin) / 22.5;
+        double result = (fastingGlucose * fastingInsulin) / 22.5;
+        return buildIndexResult(result, interpret(result), getInterval());
     }
 
     @Override
-    public String interpret(double result) {
+    public Pair<String, Severity> interpret(double result) {
         if (checkInBetween(0.5, 1.4, result)) {
-            return "Healthy";
+            return healthyPair();
         }
         if (checkInBetween(1.9, 2.9, result)) {
-            return "Early Insulin Resistance!";
+            return Pair.of("Early Insulin Resistance", Severity.INSULIN_RESISTANCE);
         }
         if (checkLowerBound(2.9, result)) {
-            return "Insulin Resistance";
+            return Pair.of("Insulin Resistance", Severity.INSULIN_RESISTANCE);
         }
-        return "-";
+        return defaultPair();
     }
 
     @Override

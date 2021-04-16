@@ -1,5 +1,8 @@
 package com.insulin.interfaces;
 
+import com.insulin.enumerations.Severity;
+import org.springframework.data.util.Pair;
+
 /**
  * Interface to provide an interpretation of indexes calculation result
  * To not be confused with Interpreter interface, which is used specially for interpreting
@@ -14,6 +17,7 @@ package com.insulin.interfaces;
  * (specific for each indices).
  */
 public interface IndexInterpreter {
-    String interpret(double result);
+    Pair<String, Severity> interpret(double result);
+
     String getInterval();
 }

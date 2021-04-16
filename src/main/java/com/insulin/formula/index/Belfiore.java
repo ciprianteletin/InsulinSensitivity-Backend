@@ -1,19 +1,24 @@
 package com.insulin.formula.index;
 
+import com.insulin.enumerations.Severity;
 import com.insulin.interfaces.CalculateIndex;
 import com.insulin.interfaces.IndexInterpreter;
 import com.insulin.model.form.GlucoseMandatory;
+import com.insulin.model.form.IndexResult;
 import com.insulin.model.form.InsulinMandatory;
 import com.insulin.model.form.MandatoryInsulinInformation;
+import org.springframework.data.util.Pair;
 
 import static com.insulin.formula.RangeChecker.checkLowerBound;
 import static com.insulin.formula.RangeChecker.checkUpperBound;
 import static com.insulin.formula.ValueConverter.*;
 import static com.insulin.shared.constants.NumericConstants.*;
+import static com.insulin.utils.IndexUtils.buildIndexResult;
+import static com.insulin.utils.IndexUtils.healthyPair;
 
 public class Belfiore implements CalculateIndex, IndexInterpreter {
     @Override
-    public double calculate(MandatoryInsulinInformation mandatoryInformation) {
+    public IndexResult calculate(MandatoryInsulinInformation mandatoryInformation) {
         GlucoseMandatory glucoseMandatory = mandatoryInformation.getGlucoseMandatory();
         InsulinMandatory insulinMandatory = mandatoryInformation.getInsulinMandatory();
 
@@ -30,21 +35,22 @@ public class Belfiore implements CalculateIndex, IndexInterpreter {
         double glucoseNormal = 0.5 * FASTING_GLUCOSE_MM + GLUCOSE_SIX_MM + GLUCOSE_ONE_TWENTY_MM;
         double insulinNormal = 0.5 * FASTING_INSULIN_UI + INSULIN_SIX_UI + INSULIN_ONE_TWENTY_UI;
 
-        return 2 / ((glucoseSubject / glucoseNormal) * (insulinSubject / insulinNormal) + 1);
+        double result = 2 / ((glucoseSubject / glucoseNormal) * (insulinSubject / insulinNormal) + 1);
+        return buildIndexResult(result, interpret(result), getInterval());
     }
 
     @Override
-    public String interpret(double result) {
+    public Pair<String, Severity> interpret(double result) {
         double errorValue = 0.27;
         double lowerBound = 1 + errorValue;
         double upperBound = 1 - errorValue;
         if (checkLowerBound(lowerBound, result)) {
-            return "Insulin resistance";
+            return Pair.of("Insulin resistance", Severity.INSULIN_RESISTANCE);
         }
         if (checkUpperBound(upperBound, result)) {
-            return "Type 2 diabetes";
+            return Pair.of("Type 2 diabetes", Severity.DIABETES);
         }
-        return "Healthy";
+        return healthyPair();
     }
 
     @Override

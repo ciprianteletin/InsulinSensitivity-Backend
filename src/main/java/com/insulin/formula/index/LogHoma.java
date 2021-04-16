@@ -1,11 +1,16 @@
 package com.insulin.formula.index;
 
+import com.insulin.enumerations.Severity;
 import com.insulin.interfaces.CalculateIndex;
 import com.insulin.interfaces.IndexInterpreter;
+import com.insulin.model.form.IndexResult;
 import com.insulin.model.form.MandatoryInsulinInformation;
+import org.springframework.data.util.Pair;
 
 import static com.insulin.formula.RangeChecker.checkInBetween;
 import static com.insulin.formula.ValueConverter.PLUS_MINUS;
+import static com.insulin.utils.IndexUtils.buildIndexResult;
+import static com.insulin.utils.IndexUtils.healthyPair;
 import static java.lang.Math.log;
 
 public class LogHoma implements CalculateIndex, IndexInterpreter {
@@ -13,19 +18,20 @@ public class LogHoma implements CalculateIndex, IndexInterpreter {
     private final static double fluctuation = 0.64;
 
     @Override
-    public double calculate(MandatoryInsulinInformation mandatoryInformation) {
+    public IndexResult calculate(MandatoryInsulinInformation mandatoryInformation) {
         Homa homa = new Homa();
-        return log(homa.calculate(mandatoryInformation));
+        double result = log(homa.calculate(mandatoryInformation).getResult());
+        return buildIndexResult(result, interpret(result), getInterval());
     }
 
     @Override
-    public String interpret(double result) {
+    public Pair<String, Severity> interpret(double result) {
         double lowerBound = interpretValue - fluctuation;
         double upperBound = interpretValue + fluctuation;
         if (checkInBetween(lowerBound, upperBound, result)) {
-            return "Healthy";
+            return healthyPair();
         }
-        return "Prediabetes";
+        return Pair.of("Prediabetes", Severity.PREDIABETES);
     }
 
     @Override

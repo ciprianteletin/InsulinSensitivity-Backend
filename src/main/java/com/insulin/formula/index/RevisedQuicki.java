@@ -1,11 +1,15 @@
 package com.insulin.formula.index;
 
+import com.insulin.enumerations.Severity;
 import com.insulin.interfaces.CalculateIndex;
 import com.insulin.interfaces.IndexInterpreter;
+import com.insulin.model.form.IndexResult;
 import com.insulin.model.form.MandatoryInsulinInformation;
+import org.springframework.data.util.Pair;
 
 import static com.insulin.formula.RangeChecker.checkInBetween;
 import static com.insulin.formula.ValueConverter.*;
+import static com.insulin.utils.IndexUtils.*;
 import static com.insulin.validation.FormulaValidation.validateNefa;
 import static java.lang.Math.log;
 
@@ -14,7 +18,7 @@ public class RevisedQuicki implements CalculateIndex, IndexInterpreter {
     private final double fluctuation = 0.013;
 
     @Override
-    public double calculate(MandatoryInsulinInformation mandatoryInformation) {
+    public IndexResult calculate(MandatoryInsulinInformation mandatoryInformation) {
         validateNefa(mandatoryInformation.getOptionalInformation(), "revised quicki");
         double fastingGlucose = convertSingleGlucose(
                 mandatoryInformation.getGlucoseMandatory().getFastingGlucose(),
@@ -27,27 +31,28 @@ public class RevisedQuicki implements CalculateIndex, IndexInterpreter {
         double nefa = convertNefa(mandatoryInformation.getOptionalInformation().getNefa(),
                 mandatoryInformation.getPlaceholders().getGlucosePlaceholder());
 
-        return 1.0 / (log(fastingGlucose) + log(fastingInsulin) + log(nefa));
+        double result = 1.0 / (log(fastingGlucose) + log(fastingInsulin) + log(nefa));
+        return buildIndexResult(result, interpret(result), getInterval());
     }
 
     @Override
-    public String interpret(double result) {
+    public Pair<String, Severity> interpret(double result) {
         double upperBound = interpretValue + fluctuation;
         double lowerBound = interpretValue - fluctuation;
         if (checkInBetween(lowerBound, upperBound, result)) {
-            return "Healthy";
+            return healthyPair();
         }
         upperBound = 0.367 + 0.008;
         lowerBound = 0.367 - 0.008;
         if (checkInBetween(lowerBound, upperBound, result)) {
-            return "Prediabetes";
+            return Pair.of("Prediabetes", Severity.PREDIABETES);
         }
         upperBound = 0.323 + 0.007;
         lowerBound = 0.323 - 0.007;
         if (checkInBetween(lowerBound, upperBound, result)) {
-            return "Type 2 diabetes";
+            return Pair.of("Type 2 diabetes", Severity.DIABETES);
         }
-        return "-";
+        return defaultPair();
     }
 
     @Override

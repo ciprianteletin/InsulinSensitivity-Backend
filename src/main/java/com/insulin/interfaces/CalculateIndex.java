@@ -1,5 +1,6 @@
 package com.insulin.interfaces;
 
+import com.insulin.model.form.IndexResult;
 import com.insulin.model.form.MandatoryInsulinInformation;
 
 /**
@@ -11,5 +12,5 @@ import com.insulin.model.form.MandatoryInsulinInformation;
  * we can access them based on the picked indexes from GUI.
  */
 public interface CalculateIndex {
-    double calculate(MandatoryInsulinInformation mandatoryInformation);
+    IndexResult calculate(MandatoryInsulinInformation mandatoryInformation);
 }

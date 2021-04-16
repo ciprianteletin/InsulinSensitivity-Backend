@@ -1,14 +1,19 @@
 package com.insulin.formula.index;
 
+import com.insulin.enumerations.Severity;
 import com.insulin.interfaces.CalculateIndex;
 import com.insulin.interfaces.IndexInterpreter;
+import com.insulin.model.form.IndexResult;
 import com.insulin.model.form.MandatoryInsulinInformation;
 import com.insulin.model.form.OptionalInsulinInformation;
+import org.springframework.data.util.Pair;
 
 import static com.insulin.formula.RangeChecker.checkLowerBound;
 import static com.insulin.formula.ValueConverter.APPROXIMATE;
 import static com.insulin.formula.ValueConverter.convertHDL;
 import static com.insulin.utils.FormulaUtils.*;
+import static com.insulin.utils.IndexUtils.buildIndexResult;
+import static com.insulin.utils.IndexUtils.healthyPair;
 import static com.insulin.validation.FormulaValidation.validateTyroAndHdl;
 import static com.insulin.validation.FormulaValidation.validateWeightAndHeight;
 import static java.lang.Math.pow;
@@ -17,7 +22,7 @@ public class Spise implements CalculateIndex, IndexInterpreter {
     private static final double lowerLimit = 6.61;
 
     @Override
-    public double calculate(MandatoryInsulinInformation mandatoryInformation) {
+    public IndexResult calculate(MandatoryInsulinInformation mandatoryInformation) {
         validateWeightAndHeight(mandatoryInformation.getOptionalInformation(), "spice");
         validateTyroAndHdl(mandatoryInformation.getOptionalInformation(), "spise");
         OptionalInsulinInformation optionalInformation = mandatoryInformation.getOptionalInformation();
@@ -26,15 +31,16 @@ public class Spise implements CalculateIndex, IndexInterpreter {
         double bmi = calculateBMI(optionalInformation);
         double tyro = optionalInformation.getThyroglobulin();
 
-        return 600 * pow(hdl, 0.185) / pow(tyro, 0.2) / pow(bmi, 1.338);
+        double result = 600 * pow(hdl, 0.185) / pow(tyro, 0.2) / pow(bmi, 1.338);
+        return buildIndexResult(result, interpret(result), getInterval());
     }
 
     @Override
-    public String interpret(double result) {
+    public Pair<String, Severity> interpret(double result) {
         if (checkLowerBound(lowerLimit, result)) {
-            return "Healthy";
+            return healthyPair();
         }
-        return "Insulin Resistance!";
+        return Pair.of("Insulin Resistance", Severity.INSULIN_RESISTANCE);
     }
 
     @Override
