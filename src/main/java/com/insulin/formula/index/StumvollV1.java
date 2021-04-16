@@ -22,7 +22,7 @@ public class StumvollV1 implements CalculateIndex, IndexInterpreter {
         InsulinMandatory insulinMandatory = mandatoryInformation.getInsulinMandatory();
 
         double insulin120 = convertSingleInsulin(insulinMandatory.getInsulinOneTwenty(),
-                mandatoryInformation.getPlaceholders().getInsulinPlaceholder(), "pmol/L");
+                mandatoryInformation.getInsulinMandatory().getInsulinPlaceholder(), "pmol/L");
         double bmi = calculateBMI(mandatoryInformation.getOptionalInformation());
         int age = mandatoryInformation.getAge();
 

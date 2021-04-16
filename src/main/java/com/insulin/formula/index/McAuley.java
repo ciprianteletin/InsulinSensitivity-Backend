@@ -28,9 +28,9 @@ public class McAuley implements CalculateIndex, IndexInterpreter {
                 .getOptionalInformation()
                 .getTriglyceride();
         fastingInsulin = convertSingleInsulin(fastingInsulin,
-                mandatoryInformation.getPlaceholders().getInsulinPlaceholder(), "μIU/mL");
+                mandatoryInformation.getInsulinMandatory().getInsulinPlaceholder(), "μIU/mL");
         trygliceride = convertTrygliceride(trygliceride,
-                mandatoryInformation.getPlaceholders().getGlucosePlaceholder());
+                mandatoryInformation.getGlucoseMandatory().getGlucosePlaceholder());
         double power = 2.63 - 0.28 * log(fastingInsulin) - 0.31 * log(trygliceride);
         double result = pow(Math.E, power);
 

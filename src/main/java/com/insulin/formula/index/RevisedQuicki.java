@@ -22,14 +22,14 @@ public class RevisedQuicki implements CalculateIndex, IndexInterpreter {
         validateNefa(mandatoryInformation.getOptionalInformation(), "revised quicki");
         double fastingGlucose = convertSingleGlucose(
                 mandatoryInformation.getGlucoseMandatory().getFastingGlucose(),
-                mandatoryInformation.getPlaceholders().getGlucosePlaceholder(),
+                mandatoryInformation.getGlucoseMandatory().getGlucosePlaceholder(),
                 "mmol/L");
         double fastingInsulin = convertSingleInsulin(
                 mandatoryInformation.getInsulinMandatory().getFastingInsulin(),
-                mandatoryInformation.getPlaceholders().getInsulinPlaceholder(),
+                mandatoryInformation.getInsulinMandatory().getInsulinPlaceholder(),
                 "μIU/mL");
         double nefa = convertNefa(mandatoryInformation.getOptionalInformation().getNefa(),
-                mandatoryInformation.getPlaceholders().getGlucosePlaceholder());
+                mandatoryInformation.getGlucoseMandatory().getGlucosePlaceholder());
 
         double result = 1.0 / (log(fastingGlucose) + log(fastingInsulin) + log(nefa));
         return buildIndexResult(result, interpret(result), getInterval());

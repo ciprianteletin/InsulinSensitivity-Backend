@@ -22,10 +22,8 @@ public class Belfiore implements CalculateIndex, IndexInterpreter {
         GlucoseMandatory glucoseMandatory = mandatoryInformation.getGlucoseMandatory();
         InsulinMandatory insulinMandatory = mandatoryInformation.getInsulinMandatory();
 
-        glucoseMandatory = glucoseConverter(glucoseMandatory,
-                mandatoryInformation.getPlaceholders(), "mmol/L");
-        insulinMandatory = insulinConverter(insulinMandatory,
-                mandatoryInformation.getPlaceholders(), "μIU/mL");
+        glucoseMandatory = glucoseConverter(glucoseMandatory, "mmol/L");
+        insulinMandatory = insulinConverter(insulinMandatory, "μIU/mL");
 
         double glucoseSubject = 0.5 * glucoseMandatory.getFastingGlucose() + glucoseMandatory.getGlucoseSix()
                 + glucoseMandatory.getGlucoseOneTwenty();

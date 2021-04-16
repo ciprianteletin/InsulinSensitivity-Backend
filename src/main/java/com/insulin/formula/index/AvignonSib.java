@@ -5,7 +5,6 @@ import com.insulin.model.form.GlucoseMandatory;
 import com.insulin.model.form.IndexResult;
 import com.insulin.model.form.InsulinMandatory;
 import com.insulin.model.form.MandatoryInsulinInformation;
-import com.insulin.utils.IndexUtils;
 
 import static com.insulin.shared.constants.NumericConstants.TEN_EIGHT;
 import static com.insulin.formula.ValueConverter.glucoseConverter;
@@ -20,10 +19,8 @@ public class AvignonSib implements CalculateIndex {
         int kilograms = mandatoryInformation.getOptionalInformation().getWeight();
         double vd = 150. / kilograms;
 
-        glucoseMandatory = glucoseConverter(glucoseMandatory,
-                mandatoryInformation.getPlaceholders(), "mmol/L");
-        insulinMandatory = insulinConverter(insulinMandatory,
-                mandatoryInformation.getPlaceholders(), "μIU/mL");
+        glucoseMandatory = glucoseConverter(glucoseMandatory, "mmol/L");
+        insulinMandatory = insulinConverter(insulinMandatory, "μIU/mL");
 
         return buildIndexResult(TEN_EIGHT / (glucoseMandatory.getFastingGlucose() * insulinMandatory.getFastingInsulin() * vd));
     }

@@ -27,7 +27,7 @@ public class Spise implements CalculateIndex, IndexInterpreter {
         validateTyroAndHdl(mandatoryInformation.getOptionalInformation(), "spise");
         OptionalInsulinInformation optionalInformation = mandatoryInformation.getOptionalInformation();
         double hdl = optionalInformation.getHdl();
-        hdl = convertHDL(hdl, mandatoryInformation.getPlaceholders().getGlucosePlaceholder());
+        hdl = convertHDL(hdl, mandatoryInformation.getGlucoseMandatory().getGlucosePlaceholder());
         double bmi = calculateBMI(optionalInformation);
         double tyro = optionalInformation.getThyroglobulin();
 

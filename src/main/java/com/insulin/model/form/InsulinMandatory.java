@@ -25,10 +25,12 @@ public class InsulinMandatory {
     @NotNull
     @Min(value = 0)
     private double insulinOneTwenty;
+    @NotNull
+    private String insulinPlaceholder;
 
-    public void convert(String placeholder) {
+    public void convert() {
         double conversionRate = INSULIN_CONVERT;
-        if (placeholder.equals("pmol/L")) {
+        if (this.insulinPlaceholder.equals("pmol/L")) {
             conversionRate = 1.0 / conversionRate;
         }
         fastingInsulin *= conversionRate;

@@ -25,10 +25,8 @@ public class Matsuda implements CalculateIndex, IndexInterpreter {
         GlucoseMandatory glucoseMandatory = mandatoryInformation.getGlucoseMandatory();
         InsulinMandatory insulinMandatory = mandatoryInformation.getInsulinMandatory();
 
-        glucoseMandatory = glucoseConverter(glucoseMandatory,
-                mandatoryInformation.getPlaceholders(), "mg/dL");
-        insulinMandatory = insulinConverter(insulinMandatory,
-                mandatoryInformation.getPlaceholders(), "μIU/mL");
+        glucoseMandatory = glucoseConverter(glucoseMandatory, "mg/dL");
+        insulinMandatory = insulinConverter(insulinMandatory, "μIU/mL");
 
         double meanGlucose = glucoseMean(glucoseMandatory);
         double meanInsulin = insulinMean(insulinMandatory);

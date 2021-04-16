@@ -24,12 +24,10 @@ public final class MandatoryInfoBuildUtils {
      */
     public static MandatoryInsulinInformation buildMandatory(MandatoryInsulinInformation mandatoryInformation) {
         return MandatoryInsulinInformation.builder() //
-                .username(mandatoryInformation.getUsername()) //
                 .age(mandatoryInformation.getAge()) //
                 .fullName(mandatoryInformation.getFullName()) //
                 .gender(mandatoryInformation.getGender()) //
                 .glucoseMandatory(buildGlucose(mandatoryInformation.getGlucoseMandatory())) //
-                .placeholders(buildPlaceholders(mandatoryInformation.getPlaceholders())) //
                 .insulinMandatory(buildInsulin(mandatoryInformation.getInsulinMandatory())) //
                 .selectedIndexes(mandatoryInformation.getSelectedIndexes()) //
                 .optionalInformation(buildOptional(mandatoryInformation.getOptionalInformation())) //
@@ -42,6 +40,7 @@ public final class MandatoryInfoBuildUtils {
                 .glucoseThree(glucoseMandatory.getGlucoseThree()) //
                 .glucoseSix(glucoseMandatory.getGlucoseSix()) //
                 .glucoseOneTwenty(glucoseMandatory.getGlucoseOneTwenty()) //
+                .glucosePlaceholder(glucoseMandatory.getGlucosePlaceholder()) //
                 .build();
     }
 
@@ -51,13 +50,6 @@ public final class MandatoryInfoBuildUtils {
                 .insulinThree(insulinMandatory.getInsulinThree()) //
                 .insulinSix(insulinMandatory.getInsulinSix()) //
                 .insulinOneTwenty(insulinMandatory.getInsulinOneTwenty()) //
-                .build();
-    }
-
-    public static Placeholders buildPlaceholders(Placeholders placeholders) {
-        return Placeholders.builder() //
-                .glucosePlaceholder(placeholders.getGlucosePlaceholder()) //
-                .insulinPlaceholder(placeholders.getInsulinPlaceholder()) //
                 .build();
     }
 

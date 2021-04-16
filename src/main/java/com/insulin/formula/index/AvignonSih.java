@@ -18,10 +18,8 @@ public class AvignonSih implements CalculateIndex {
         InsulinMandatory insulinMandatory = mandatoryInformation.getInsulinMandatory();
         double vd = 150. / mandatoryInformation.getOptionalInformation().getWeight();
 
-        glucoseMandatory = glucoseConverter(glucoseMandatory,
-                mandatoryInformation.getPlaceholders(), "mmol/L");
-        insulinMandatory = insulinConverter(insulinMandatory,
-                mandatoryInformation.getPlaceholders(), "μIU/mL");
+        glucoseMandatory = glucoseConverter(glucoseMandatory, "mmol/L");
+        insulinMandatory = insulinConverter(insulinMandatory, "μIU/mL");
 
         return buildIndexResult(TEN_EIGHT / (glucoseMandatory.getGlucoseOneTwenty() * insulinMandatory.getInsulinOneTwenty() * vd));
     }

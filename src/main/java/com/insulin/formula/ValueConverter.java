@@ -2,7 +2,6 @@ package com.insulin.formula;
 
 import com.insulin.model.form.GlucoseMandatory;
 import com.insulin.model.form.InsulinMandatory;
-import com.insulin.model.form.Placeholders;
 
 import static com.insulin.utils.MandatoryInfoBuildUtils.*;
 
@@ -25,30 +24,27 @@ public final class ValueConverter {
 
     }
 
-    public static GlucoseMandatory glucoseConverter
-            (GlucoseMandatory glucoseOriginal, Placeholders placeholders, String to) {
-        String from = placeholders.getGlucosePlaceholder();
+    public static GlucoseMandatory glucoseConverter(GlucoseMandatory glucoseOriginal, String to) {
+        String from = glucoseOriginal.getGlucosePlaceholder();
         if (from.equals(to)) {
             return glucoseOriginal;
         }
         GlucoseMandatory glucoseMandatory = buildGlucose(glucoseOriginal);
-        glucoseMandatory.convert(from);
+        glucoseMandatory.convert();
         return glucoseMandatory;
     }
 
-    public static InsulinMandatory insulinConverter
-            (InsulinMandatory insulinOriginal, Placeholders placeholders, String to) {
-        String from = placeholders.getInsulinPlaceholder();
+    public static InsulinMandatory insulinConverter(InsulinMandatory insulinOriginal, String to) {
+        String from = insulinOriginal.getInsulinPlaceholder();
         if (from.equals(to)) {
             return insulinOriginal;
         }
         InsulinMandatory insulinMandatory = buildInsulin(insulinOriginal);
-        insulinMandatory.convert(from);
+        insulinMandatory.convert();
         return insulinMandatory;
     }
 
-    public static double convertSingleGlucose
-            (double value, String from, String to) {
+    public static double convertSingleGlucose(double value, String from, String to) {
         if (from.equals(to)) {
             return value;
         }
@@ -58,8 +54,7 @@ public final class ValueConverter {
         return value / GLUCOSE_CONVERT;
     }
 
-    public static double convertSingleInsulin
-            (double value, String from, String to) {
+    public static double convertSingleInsulin(double value, String from, String to) {
         if (from.equals(to)) {
             return value;
         }

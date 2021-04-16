@@ -13,9 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class MandatoryInsulinInformation {
-    @Size(min = 6, max = 30)
-    // needed to register data for a logged user
-    private String username;
+    private Long id;
     // Not required if we have a username
     @Size(min = 1, max = 1)
     private String gender;
@@ -24,8 +22,6 @@ public class MandatoryInsulinInformation {
     private Integer age;
     @NonNull
     private List<String> selectedIndexes;
-    @Valid
-    private Placeholders placeholders;
     @Valid
     private GlucoseMandatory glucoseMandatory;
     @Valid

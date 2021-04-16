@@ -19,11 +19,11 @@ public class HomaB implements CalculateIndex, IndexInterpreter {
     public IndexResult calculate(MandatoryInsulinInformation mandatoryInformation) {
         double fastingGlucose = convertSingleGlucose(
                 mandatoryInformation.getGlucoseMandatory().getFastingGlucose(),
-                mandatoryInformation.getPlaceholders().getGlucosePlaceholder(),
+                mandatoryInformation.getGlucoseMandatory().getGlucosePlaceholder(),
                 "mmol/L");
         double fastingInsulin = convertSingleInsulin(
                 mandatoryInformation.getInsulinMandatory().getFastingInsulin(),
-                mandatoryInformation.getPlaceholders().getInsulinPlaceholder(),
+                mandatoryInformation.getInsulinMandatory().getInsulinPlaceholder(),
                 "μIU/mL");
 
         double result = (20 * fastingInsulin) / (fastingGlucose - 3.5);

@@ -28,10 +28,8 @@ public class Cederholm implements CalculateIndex, IndexInterpreter {
         GlucoseMandatory glucoseMandatory = mandatoryInformation.getGlucoseMandatory();
         InsulinMandatory insulinMandatory = mandatoryInformation.getInsulinMandatory();
 
-        glucoseMandatory = glucoseConverter(glucoseMandatory,
-                mandatoryInformation.getPlaceholders(), "mmol/L");
-        insulinMandatory = insulinConverter(insulinMandatory,
-                mandatoryInformation.getPlaceholders(), "μIU/mL");
+        glucoseMandatory = glucoseConverter(glucoseMandatory, "mmol/L");
+        insulinMandatory = insulinConverter(insulinMandatory, "μIU/mL");
 
         double meanGlucose = glucoseMean(glucoseMandatory);
         double meanInsulin = insulinMean(insulinMandatory);

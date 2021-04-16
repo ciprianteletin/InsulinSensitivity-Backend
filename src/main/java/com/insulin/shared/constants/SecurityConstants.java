@@ -22,5 +22,5 @@ public class SecurityConstants {
     public static final String ACCESS_DENIED_MESSAGE = "You don't have the permission to access this page."; // another error
     public static final String OPTIONS_HTTP_METHOD = "OPTIONS";
     public static final String[] PUBLIC_URLS = {"/login", "/register", "/autologin", "/forgotPassword/**",
-            "/resetPassword/**", "/user/resetPassword/**", "/user/image/**", "/index"}; // set of urls which are permitted by default.
+            "/resetPassword/**", "/user/resetPassword/**", "/user/image/**", "/index/**"}; // set of urls which are permitted by default.
 }

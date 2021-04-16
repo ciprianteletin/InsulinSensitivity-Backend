@@ -2,9 +2,7 @@ package com.insulin.service.implementation;
 
 import com.insulin.formula.result.Analyzer;
 import com.insulin.model.User;
-import com.insulin.model.form.Formula;
-import com.insulin.model.form.GlucoseMandatory;
-import com.insulin.model.form.MandatoryInsulinInformation;
+import com.insulin.model.form.*;
 import com.insulin.repository.UserRepository;
 import com.insulin.service.abstraction.IndexService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,15 +25,21 @@ public class IndexServiceImpl implements IndexService {
     }
 
     @Override
-    public void getIndexResult(MandatoryInsulinInformation mandatoryInformation) {
-        String username = mandatoryInformation.getUsername();
+    public void getIndexResult(MandatoryInsulinInformation mandatoryInformation, String username) {
         GlucoseMandatory glucoseMandatory = mandatoryInformation.getGlucoseMandatory();
         String initialResult = analyzer.filterGlucoseMandatoryResult(glucoseMandatory);
         User user = getUserOrNull(username); // for preserving a history
+        IndexSender sender = populateIndexSenderMap(mandatoryInformation);
+    }
+
+    private IndexSender populateIndexSenderMap(MandatoryInsulinInformation mandatoryInformation) {
+        IndexSender indexSender = new IndexSender();
         List<String> indexes = mandatoryInformation.getSelectedIndexes();
         indexes.forEach(index -> {
-            formula.getFormula(index).calculate(mandatoryInformation);
+            IndexResult result = formula.getFormula(index).calculate(mandatoryInformation);
+            indexSender.addResult(index, result);
         });
+        return indexSender;
     }
 
     private User getUserOrNull(String username) {

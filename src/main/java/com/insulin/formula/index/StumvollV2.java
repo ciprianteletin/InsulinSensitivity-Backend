@@ -20,11 +20,11 @@ public class StumvollV2 implements CalculateIndex, IndexInterpreter {
         GlucoseMandatory glucoseMandatory = mandatoryInformation.getGlucoseMandatory();
 
         double fastingInsulin = convertSingleInsulin(insulinMandatory.getFastingInsulin(),
-                mandatoryInformation.getPlaceholders().getInsulinPlaceholder(), "pmol/L");
+                mandatoryInformation.getInsulinMandatory().getInsulinPlaceholder(), "pmol/L");
         double insulin120 = convertSingleInsulin(insulinMandatory.getInsulinOneTwenty(),
-                mandatoryInformation.getPlaceholders().getInsulinPlaceholder(), "pmol/L");
+                mandatoryInformation.getInsulinMandatory().getInsulinPlaceholder(), "pmol/L");
         double glucose120 = convertSingleGlucose(glucoseMandatory.getGlucoseOneTwenty(),
-                mandatoryInformation.getPlaceholders().getGlucosePlaceholder(), "mmol/L");
+                mandatoryInformation.getGlucoseMandatory().getGlucosePlaceholder(), "mmol/L");
 
         double result = 0.156 - 0.0000459 * insulin120 - 0.000321 * fastingInsulin - 0.00541 * glucose120;
         return buildIndexResult(result, interpret(result));

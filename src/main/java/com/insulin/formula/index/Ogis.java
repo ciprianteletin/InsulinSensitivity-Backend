@@ -22,10 +22,8 @@ public class Ogis implements CalculateIndex, IndexInterpreter {
         GlucoseMandatory glucoseMandatory = mandatoryInformation.getGlucoseMandatory();
         InsulinMandatory insulinMandatory = mandatoryInformation.getInsulinMandatory();
 
-        glucoseMandatory = glucoseConverter(glucoseMandatory,
-                mandatoryInformation.getPlaceholders(), "mmol/L");
-        insulinMandatory = insulinConverter(insulinMandatory,
-                mandatoryInformation.getPlaceholders(), "pmol/L");
+        glucoseMandatory = glucoseConverter(glucoseMandatory, "mmol/L");
+        insulinMandatory = insulinConverter(insulinMandatory, "pmol/L");
 
         double glucoseNine = (glucoseMandatory.getGlucoseOneTwenty() + glucoseMandatory.getGlucoseSix()) / 2;
         double insulinNine = (insulinMandatory.getInsulinOneTwenty() + insulinMandatory.getInsulinSix()) / 2;

@@ -29,12 +29,9 @@ public class Gutt implements CalculateIndex, IndexInterpreter {
         InsulinMandatory insulinMandatory = mandatoryInformation.getInsulinMandatory();
 
 
-        GlucoseMandatory copyGlucose = glucoseConverter(glucoseMandatory,
-                mandatoryInformation.getPlaceholders(), "mg/dL");
-        insulinMandatory = insulinConverter(insulinMandatory,
-                mandatoryInformation.getPlaceholders(), "μIU/mL");
-        glucoseMandatory = glucoseConverter(glucoseMandatory,
-                mandatoryInformation.getPlaceholders(), "mmol/L");
+        GlucoseMandatory copyGlucose = glucoseConverter(glucoseMandatory, "mg/dL");
+        insulinMandatory = insulinConverter(insulinMandatory, "μIU/mL");
+        glucoseMandatory = glucoseConverter(glucoseMandatory, "mmol/L");
 
         double meanGlucose = glucoseMean(glucoseMandatory);
         double meanInsulin = insulinMean(insulinMandatory);
