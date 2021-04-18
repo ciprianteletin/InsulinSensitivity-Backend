@@ -5,16 +5,16 @@ import javax.validation.Payload;
 import java.lang.annotation.*;
 
 /**
- * Annotation used for phone number validation against user input.
+ * Used for glucose placeholders
  */
 @Documented
-@Constraint(validatedBy = PhoneNumberValidator.class)
+@Constraint(validatedBy = GlucosePlaceholderValidation.class)
 @Target({ElementType.METHOD, ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Phone {
+public @interface GlucosePlaceholder {
     String locale() default "";
 
-    String message() default "Invalid phone number!";
+    String message() default "Incorrect Glucose Placeholder!";
 
     Class<?>[] groups() default {};
 

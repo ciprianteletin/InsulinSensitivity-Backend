@@ -11,4 +11,5 @@ public class ExceptionConstants {
     public static final String INVALID_FIELD = "Invalid field inserted, please enter valid data";
     public static final String OLD_PASSWORD = "The new password must be different from the old one!";
     public static final String UPDATE_DENIED = "Token update operation is denied!";
+    public static final String NO_ELEMENT = "The requested value was not found";
 }

@@ -10,6 +10,10 @@ import lombok.*;
 import javax.persistence.*;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
+import static java.util.Objects.isNull;
 
 @Entity
 @Table(name = "users")
@@ -44,9 +48,23 @@ public class User implements Serializable {
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @PrimaryKeyJoinColumn
     private UserDetail details;
+    /**
+     * Stored as uni-directional relationship, because there is no need for the
+     * history to know and have a reference to the user.
+     */
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "history_id")
+    private List<History> historyList;
 
     public void setBidirectionalDetails(UserDetail userDetail) {
         this.details = userDetail;
         userDetail.setUser(this);
+    }
+
+    public void addHistory(History history) {
+        if (isNull(historyList)) {
+            historyList = new ArrayList<>();
+        }
+        historyList.add(history);
     }
 }

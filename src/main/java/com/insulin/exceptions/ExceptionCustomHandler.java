@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import javax.persistence.NoResultException;
 import java.io.IOException;
 import java.lang.reflect.UndeclaredThrowableException;
+import java.util.NoSuchElementException;
 
 import static com.insulin.shared.constants.ExceptionConstants.*;
 import static com.insulin.shared.constants.SecurityConstants.CAPTCHA_HEADER;
@@ -146,6 +147,11 @@ public class ExceptionCustomHandler {
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     public ResponseEntity<HttpResponse> methodNotSupportedException() {
         return buildHttpResponseEntity(HttpStatus.METHOD_NOT_ALLOWED, METHOD_NOT_ALLOWED);
+    }
+
+    @ExceptionHandler(NoSuchElementException.class)
+    public ResponseEntity<HttpResponse> noSuchElementException() {
+        return buildHttpResponseEntity(HttpStatus.SERVICE_UNAVAILABLE, NO_ELEMENT);
     }
 
     @ExceptionHandler(NoResultException.class)

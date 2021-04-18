@@ -1,31 +1,45 @@
 package com.insulin.model.form;
 
+import com.insulin.validation.GlucosePlaceholder;
 import lombok.*;
 
+import javax.persistence.*;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 import static com.insulin.formula.ValueConverter.GLUCOSE_CONVERT;
 
+@Entity
+@Table(name = "glucose_mandatory")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class GlucoseMandatory {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(nullable = false, updatable = false)
+    private Long id;
     @NotNull
     @Min(value = 0)
+    @Column(name = "fasting_glucose", updatable = false, nullable = false)
     private double fastingGlucose;
     @NotNull
     @Min(value = 0)
+    @Column(name = "glucose_three", updatable = false, nullable = false)
     private double glucoseThree;
     @NotNull
     @Min(value = 0)
+    @Column(name = "glucose_six", updatable = false, nullable = false)
     private double glucoseSix;
     @NotNull
     @Min(value = 0)
+    @Column(name = "glucose_onetwenty", updatable = false, nullable = false)
     private double glucoseOneTwenty;
     @NonNull
+    @GlucosePlaceholder
+    @Column(name = "glucose_placeholder", updatable = false, nullable = false)
     private String glucosePlaceholder;
 
     public void convert() {

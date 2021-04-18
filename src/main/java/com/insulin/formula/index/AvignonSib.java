@@ -16,7 +16,7 @@ public class AvignonSib implements CalculateIndex {
     public IndexResult calculate(MandatoryInsulinInformation mandatoryInformation) {
         GlucoseMandatory glucoseMandatory = mandatoryInformation.getGlucoseMandatory();
         InsulinMandatory insulinMandatory = mandatoryInformation.getInsulinMandatory();
-        int kilograms = mandatoryInformation.getOptionalInformation().getWeight();
+        double kilograms = mandatoryInformation.getOptionalInformation().getWeight();
         double vd = 150. / kilograms;
 
         glucoseMandatory = glucoseConverter(glucoseMandatory, "mmol/L");

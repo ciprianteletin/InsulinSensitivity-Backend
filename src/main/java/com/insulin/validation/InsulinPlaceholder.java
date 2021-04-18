@@ -5,16 +5,16 @@ import javax.validation.Payload;
 import java.lang.annotation.*;
 
 /**
- * Annotation used for phone number validation against user input.
+ * Used for insulin placeholders
  */
 @Documented
-@Constraint(validatedBy = PhoneNumberValidator.class)
+@Constraint(validatedBy = InsulinPlaceholderValidation.class)
 @Target({ElementType.METHOD, ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Phone {
+public @interface InsulinPlaceholder {
     String locale() default "";
 
-    String message() default "Invalid phone number!";
+    String message() default "Incorrect Insulin Placeholder!";
 
     Class<?>[] groups() default {};
 

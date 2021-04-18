@@ -13,10 +13,10 @@ import javax.validation.constraints.Min;
 public class OptionalInsulinInformation {
     @Min(value = 120)
     @Max(value = 240)
-    private Integer height;
+    private Double height;
     @Min(value = 40)
     @Max(value = 300)
-    private Integer weight;
+    private Double weight;
     @Min(value = 0)
     private Double nefa;
     @Min(value = 0)
@@ -25,5 +25,4 @@ public class OptionalInsulinInformation {
     private Double thyroglobulin;
     @Min(value = 0)
     private Double triglyceride;
-
 }

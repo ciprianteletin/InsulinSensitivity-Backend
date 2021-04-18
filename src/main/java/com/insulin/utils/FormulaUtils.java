@@ -23,8 +23,8 @@ public final class FormulaUtils {
     }
 
     public static double calculateBMI(OptionalInsulinInformation optionalInformation) {
-        int weight = optionalInformation.getWeight();
-        int height = optionalInformation.getHeight() / 100;
+        double weight = optionalInformation.getWeight();
+        double height = optionalInformation.getHeight() / 100;
 
         return weight / pow(height, 2);
     }

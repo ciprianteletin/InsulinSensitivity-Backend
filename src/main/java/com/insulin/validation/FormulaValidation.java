@@ -31,7 +31,7 @@ public final class FormulaValidation {
 
     public static void validateWeight(OptionalInsulinInformation optionalInformation, String index)
             throws InputIndexException {
-        Integer weight = optionalInformation.getWeight();
+        Double weight = optionalInformation.getWeight();
         if (isNull(weight)) {
             String message = MessageFormat.format(SINGLE_NULL, "weight", index);
             throw new InputIndexException(message);
@@ -40,7 +40,7 @@ public final class FormulaValidation {
 
     public static void validateHeight(OptionalInsulinInformation optionalInformation, String index)
             throws InputIndexException {
-        Integer height = optionalInformation.getWeight();
+        Double height = optionalInformation.getWeight();
         if (isNull(height)) {
             String message = MessageFormat.format(SINGLE_NULL, "height", index);
             throw new InputIndexException(message);

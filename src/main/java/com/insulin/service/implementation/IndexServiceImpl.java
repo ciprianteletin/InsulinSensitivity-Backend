@@ -4,24 +4,29 @@ import com.insulin.formula.result.Analyzer;
 import com.insulin.model.User;
 import com.insulin.model.form.*;
 import com.insulin.repository.UserRepository;
+import com.insulin.service.abstraction.HistoryService;
 import com.insulin.service.abstraction.IndexService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@Transactional
 public class IndexServiceImpl implements IndexService {
     private final Formula formula;
     private final Analyzer analyzer;
     private final UserRepository userRepository;
+    private final HistoryService historyService;
 
     @Autowired
-    public IndexServiceImpl(UserRepository userRepository) {
+    public IndexServiceImpl(UserRepository userRepository, HistoryService historyService) {
         this.formula = Formula.getInstance();
         this.analyzer = Analyzer.getInstance();
         this.userRepository = userRepository;
+        this.historyService = historyService;
     }
 
     @Override
@@ -30,6 +35,9 @@ public class IndexServiceImpl implements IndexService {
         String initialResult = analyzer.filterGlucoseMandatoryResult(glucoseMandatory);
         User user = getUserOrNull(username); // for preserving a history
         IndexSender sender = populateIndexSenderMap(mandatoryInformation);
+        if (user != null) {
+            this.historyService.saveHistory(user, mandatoryInformation, initialResult, sender);
+        }
     }
 
     private IndexSender populateIndexSenderMap(MandatoryInsulinInformation mandatoryInformation) {
