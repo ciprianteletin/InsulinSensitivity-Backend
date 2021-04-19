@@ -36,7 +36,7 @@ public final class Analyzer {
     }
 
     public String filterGlucoseMandatoryResult(GlucoseMandatory glucoseMandatory) {
-        String result = null;
+        String result = "Healthy";
         Optional<Interpreter> interpreter = interpreters.stream()
                 .filter(in -> in.interpret(glucoseMandatory))
                 .findAny();

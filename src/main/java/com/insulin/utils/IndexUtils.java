@@ -24,13 +24,13 @@ public final class IndexUtils {
 
     public static IndexResult buildIndexResult(double result) {
         return IndexResult.builder() //
-                .result(result) //
+                .result(Math.round(result * 100.0) / 100.0) //
                 .build();
     }
 
     public static IndexResult buildIndexResult(double result, Pair<String, Severity> pair) {
         return IndexResult.builder() //
-                .result(result) //
+                .result(Math.round(result * 100.0) / 100.0) //
                 .message(pair.getFirst()) //
                 .severity(pair.getSecond()) //
                 .normalRange("-") //
@@ -39,7 +39,7 @@ public final class IndexUtils {
 
     public static IndexResult buildIndexResult(double result, Pair<String, Severity> pair, String range) {
         return IndexResult.builder() //
-                .result(result) //
+                .result(Math.round(result * 100.0) / 100.0) //
                 .message(pair.getFirst()) //
                 .severity(pair.getSecond()) //
                 .normalRange(range) //

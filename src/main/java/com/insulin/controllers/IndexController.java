@@ -1,5 +1,6 @@
 package com.insulin.controllers;
 
+import com.insulin.model.form.IndexSender;
 import com.insulin.model.form.MandatoryInsulinInformation;
 import com.insulin.service.abstraction.IndexService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,9 +25,8 @@ public class IndexController {
      * that any user can use this feature.
      */
     @PostMapping("/{username}")
-    public ResponseEntity<HttpStatus> evaluateIndexes(@RequestBody @Valid MandatoryInsulinInformation mandatoryInformation,
-                                                      @PathVariable(name = "username", required = false) String username) {
-        indexService.getIndexResult(mandatoryInformation, username);
-        return new ResponseEntity<>(HttpStatus.OK);
+    public ResponseEntity<IndexSender> evaluateIndexes(@RequestBody @Valid MandatoryInsulinInformation mandatoryInformation,
+                                                       @PathVariable(name = "username", required = false) String username) {
+        return new ResponseEntity<>(indexService.getIndexResult(mandatoryInformation, username), HttpStatus.OK);
     }
 }

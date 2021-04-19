@@ -10,7 +10,6 @@ import com.insulin.model.form.OptionalInsulinInformation;
 import com.insulin.repository.HistoryRepository;
 import com.insulin.repository.UserRepository;
 import com.insulin.service.abstraction.HistoryService;
-import com.insulin.utils.IndexUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -40,11 +39,6 @@ public class HistoryServiceImpl implements HistoryService {
     }
 
     private History buildHistory(MandatoryInsulinInformation mandatoryInformation, String result, IndexSender sender) {
-        String computedResult = IndexUtils.getIndexResult(sender);
-        if (!computedResult.equals("-")) {
-            result = result + "|" + computedResult;
-        }
-
         return History.builder() //
                 .result(result) //
                 .indexHistory(convertSenderToHistory(sender)) //
