@@ -1,6 +1,12 @@
 package com.insulin.utils;
 
+import com.insulin.model.IndexHistory;
 import com.insulin.model.form.*;
+
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Static class used for building different objects related to index calculation.
@@ -50,6 +56,7 @@ public final class MandatoryInfoBuildUtils {
                 .insulinThree(insulinMandatory.getInsulinThree()) //
                 .insulinSix(insulinMandatory.getInsulinSix()) //
                 .insulinOneTwenty(insulinMandatory.getInsulinOneTwenty()) //
+                .insulinPlaceholder(insulinMandatory.getInsulinPlaceholder()) //
                 .build();
     }
 
@@ -62,5 +69,17 @@ public final class MandatoryInfoBuildUtils {
                 .thyroglobulin(optionalInformation.getThyroglobulin()) //
                 .triglyceride(optionalInformation.getTriglyceride()) //
                 .build();
+    }
+
+    public static Set<OptionalData> buildOptionalData(MandatoryInsulinInformation mandatoryInformation) {
+        Set<OptionalData> optionalData = new HashSet<>();
+        OptionalInsulinInformation optionalInfo = mandatoryInformation.getOptionalInformation();
+        optionalData.add(OptionalData.buildOptionalData("Height", optionalInfo.getHeight()));
+        optionalData.add(OptionalData.buildOptionalData("Weight", optionalInfo.getWeight()));
+        optionalData.add(OptionalData.buildOptionalData("Nefa", optionalInfo.getNefa()));
+        optionalData.add(OptionalData.buildOptionalData("HDL", optionalInfo.getHdl()));
+        optionalData.add(OptionalData.buildOptionalData("Thyroglobulin", optionalInfo.getThyroglobulin()));
+        optionalData.add(OptionalData.buildOptionalData("Triglyceride", optionalInfo.getTriglyceride()));
+        return optionalData.stream().filter(Objects::nonNull).collect(Collectors.toSet());
     }
 }

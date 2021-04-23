@@ -11,7 +11,7 @@ import static com.insulin.formula.ValueConverter.glucoseConverter;
 import static com.insulin.formula.ValueConverter.insulinConverter;
 import static com.insulin.utils.IndexUtils.buildIndexResult;
 
-public class AvignonSih implements CalculateIndex {
+public class AvingonSih implements CalculateIndex {
     @Override
     public IndexResult calculate(MandatoryInsulinInformation mandatoryInformation) {
         GlucoseMandatory glucoseMandatory = mandatoryInformation.getGlucoseMandatory();

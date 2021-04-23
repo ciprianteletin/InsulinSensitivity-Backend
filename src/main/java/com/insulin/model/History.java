@@ -46,10 +46,10 @@ public class History {
     @JoinColumn(name = "insulin_id")
     private InsulinMandatory insulinMandatory;
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinColumn(name = "index_id")
+    @JoinColumn(name = "history_id")
     private List<IndexHistory> indexHistory;
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinColumn(name = "optional_id")
+    @JoinColumn(name = "history_id")
     private Set<OptionalData> optionalData;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")

@@ -104,6 +104,12 @@ public class ExceptionCustomHandler {
         return buildHttpResponseEntity(HttpStatus.BAD_REQUEST, exception.getMessage());
     }
 
+    @ExceptionHandler(InvalidHistoryId.class)
+    public ResponseEntity<HttpResponse> invalidHistoryId(InvalidHistoryId exception) {
+        logger.error(exception.getMessage());
+        return buildHttpResponseEntity(HttpStatus.BAD_REQUEST, exception.getMessage());
+    }
+
     @ExceptionHandler(ActivateCaptchaException.class)
     public ResponseEntity<CaptchaModel> activateCaptchaCode() {
         logger.info("Activate cache for the current user!");

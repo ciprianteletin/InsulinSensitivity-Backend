@@ -11,14 +11,14 @@ import static com.insulin.shared.constants.NumericConstants.BALANCE_AVIGNON;
 import static com.insulin.utils.IndexUtils.buildIndexResult;
 import static com.insulin.utils.IndexUtils.defaultPair;
 
-public class Avignon implements CalculateIndex, IndexInterpreter {
-    private final CalculateIndex avignonSib = new AvignonSib();
-    private final CalculateIndex avignonSih = new AvignonSih();
+public class Avingon implements CalculateIndex, IndexInterpreter {
+    private final CalculateIndex avingonSib = new AvingonSib();
+    private final CalculateIndex avingonSih = new AvingonSih();
 
     @Override
     public IndexResult calculate(MandatoryInsulinInformation mandatoryInformation) {
-        double sibResult = avignonSib.calculate(mandatoryInformation).getResult();
-        double sihResult = avignonSih.calculate(mandatoryInformation).getResult();
+        double sibResult = avingonSib.calculate(mandatoryInformation).getResult();
+        double sihResult = avingonSih.calculate(mandatoryInformation).getResult();
 
         double result = ((BALANCE_AVIGNON * sibResult) + sihResult) / 2;
         return buildIndexResult(result, interpret(result));

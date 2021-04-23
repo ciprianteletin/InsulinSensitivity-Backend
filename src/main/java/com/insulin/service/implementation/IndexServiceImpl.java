@@ -34,13 +34,11 @@ public class IndexServiceImpl implements IndexService {
     public IndexSender getIndexResult(MandatoryInsulinInformation mandatoryInformation, String username) {
         GlucoseMandatory glucoseMandatory = mandatoryInformation.getGlucoseMandatory();
         String initialResult = analyzer.filterGlucoseMandatoryResult(glucoseMandatory);
-        User user = getUserOrNull(username); // for preserving a history
+        Optional<User> user = getUserOrNull(username); // for preserving a history
         IndexSender sender = populateIndexSenderMap(mandatoryInformation);
-        initialResult = generateResult(initialResult, sender);
-        sender.setResult(initialResult);
-        if (user != null) {
-            this.historyService.saveHistory(user, mandatoryInformation, initialResult, sender);
-        }
+        String result = generateResult(initialResult, sender);
+        sender.setResult(result);
+        user.ifPresent(u -> this.historyService.saveHistory(u, mandatoryInformation, result, sender));
         return sender;
     }
 
@@ -54,12 +52,11 @@ public class IndexServiceImpl implements IndexService {
         return indexSender;
     }
 
-    private User getUserOrNull(String username) {
+    private Optional<User> getUserOrNull(String username) {
         if (username == null) {
-            return null;
+            return Optional.empty();
         }
-        Optional<User> user = userRepository.findByUsername(username);
-        return user.orElse(null);
+        return userRepository.findByUsername(username);
     }
 
     private String generateResult(String result, IndexSender sender) {

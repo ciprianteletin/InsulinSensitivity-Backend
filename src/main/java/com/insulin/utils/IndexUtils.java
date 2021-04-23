@@ -5,9 +5,7 @@ import com.insulin.model.form.IndexResult;
 import com.insulin.model.form.IndexSender;
 import org.springframework.data.util.Pair;
 
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public final class IndexUtils {
     private IndexUtils() {

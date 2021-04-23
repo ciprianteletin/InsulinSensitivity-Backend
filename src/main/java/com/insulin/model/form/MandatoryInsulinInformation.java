@@ -13,8 +13,6 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class MandatoryInsulinInformation {
-    private Long id;
-    // Not required if we have a username
     @Size(min = 1, max = 1)
     private String gender;
     private String fullName;

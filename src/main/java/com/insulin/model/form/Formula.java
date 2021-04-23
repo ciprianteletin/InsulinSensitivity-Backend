@@ -102,8 +102,8 @@ public final class Formula {
     }
 
     private void addAvignon() {
-        String key = "avignon";
-        CalculateIndex calculateIndex = new Avignon();
+        String key = "avingon";
+        CalculateIndex calculateIndex = new Avingon();
         formulaCalculator.put(key, calculateIndex);
     }
 

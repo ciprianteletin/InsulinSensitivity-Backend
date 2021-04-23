@@ -23,6 +23,9 @@ public class IndexController {
     /**
      * No login requested for this endpoint for the simple fact
      * that any user can use this feature.
+     * <p>
+     * The returned object will represent the result displayed to the user, starting with the table of indexes
+     * and also the graphical representation.
      */
     @PostMapping("/{username}")
     public ResponseEntity<IndexSender> evaluateIndexes(@RequestBody @Valid MandatoryInsulinInformation mandatoryInformation,

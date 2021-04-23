@@ -53,7 +53,8 @@ public class User implements Serializable {
      * history to know and have a reference to the user.
      */
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "history_id")
+    @JoinColumn(name = "user_id")
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private List<History> historyList;
 
     public void setBidirectionalDetails(UserDetail userDetail) {

@@ -2,7 +2,6 @@ package com.insulin.model;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-import com.insulin.model.form.IndexResult;
 import com.sun.istack.NotNull;
 import lombok.*;
 
@@ -38,13 +37,4 @@ public class IndexHistory {
     @NotNull
     @Column(nullable = false, updatable = false)
     private String normalRange;
-
-    public static IndexHistory buildIndexHistory(String name, IndexResult indexResult) {
-        return IndexHistory.builder() //
-                .indexName(name) //
-                .result(indexResult.getResult()) //
-                .message(indexResult.getMessage()) //
-                .normalRange(indexResult.getNormalRange()) //
-                .build();
-    }
 }
