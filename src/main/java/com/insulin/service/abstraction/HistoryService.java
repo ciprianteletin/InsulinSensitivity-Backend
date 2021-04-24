@@ -17,4 +17,6 @@ public interface HistoryService {
     List<IndexSummary> findSummaryByUsername(String username) throws UserNotFoundException;
 
     Pair<MandatoryInsulinInformation, IndexSender> getMandatorySenderPairByHistoryId(Long id, String username) throws InvalidHistoryId, UserNotFoundException;
+
+    void deleteByHistoryId(Long historyId);
 }

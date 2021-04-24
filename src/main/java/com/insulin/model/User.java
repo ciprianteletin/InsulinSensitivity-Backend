@@ -50,7 +50,8 @@ public class User implements Serializable {
     private UserDetail details;
     /**
      * Stored as uni-directional relationship, because there is no need for the
-     * history to know and have a reference to the user.
+     * history to know and have a reference to the user. Using Cascade.ALL,
+     * because we want to get rid of all information associated to the current user.
      */
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")

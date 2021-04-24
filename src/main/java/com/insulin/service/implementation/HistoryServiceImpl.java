@@ -52,6 +52,7 @@ public class HistoryServiceImpl implements HistoryService {
         return relatedHistory.stream().map(HistoryUtils::convertHistoryToSummary)
                 .collect(Collectors.toList());
     }
+
     // TODO maybe check if the logged user has an history object with that id.
     @Override
     public Pair<MandatoryInsulinInformation, IndexSender> getMandatorySenderPairByHistoryId(Long id, String username)
@@ -63,6 +64,11 @@ public class HistoryServiceImpl implements HistoryService {
         addUserData(user, mandatoryInformation);
         IndexSender sender = convertHistoryToSender(history);
         return Pair.of(mandatoryInformation, sender);
+    }
+
+    @Override
+    public void deleteByHistoryId(Long historyId) {
+        historyRepository.deleteById(historyId);
     }
 
     private User getUserByUsernameOrThrowError(String username) throws UserNotFoundException {
