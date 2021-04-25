@@ -46,6 +46,9 @@ public class GlucoseMandatory {
         double conversionRate = GLUCOSE_CONVERT;
         if (this.glucosePlaceholder.equals("mg/dL")) {
             conversionRate = 1.0 / conversionRate;
+            this.glucosePlaceholder = "mmol/L";
+        } else {
+            this.glucosePlaceholder = "mg/dL";
         }
         fastingGlucose *= conversionRate;
         glucoseThree *= conversionRate;

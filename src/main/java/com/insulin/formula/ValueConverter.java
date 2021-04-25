@@ -2,6 +2,7 @@ package com.insulin.formula;
 
 import com.insulin.model.form.GlucoseMandatory;
 import com.insulin.model.form.InsulinMandatory;
+import com.insulin.model.form.OptionalInsulinInformation;
 
 import static com.insulin.utils.MandatoryInfoBuildUtils.*;
 
@@ -17,8 +18,9 @@ public final class ValueConverter {
     public static final String APPROXIMATE = "≅";
     public static final String GREATER_THAN = ">";
     public static final String DASH = "-";
-    private static final double NEFA_CONVERT = 0.35;
-    private static final double TRYGLICERIDE_CONVERT = 0.01129;
+    public static final double NEFA_CONVERT = 0.35;
+    public static final double TRYGLICERIDE_CONVERT = 0.01129;
+    public static final double HDL_CONVERT = 38.67;
 
     private ValueConverter() {
 
@@ -42,6 +44,15 @@ public final class ValueConverter {
         InsulinMandatory insulinMandatory = buildInsulin(insulinOriginal);
         insulinMandatory.convert();
         return insulinMandatory;
+    }
+
+    public static OptionalInsulinInformation optionalConverter(OptionalInsulinInformation optionalInsulin, String from, String to) {
+        if (from.equals(to)) {
+            return optionalInsulin;
+        }
+        OptionalInsulinInformation copyOptional = buildOptional(optionalInsulin);
+        copyOptional.convert(from);
+        return copyOptional;
     }
 
     public static double convertSingleGlucose(double value, String from, String to) {
@@ -82,6 +93,6 @@ public final class ValueConverter {
         if (from.equals("mmol/L")) {
             return value;
         }
-        return value / 38.67;
+        return value / HDL_CONVERT;
     }
 }

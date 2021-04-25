@@ -5,6 +5,8 @@ import lombok.*;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 
+import static com.insulin.formula.ValueConverter.*;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -25,4 +27,20 @@ public class OptionalInsulinInformation {
     private Double thyroglobulin;
     @Min(value = 0)
     private Double triglyceride;
+
+    public void convert(String actual) {
+        // From mmol to mg/dL
+        double nefaConvert = NEFA_CONVERT;
+        double hdlConvert = HDL_CONVERT;
+        double triglycerideConvert = TRYGLICERIDE_CONVERT;
+
+        if (actual.equals("mg/dL")) {
+            nefaConvert = 1. / nefaConvert;
+            hdlConvert = 1. / hdlConvert;
+            triglycerideConvert = 1. / triglycerideConvert;
+        }
+        nefa *= nefaConvert;
+        hdl *= hdlConvert;
+        triglyceride *= triglycerideConvert;
+    }
 }

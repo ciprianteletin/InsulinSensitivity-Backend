@@ -46,6 +46,9 @@ public class InsulinMandatory {
         double conversionRate = INSULIN_CONVERT;
         if (this.insulinPlaceholder.equals("pmol/L")) {
             conversionRate = 1.0 / conversionRate;
+            this.insulinPlaceholder = "μIU/mL";
+        } else {
+            this.insulinPlaceholder = "pmol/L";
         }
         fastingInsulin *= conversionRate;
         insulinThree *= conversionRate;

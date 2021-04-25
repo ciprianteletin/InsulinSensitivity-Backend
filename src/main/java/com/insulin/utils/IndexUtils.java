@@ -20,15 +20,19 @@ public final class IndexUtils {
         return Pair.of("Healthy", Severity.HEALTHY);
     }
 
+    public static double roundValue(double result) {
+        return Math.round(result * 100.0) / 100.0;
+    }
+
     public static IndexResult buildIndexResult(double result) {
         return IndexResult.builder() //
-                .result(Math.round(result * 100.0) / 100.0) //
+                .result(roundValue(result)) //
                 .build();
     }
 
     public static IndexResult buildIndexResult(double result, Pair<String, Severity> pair) {
         return IndexResult.builder() //
-                .result(Math.round(result * 100.0) / 100.0) //
+                .result(roundValue(result)) //
                 .message(pair.getFirst()) //
                 .severity(pair.getSecond()) //
                 .normalRange("-") //
@@ -37,7 +41,7 @@ public final class IndexUtils {
 
     public static IndexResult buildIndexResult(double result, Pair<String, Severity> pair, String range) {
         return IndexResult.builder() //
-                .result(Math.round(result * 100.0) / 100.0) //
+                .result(roundValue(result)) //
                 .message(pair.getFirst()) //
                 .severity(pair.getSecond()) //
                 .normalRange(range) //
