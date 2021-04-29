@@ -21,7 +21,7 @@ public final class IndexUtils {
     }
 
     public static double roundValue(double result) {
-        return Math.round(result * 100.0) / 100.0;
+        return Math.round(result * 10000.0) / 10000.0;
     }
 
     public static IndexResult buildIndexResult(double result) {

@@ -1,7 +1,8 @@
 package com.insulin.formula.index;
 
 import com.insulin.enumerations.Severity;
-import com.insulin.interfaces.CalculateIndex;
+import com.insulin.excel.utils.FormulaExcelUtils;
+import com.insulin.interfaces.FormulaMarker;
 import com.insulin.interfaces.IndexInterpreter;
 import com.insulin.model.form.GlucoseMandatory;
 import com.insulin.model.form.IndexResult;
@@ -10,6 +11,7 @@ import com.insulin.model.form.MandatoryInsulinInformation;
 import org.springframework.data.util.Pair;
 
 import static com.insulin.formula.RangeChecker.checkUpperBound;
+import static com.insulin.shared.constants.IndexDataConstants.*;
 import static com.insulin.shared.constants.NumericConstants.TEN_FOUR;
 import static com.insulin.formula.ValueConverter.*;
 import static com.insulin.utils.FormulaUtils.glucoseMean;
@@ -17,7 +19,7 @@ import static com.insulin.utils.FormulaUtils.insulinMean;
 import static com.insulin.utils.IndexUtils.buildIndexResult;
 import static com.insulin.utils.IndexUtils.healthyPair;
 
-public class Matsuda implements CalculateIndex, IndexInterpreter {
+public class Matsuda implements FormulaMarker, IndexInterpreter {
     private static final double interpretValue = 4.3;
 
     @Override
@@ -47,5 +49,21 @@ public class Matsuda implements CalculateIndex, IndexInterpreter {
     @Override
     public String getInterval() {
         return LESS_THAN + interpretValue;
+    }
+
+    @Override
+    public String generateExcelFormula(int infoId) {
+        StringBuilder formulaBuilder = new StringBuilder();
+        String fastingGlucoseFormula = FormulaExcelUtils.getGlucose(infoId, "mg/dL", FASTING_GLUCOSE);
+        String fastingInsulin = FormulaExcelUtils.getInsulin(infoId, "μIU/mL", FASTING_INSULIN);
+        String sqrtFastingGlucose = FormulaExcelUtils.getSqrt(fastingGlucoseFormula);
+        String meanGlucoseFormula = FormulaExcelUtils.getGlucoseMeanIncomplete(infoId, "mg/dL");
+        String meanInsulinFormula = FormulaExcelUtils.getInsulinMeanIncomplete(infoId, "μIU/mL");
+
+        formulaBuilder.append("10000 / (").append(sqrtFastingGlucose).append(" * ")
+                .append(fastingInsulin).append(" * ").append(meanGlucoseFormula)
+                .append(" * ").append(meanInsulinFormula).append(")");
+
+        return formulaBuilder.toString();
     }
 }

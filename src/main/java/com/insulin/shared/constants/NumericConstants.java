@@ -1,8 +1,8 @@
 package com.insulin.shared.constants;
 
-public class NumericConstants {
+public final class NumericConstants {
     public static final int TEN_FOUR = 10_000;
-    public static final int TEN_EIGHT = 10_000_000;
+    public static final int TEN_EIGHT = 100_000_000;
     public static final double BALANCE_AVIGNON = 0.137;
 
     /**

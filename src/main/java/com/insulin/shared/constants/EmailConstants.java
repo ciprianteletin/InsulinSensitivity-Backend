@@ -4,7 +4,7 @@ package com.insulin.shared.constants;
  * Large class of constants used for email, starting from the configuration to the actual message passed
  * to the user.
  */
-public class EmailConstants {
+public final class EmailConstants {
     public static final String SIMPLE_MAIL_TRANSFER_PROTOCOL = "smtps";
     public static final String FROM_EMAIL = "support@insulin.com";
     public static final String CC_EMAIL = "";

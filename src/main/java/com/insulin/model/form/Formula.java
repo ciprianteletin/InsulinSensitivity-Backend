@@ -2,6 +2,8 @@ package com.insulin.model.form;
 
 import com.insulin.formula.index.*;
 import com.insulin.interfaces.CalculateIndex;
+import com.insulin.interfaces.ExcelFormula;
+import com.insulin.interfaces.FormulaMarker;
 
 import java.util.Map;
 
@@ -15,7 +17,7 @@ import static java.util.Objects.isNull;
  */
 public final class Formula {
     private static Formula formula;
-    public final Map<String, CalculateIndex> formulaCalculator = newHashMap();
+    public final Map<String, FormulaMarker> formulaCalculator = newHashMap();
 
     private Formula() {
         prepopulateMap();
@@ -29,6 +31,10 @@ public final class Formula {
     }
 
     public CalculateIndex getFormula(String index) {
+        return formulaCalculator.get(index);
+    }
+
+    public ExcelFormula getExcelFormula(String index) {
         return formulaCalculator.get(index);
     }
 
@@ -53,25 +59,25 @@ public final class Formula {
 
     private void addCederholm() {
         String key = "cederholm";
-        CalculateIndex calculateIndex = new Cederholm();
+        FormulaMarker calculateIndex = new Cederholm();
         formulaCalculator.put(key, calculateIndex);
     }
 
     private void addGutt() {
         String key = "gutt";
-        CalculateIndex calculateIndex = new Gutt();
+        FormulaMarker calculateIndex = new Gutt();
         formulaCalculator.put(key, calculateIndex);
     }
 
     private void addMatsuda() {
         String key = "matsuda";
-        CalculateIndex calculateIndex = new Matsuda();
+        FormulaMarker calculateIndex = new Matsuda();
         formulaCalculator.put(key, calculateIndex);
     }
 
     private void addHoma() {
         String key = "homa";
-        CalculateIndex calculateIndex = new Homa();
+        FormulaMarker calculateIndex = new Homa();
         formulaCalculator.put(key, calculateIndex);
         addHomaB();
         addLogHoma();
@@ -79,37 +85,37 @@ public final class Formula {
 
     private void addHomaB() {
         String key = "homab";
-        CalculateIndex calculateIndex = new HomaB();
+        FormulaMarker calculateIndex = new HomaB();
         formulaCalculator.put(key, calculateIndex);
     }
 
     private void addLogHoma() {
         String key = "loghoma";
-        CalculateIndex calculateIndex = new LogHoma();
+        FormulaMarker calculateIndex = new LogHoma();
         formulaCalculator.put(key, calculateIndex);
     }
 
     private void addQuicki() {
         String key = "quicki";
-        CalculateIndex calculateIndex = new Quicki();
+        FormulaMarker calculateIndex = new Quicki();
         formulaCalculator.put(key, calculateIndex);
     }
 
     private void addRevised() {
         String key = "revised";
-        CalculateIndex calculateIndex = new RevisedQuicki();
+        FormulaMarker calculateIndex = new RevisedQuicki();
         formulaCalculator.put(key, calculateIndex);
     }
 
     private void addAvignon() {
         String key = "avingon";
-        CalculateIndex calculateIndex = new Avingon();
+        FormulaMarker calculateIndex = new Avingon();
         formulaCalculator.put(key, calculateIndex);
     }
 
     private void addBelfiore() {
         String key = "belfiore";
-        CalculateIndex calculateIndex = new Belfiore();
+        FormulaMarker calculateIndex = new Belfiore();
         formulaCalculator.put(key, calculateIndex);
     }
 
@@ -120,31 +126,31 @@ public final class Formula {
 
     private void addStumvollV1() {
         String key = "stumvoll1";
-        CalculateIndex calculateIndex = new StumvollV1();
+        FormulaMarker calculateIndex = new StumvollV1();
         formulaCalculator.put(key, calculateIndex);
     }
 
     private void addStumvollV2() {
         String key = "stumvoll2";
-        CalculateIndex calculateIndex = new StumvollV2();
+        FormulaMarker calculateIndex = new StumvollV2();
         formulaCalculator.put(key, calculateIndex);
     }
 
     private void addMcAuley() {
         String key = "mcauley";
-        CalculateIndex calculateIndex = new McAuley();
+        FormulaMarker calculateIndex = new McAuley();
         formulaCalculator.put(key, calculateIndex);
     }
 
     private void addSpise() {
         String key = "spise";
-        CalculateIndex calculateIndex = new Spise();
+        FormulaMarker calculateIndex = new Spise();
         formulaCalculator.put(key, calculateIndex);
     }
 
     private void addOgis() {
         String key = "ogis";
-        CalculateIndex calculateIndex = new Ogis();
+        FormulaMarker calculateIndex = new Ogis();
         formulaCalculator.put(key, calculateIndex);
     }
 }

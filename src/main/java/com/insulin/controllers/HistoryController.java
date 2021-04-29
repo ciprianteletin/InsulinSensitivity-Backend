@@ -33,7 +33,7 @@ public class HistoryController {
         return new ResponseEntity<>(this.historyService.findSummaryByUsername(username), HttpStatus.OK);
     }
 
-    @GetMapping("result/{id}")
+    @GetMapping("/result/{id}")
     @PreAuthorize("hasAnyAuthority('PATIENT', 'MEDIC', 'ADMIN')")
     public ResponseEntity<Pair<MandatoryInsulinInformation, IndexSender>> getResultsById(@PathVariable("id") Long id,
                                                                                          Authentication auth)

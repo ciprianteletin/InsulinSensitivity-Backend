@@ -7,4 +7,5 @@ public class UserConstants {
     public static final String EMAIL_ALREADY_EXISTENT = "The email provided is already existent.";
     public static final String USER_UPDATED = "User information updated with success!";
     public static final String NOT_UNIQUE_PHONE = "The given phone number is already used!";
+    public static final String LOCAL_PATH = "C:\\Users\\Cipri\\Downloads\\";
 }

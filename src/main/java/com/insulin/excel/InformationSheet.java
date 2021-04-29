@@ -1,5 +1,6 @@
 package com.insulin.excel;
 
+import com.insulin.excel.utils.RowTracker;
 import com.insulin.model.form.GlucoseMandatory;
 import com.insulin.model.form.InsulinMandatory;
 import com.insulin.model.form.MandatoryInsulinInformation;
@@ -8,9 +9,9 @@ import org.apache.poi.ss.usermodel.*;
 
 import java.util.List;
 
+import static com.insulin.excel.utils.ExcelCommons.*;
 import static com.insulin.excel.utils.InformationPageUtils.*;
 import static com.insulin.formula.ValueConverter.*;
-import static java.util.Objects.isNull;
 
 /**
  * InformationSheet class represents the first page of the Excel document which contains all
@@ -26,60 +27,56 @@ import static java.util.Objects.isNull;
  */
 public class InformationSheet {
     private final List<String> dataNames;
-    private int rowNumber;
     private final Workbook workbook;
     private final Sheet sheet;
     private int infoId;
+    private final RowTracker tracker;
 
     public InformationSheet(Workbook workbook) {
         this.dataNames = getDataNamesList();
-        sheet = generateInfoSheet();
+        this.tracker = new RowTracker();
+        tracker.addNewRecord(infoSheetName, 0);
         this.workbook = workbook;
+        sheet = createSheet();
         this.infoId = 1;
-        this.rowNumber = 0;
     }
 
+    /**
+     * The information id is used to calculate the formula with the expected data.
+     * The information of any formula depends on this information. The data in mg/dL and uUi/mL will be find on row infoId * 3 - 1.
+     * For example, for infoId = 1, the values will be on row 2 and 3
+     */
     public int getCurrentInfoId() {
         return this.infoId;
     }
 
     public void addMandatoryInformation(MandatoryInsulinInformation mandatoryInformation) {
-        Row firstRow = sheet.createRow(this.rowNumber++);
-        Row secondRow = sheet.createRow(this.rowNumber++);
+        Row firstRow = sheet.createRow(this.tracker.getAndUpdate(infoSheetName));
+        Row secondRow = sheet.createRow(this.tracker.getAndUpdate(infoSheetName));
         addUserInfo(firstRow, secondRow, mandatoryInformation);
         addGlucoseData(mandatoryInformation.getGlucoseMandatory(), firstRow, secondRow);
         addInsulinData(mandatoryInformation.getInsulinMandatory(), firstRow, secondRow);
         addOptionalData(mandatoryInformation.getOptionalInformation(),
                 mandatoryInformation.getGlucoseMandatory().getGlucosePlaceholder(),
                 firstRow, secondRow);
+        createEmptyRow(this.tracker.getAndUpdate(infoSheetName), this.sheet);
     }
 
     private void addUserInfo(Row firstRow, Row secondRow, MandatoryInsulinInformation mandatoryInformation) {
         int cellNr = 0;
-        Cell cell = firstRow.createCell(cellNr++);
-        cell.setCellValue(infoId);
 
+        createCellWithValue(firstRow, cellNr++, infoId);
         createEmptyColumn(firstRow, cellNr++);
-
-        cell = firstRow.createCell(cellNr++);
-        cell.setCellValue(getGender(mandatoryInformation.getGender()));
-
-        cell = firstRow.createCell(cellNr);
-        cell.setCellValue(mandatoryInformation.getAge());
+        createCellWithValue(firstRow, cellNr++, getGender(mandatoryInformation.getGender()));
+        createCellWithValue(firstRow, cellNr, mandatoryInformation.getAge());
 
         cellNr = 0;
-        cell = secondRow.createCell(cellNr++);
-        cell.setCellValue(infoId);
 
+        createCellWithValue(secondRow, cellNr++, infoId);
         createEmptyColumn(secondRow, cellNr++);
         // As the second row will contain the same age & gender, we use - instead, in order to avoid duplicates.
-        cell = secondRow.createCell(cellNr++);
-        cell.setCellValue('-');
-
-        cell = secondRow.createCell(cellNr);
-        cell.setCellValue('-');
-
-        ++infoId;
+        createCellWithValue(secondRow, cellNr++, "-");
+        createCellWithValue(secondRow, cellNr, "-");
     }
 
     private void addGlucoseData(GlucoseMandatory glucoseMandatory, Row firstRow, Row secondRow) {
@@ -159,92 +156,25 @@ public class InformationSheet {
         createCellWithNullCheck(row, cellNr, optionalinformation.getThyroglobulin());
     }
 
-    private Sheet generateInfoSheet() {
-        Sheet sheet = createSheet();
+    private Sheet createSheet() {
+        Sheet sheet = workbook.createSheet("General");
         createHeader(sheet);
         return sheet;
     }
 
-    /**
-     * Method to create an empty cell on a specific position in the given row.
-     * The simple statement could be used instead of calling the method, but
-     * the method name has a clear intend.
-     */
-    private void createEmptyColumn(Row row, int cellNr) {
-        row.createCell(cellNr);
-    }
-
     private void createHeader(Sheet sheet) {
-        CellStyle cellStyle = generateHeaderStyle();
+        CellStyle cellStyle = generateHeaderStyle(workbook);
         int cellNumber = 0;
-        Row header = sheet.createRow(rowNumber++);
-        Cell cell = createCell(header, cellNumber++, cellStyle);
-        cell.setCellValue("Information id");
-        createCell(header, cellNumber++, cellStyle); // we want a gap between id and the rest of data
+        Row header = sheet.createRow(this.tracker.getAndUpdate(infoSheetName));
+        createCellWithStyleAndValue(header, cellNumber++, cellStyle, "Information id");
+        createCellWithStyle(header, cellNumber++, cellStyle); // we want a gap between id and the rest of data
         for (String name : dataNames) {
-            cell = createCell(header, cellNumber++, cellStyle);
-            cell.setCellValue(name);
+            createCellWithStyleAndValue(header, cellNumber++, cellStyle, name);
         }
-    }
-
-    private void createCellWithValue(Row row, int cellNr, Double value) {
-        Cell cell = row.createCell(cellNr);
-        cell.setCellValue(value);
-    }
-
-    private void createCellWithValue(Row row, int cellNr, String value) {
-        Cell cell = row.createCell(cellNr);
-        cell.setCellValue(value);
-    }
-
-    /**
-     * Method used for optional values that can be null. Replacing null with "-"
-     */
-    private void createCellWithNullCheck(Row row, int cellNr, Double value) {
-        Cell cell = row.createCell(cellNr);
-        if (isNull(value)) {
-            cell.setCellValue("-");
-            return;
+        int columns = dataNames.size() + 2;
+        for (int i = 0; i < columns; i++) {
+            sheet.autoSizeColumn(i);
         }
-        cell.setCellValue(value);
-    }
-
-    private void createCellWithNullCheckCommons(Row firstRow, Row secondRow, int cellNr, Double value) {
-        createCellWithNullCheck(firstRow, cellNr, value);
-        createCellWithNullCheck(secondRow, cellNr, value);
-    }
-
-    private Cell createCell(Row row, int cellNumber, CellStyle cellStyle) {
-        Cell cell = row.createCell(cellNumber);
-        cell.setCellStyle(cellStyle);
-        return cell;
-    }
-
-    private Sheet createSheet() {
-        Sheet sheet = workbook.createSheet("General");
-        sheet.setDefaultColumnWidth(6000);
-        return sheet;
-    }
-
-    private CellStyle generateHeaderStyle() {
-        Font font = generateHeaderFont();
-        CellStyle style = workbook.createCellStyle();
-        style.setFillForegroundColor(IndexedColors.DARK_BLUE.getIndex());
-        style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-        style.setVerticalAlignment(VerticalAlignment.CENTER);
-        style.setAlignment(HorizontalAlignment.CENTER);
-        style.setFont(font);
-        return style;
-    }
-
-    private Font generateHeaderFont() {
-        Font font = workbook.createFont();
-        font.setFontHeightInPoints((short) 10);
-        font.setFontName("Arial");
-        font.setColor(IndexedColors.WHITE.getIndex());
-        font.setBold(true);
-        font.setItalic(false);
-        return font;
     }
 
     private String getGender(String gender) {

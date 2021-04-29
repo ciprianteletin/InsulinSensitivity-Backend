@@ -3,7 +3,7 @@ package com.insulin.shared.constants;
 /**
  * A bunch of constant used for security configuration or to specify some time durations.
  */
-public class SecurityConstants {
+public final class SecurityConstants {
     public static final long JWT_EXPIRATION_TIME = 900_000;  // 15 minutes in milliseconds
     public static final long REFRESH_EXPIRATION_TIME_MS = 604_800_000L; // 7 days in ms
     public static final int REFRESH_EXPIRATION_TIME_SEC = 604_800; // 7 days in seconds

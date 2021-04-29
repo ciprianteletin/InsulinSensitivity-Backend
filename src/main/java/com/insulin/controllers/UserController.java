@@ -33,7 +33,7 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping("username/{username}")
+    @GetMapping("/username/{username}")
     @PreAuthorize("hasAnyAuthority('PATIENT', 'MEDIC', 'ADMIN')")
     public ResponseEntity<User> getUserByUsername(@PathVariable("username") String username) {
         return new ResponseEntity<>(userService.getUserByUsername(username), HttpStatus.OK);
@@ -62,7 +62,7 @@ public class UserController {
         return HttpResponseUtils.buildHttpResponseEntity(HttpStatus.OK, USER_UPDATED);
     }
 
-    @PutMapping("updatePassword")
+    @PutMapping("/updatePassword")
     @PreAuthorize("hasAnyAuthority('PATIENT', 'MEDIC', 'ADMIN')")
     public ResponseEntity<HttpResponse> updateUserPassword(@Valid @RequestBody UserPasswordInfo userPasswordInfo,
                                                            Authentication authentication) throws OldPasswordException {

@@ -1,7 +1,8 @@
 package com.insulin.formula.index;
 
 import com.insulin.enumerations.Severity;
-import com.insulin.interfaces.CalculateIndex;
+import com.insulin.excel.utils.FormulaExcelUtils;
+import com.insulin.interfaces.FormulaMarker;
 import com.insulin.interfaces.IndexInterpreter;
 import com.insulin.model.form.IndexResult;
 import com.insulin.model.form.MandatoryInsulinInformation;
@@ -9,11 +10,12 @@ import org.springframework.data.util.Pair;
 
 import static com.insulin.formula.RangeChecker.checkInBetween;
 import static com.insulin.formula.ValueConverter.*;
+import static com.insulin.shared.constants.IndexDataConstants.*;
 import static com.insulin.utils.IndexUtils.*;
 import static com.insulin.validation.FormulaValidation.validateNefa;
 import static java.lang.Math.log;
 
-public class RevisedQuicki implements CalculateIndex, IndexInterpreter {
+public class RevisedQuicki implements FormulaMarker, IndexInterpreter {
     private final double interpretValue = 0.448;
     private final double fluctuation = 0.013;
 
@@ -58,5 +60,20 @@ public class RevisedQuicki implements CalculateIndex, IndexInterpreter {
     @Override
     public String getInterval() {
         return interpretValue + PLUS_MINUS + fluctuation;
+    }
+
+    @Override
+    public String generateExcelFormula(int infoId) {
+        StringBuilder formulaBuilder = new StringBuilder();
+
+        String fastingGlucoseFormula = FormulaExcelUtils.getGlucose(infoId, "mmol/L", FASTING_GLUCOSE);
+        String fastingInsulinFormula = FormulaExcelUtils.getInsulin(infoId, "μIU/mL", FASTING_INSULIN);
+        String nefa = FormulaExcelUtils.getOptionalWithPlaceholder(infoId, "mmol/L", NEFA);
+
+        formulaBuilder.append("1.0 / (").append(FormulaExcelUtils.getLog(fastingGlucoseFormula))
+                .append(" + ").append(FormulaExcelUtils.getLog(fastingInsulinFormula))
+                .append(" + ")
+                .append(FormulaExcelUtils.getLog(nefa)).append(")");
+        return formulaBuilder.toString();
     }
 }

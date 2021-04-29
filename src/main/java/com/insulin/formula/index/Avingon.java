@@ -1,7 +1,7 @@
 package com.insulin.formula.index;
 
 import com.insulin.enumerations.Severity;
-import com.insulin.interfaces.CalculateIndex;
+import com.insulin.interfaces.FormulaMarker;
 import com.insulin.interfaces.IndexInterpreter;
 import com.insulin.model.form.IndexResult;
 import com.insulin.model.form.MandatoryInsulinInformation;
@@ -11,9 +11,9 @@ import static com.insulin.shared.constants.NumericConstants.BALANCE_AVIGNON;
 import static com.insulin.utils.IndexUtils.buildIndexResult;
 import static com.insulin.utils.IndexUtils.defaultPair;
 
-public class Avingon implements CalculateIndex, IndexInterpreter {
-    private final CalculateIndex avingonSib = new AvingonSib();
-    private final CalculateIndex avingonSih = new AvingonSih();
+public class Avingon implements FormulaMarker, IndexInterpreter {
+    private final FormulaMarker avingonSib = new AvingonSib();
+    private final FormulaMarker avingonSih = new AvingonSih();
 
     @Override
     public IndexResult calculate(MandatoryInsulinInformation mandatoryInformation) {
@@ -32,5 +32,18 @@ public class Avingon implements CalculateIndex, IndexInterpreter {
     @Override
     public String getInterval() {
         return "-";
+    }
+
+    @Override
+    public String generateExcelFormula(int infoId) {
+        StringBuilder formulaBuilder = new StringBuilder();
+
+        String avingonSib = this.avingonSib.generateExcelFormula(infoId);
+        String avingonSih = this.avingonSih.generateExcelFormula(infoId);
+
+        formulaBuilder.append("((").append(BALANCE_AVIGNON).append(" * ")
+                .append(avingonSib).append(") + ").append(avingonSih)
+                .append(") / 2");
+        return formulaBuilder.toString();
     }
 }

@@ -1,7 +1,8 @@
 package com.insulin.formula.index;
 
 import com.insulin.enumerations.Severity;
-import com.insulin.interfaces.CalculateIndex;
+import com.insulin.excel.utils.FormulaExcelUtils;
+import com.insulin.interfaces.FormulaMarker;
 import com.insulin.interfaces.IndexInterpreter;
 import com.insulin.model.form.GlucoseMandatory;
 import com.insulin.model.form.IndexResult;
@@ -16,7 +17,7 @@ import static com.insulin.shared.constants.NumericConstants.*;
 import static com.insulin.utils.IndexUtils.buildIndexResult;
 import static com.insulin.utils.IndexUtils.healthyPair;
 
-public class Belfiore implements CalculateIndex, IndexInterpreter {
+public class Belfiore implements FormulaMarker, IndexInterpreter {
     @Override
     public IndexResult calculate(MandatoryInsulinInformation mandatoryInformation) {
         GlucoseMandatory glucoseMandatory = mandatoryInformation.getGlucoseMandatory();
@@ -54,5 +55,19 @@ public class Belfiore implements CalculateIndex, IndexInterpreter {
     @Override
     public String getInterval() {
         return APPROXIMATE + "1";
+    }
+
+    @Override
+    public String generateExcelFormula(int infoId) {
+        StringBuilder formulaBuilder = new StringBuilder();
+        String glucoseNormal = FormulaExcelUtils.getGlucoseNormal();
+        String insulinNormal = FormulaExcelUtils.getInsulinNormal();
+        String glucoseSubject = FormulaExcelUtils.getGlucoseSubject(infoId, "mmol/L");
+        String insulinSubject = FormulaExcelUtils.getInsulinSubject(infoId, "μIU/mL");
+
+        formulaBuilder.append("2 / ((").append(glucoseSubject).append(" / ").append(glucoseNormal)
+                .append(") * (").append(insulinSubject).append(" / ").append(insulinNormal)
+                .append(") + 1 )");
+        return formulaBuilder.toString();
     }
 }

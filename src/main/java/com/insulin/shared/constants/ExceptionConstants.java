@@ -1,6 +1,6 @@
 package com.insulin.shared.constants;
 
-public class ExceptionConstants {
+public final class ExceptionConstants {
     public static final String INVALID_DATA = "Data format not supported.";
     public static final String METHOD_NOT_ALLOWED = "Request not allowed on this endpoint. Please change the type of the request!";
     public static final String INTERNAL_SERVER_ERROR = "An error occurred while processing the request";

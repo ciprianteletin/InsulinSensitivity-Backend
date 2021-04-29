@@ -29,18 +29,25 @@ public class OptionalInsulinInformation {
     private Double triglyceride;
 
     public void convert(String actual) {
-        // From mmol to mg/dL
+        // From mg/dL to mmol
         double nefaConvert = NEFA_CONVERT;
-        double hdlConvert = HDL_CONVERT;
+        double hdlConvert = 1. / HDL_CONVERT;
         double triglycerideConvert = TRYGLICERIDE_CONVERT;
 
-        if (actual.equals("mg/dL")) {
+        if (actual.equals("mmol/L")) {
             nefaConvert = 1. / nefaConvert;
             hdlConvert = 1. / hdlConvert;
             triglycerideConvert = 1. / triglycerideConvert;
         }
-        nefa *= nefaConvert;
-        hdl *= hdlConvert;
-        triglyceride *= triglycerideConvert;
+        nefa = convertNotNull(nefa, nefaConvert);
+        hdl = convertNotNull(hdl, hdlConvert);
+        triglyceride = convertNotNull(triglyceride, triglycerideConvert);
+    }
+
+    private Double convertNotNull(Double value, double converter) {
+        if (value == null) {
+            return null;
+        }
+        return value * converter;
     }
 }
