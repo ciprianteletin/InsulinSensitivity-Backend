@@ -50,6 +50,10 @@ public class InformationSheet {
         return this.infoId;
     }
 
+    public void increaseInfoId() {
+        this.infoId++;
+    }
+
     public void addMandatoryInformation(MandatoryInsulinInformation mandatoryInformation) {
         Row firstRow = sheet.createRow(this.tracker.getAndUpdate(infoSheetName));
         Row secondRow = sheet.createRow(this.tracker.getAndUpdate(infoSheetName));
@@ -67,7 +71,7 @@ public class InformationSheet {
 
         createCellWithValue(firstRow, cellNr++, infoId);
         createEmptyColumn(firstRow, cellNr++);
-        createCellWithValue(firstRow, cellNr++, getGender(mandatoryInformation.getGender()));
+        createCellWithValue(firstRow, cellNr++, mandatoryInformation.getGender());
         createCellWithValue(firstRow, cellNr, mandatoryInformation.getAge());
 
         cellNr = 0;
@@ -175,12 +179,5 @@ public class InformationSheet {
         for (int i = 0; i < columns; i++) {
             sheet.autoSizeColumn(i);
         }
-    }
-
-    private String getGender(String gender) {
-        if (gender.equals("M")) {
-            return "Male";
-        }
-        return "Female";
     }
 }

@@ -6,7 +6,7 @@ import com.insulin.model.User;
 import com.insulin.model.form.IndexSender;
 import com.insulin.model.form.MandatoryInsulinInformation;
 import com.insulin.utils.model.IndexSummary;
-import org.springframework.data.util.Pair;
+import com.insulin.utils.model.Pair;
 
 import java.util.List;
 
@@ -19,4 +19,6 @@ public interface HistoryService {
     Pair<MandatoryInsulinInformation, IndexSender> getMandatorySenderPairByHistoryId(Long id, String username) throws InvalidHistoryId, UserNotFoundException;
 
     void deleteByHistoryId(Long historyId);
+
+    String getCreationDate(Long id) throws InvalidHistoryId;
 }

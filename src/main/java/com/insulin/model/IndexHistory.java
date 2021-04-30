@@ -28,7 +28,6 @@ public class IndexHistory {
     @Column(name = "index_name", nullable = false, updatable = false)
     private String indexName;
     @NotNull
-    @Min(value = 0)
     @Column(nullable = false, updatable = false)
     private Double result;
     @NotNull

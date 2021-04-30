@@ -2,7 +2,6 @@ package com.insulin.excel;
 
 import com.insulin.model.form.IndexSender;
 import com.insulin.model.form.MandatoryInsulinInformation;
-import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
@@ -24,20 +23,14 @@ public class ExcelManager {
         this.formulaSheet = new FormulaSheet(workbook);
     }
 
-    public void createGeneralPage(MandatoryInsulinInformation mandatoryInformation) {
+    public void addToGeneralPage(MandatoryInsulinInformation mandatoryInformation) {
         informationSheet.addMandatoryInformation(mandatoryInformation);
     }
 
-    public void addFormulaPage(IndexSender sender) {
+    public void addFormulaPage(IndexSender sender, String sheetName) {
         int currentInformation = informationSheet.getCurrentInfoId();
         formulaSheet.setCurrentInformation(currentInformation);
-        formulaSheet.addFormulaPage(sender);
-    }
-
-    private Sheet addSheet(String sheetName) {
-        Sheet sheet = workbook.createSheet(sheetName);
-        sheet.setDefaultColumnWidth(6000);
-        return sheet;
+        formulaSheet.addFormulaPage(sender, sheetName);
     }
 
     public byte[] getExcelDocument() throws IOException {
@@ -49,6 +42,10 @@ public class ExcelManager {
 
         File file = new File(fileLocation);
         return Files.readAllBytes(file.toPath());
+    }
+
+    public void increaseInfoId() {
+        this.informationSheet.increaseInfoId();
     }
 
     /**

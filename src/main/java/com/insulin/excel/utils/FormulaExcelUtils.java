@@ -80,13 +80,11 @@ public class FormulaExcelUtils {
     }
 
     public static String getGlucoseSubject(int infoId, String placeholder) {
-        int actualIndex = getActualInfoIdGlucose(infoId, placeholder);
+        String fastingGlucose = getGlucose(infoId, placeholder, FASTING_GLUCOSE);
+        String glucoseSix = getGlucose(infoId, placeholder, GLUCOSE_SIX);
+        String glucoseOne = getGlucose(infoId, placeholder, GLUCOSE_ONE_TWENTY);
 
-        String start = infoSheetName + "!" + referenceMap.get(FASTING_GLUCOSE) + actualIndex;
-        String firstEnd = infoSheetName + "!" + referenceMap.get(GLUCOSE_SIX) + actualIndex;
-
-        String glucoseOne = infoSheetName + "!" + referenceMap.get(GLUCOSE_ONE_TWENTY) + actualIndex;
-        return "0.5 * SUM(" + start + ":" + firstEnd + "," + glucoseOne + ")";
+        return "(0.5 * " + fastingGlucose + " + " + glucoseSix + " + " + glucoseOne + ")";
     }
 
     public static String getGlucoseMean(int infoId, String placeholder) {
@@ -106,12 +104,11 @@ public class FormulaExcelUtils {
     }
 
     public static String getInsulinSubject(int infoId, String placeholder) {
-        int actualIndex = getActualInfoIdInsulin(infoId, placeholder);
-        String start = infoSheetName + "!" + referenceMap.get(FASTING_INSULIN) + actualIndex;
-        String firstEnd = infoSheetName + "!" + referenceMap.get(INSULIN_SIX) + actualIndex;
+        String fastingInsulin = getInsulin(infoId, placeholder, FASTING_INSULIN);
+        String insulinSix = getInsulin(infoId, placeholder, INSULIN_SIX);
+        String insulinOne = getInsulin(infoId, placeholder, INSULIN_ONE_TWENTY);
 
-        String insulinOne = infoSheetName + "!" + referenceMap.get(INSULIN_ONE_TWENTY) + actualIndex;
-        return "0.5 * SUM(" + start + ":" + firstEnd + "," + insulinOne + ")";
+        return "(0.5 * " + fastingInsulin + " + " + insulinSix + " + " + insulinOne + ")";
     }
 
     public static String getInsulinMean(int infoId, String placeholder) {

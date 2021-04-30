@@ -18,11 +18,11 @@ public final class NumericConstants {
     public static final int GLUCOSE_NINE_MG = 147;
     public static final int GLUCOSE_ONE_TWENTY_MG = 139;
 
-    public static final int FASTING_GLUCOSE_MM = 1782;
-    public static final int GLUCOSE_THREE_MM = 2780;
-    public static final int GLUCOSE_SIX_MM = 2780;
-    public static final int GLUCOSE_NINE_MM = 2646;
-    public static final int GLUCOSE_ONE_TWENTY_MM = 2502;
+    public static final double FASTING_GLUCOSE_MM = 5.5;
+    public static final double GLUCOSE_THREE_MM = 8.61;
+    public static final double GLUCOSE_SIX_MM = 8.61;
+    public static final double GLUCOSE_NINE_MM = 8.16;
+    public static final double GLUCOSE_ONE_TWENTY_MM = 7.72;
 
     public static final int FASTING_INSULIN_UI = 8;
     public static final int INSULIN_THREE_UI = 60;

@@ -1,5 +1,6 @@
 package com.insulin.excel;
 
+import com.insulin.excel.utils.FormulaSheetTracker;
 import com.insulin.excel.utils.RowTracker;
 import com.insulin.interfaces.ExcelFormula;
 import com.insulin.model.form.Formula;
@@ -16,30 +17,42 @@ public class FormulaSheet {
     private int currentInformation;
     private final RowTracker tracker;
     private final Formula formula;
+    private final FormulaSheetTracker sheetTracker;
 
     public FormulaSheet(Workbook workbook) {
         this.workbook = workbook;
         this.tracker = new RowTracker();
         this.formula = Formula.getInstance();
+        this.sheetTracker = new FormulaSheetTracker();
     }
 
     public void setCurrentInformation(int currentInformation) {
         this.currentInformation = currentInformation;
     }
 
-    public void addFormulaPage(IndexSender indexSender) {
-        Sheet sheet = createSheet("Indexes");
+    public void addFormulaPage(IndexSender indexSender, String sheetName) {
+        Sheet sheet = retrieveOrCreateSheet(sheetName);
         Map<String, IndexResult> results = indexSender.getResults();
         results.forEach((name, result) -> addIndexRow(name, result, sheet));
         for (int i = 0; i <= 5; i++) {
             sheet.autoSizeColumn(i);
         }
+        createEmptyRow(tracker.getAndUpdate(sheetName), sheet);
     }
 
     private Sheet createSheet(String name) {
         Sheet sheet = workbook.createSheet(name);
         tracker.addNewRecord(name, 0);
         addPageHeader(sheet);
+        return sheet;
+    }
+
+    private Sheet retrieveOrCreateSheet(String sheetName) {
+        if (sheetTracker.containsSheet(sheetName)) {
+            return sheetTracker.getSheetByName(sheetName);
+        }
+        Sheet sheet = createSheet(sheetName);
+        sheetTracker.setSheet(sheetName, sheet);
         return sheet;
     }
 

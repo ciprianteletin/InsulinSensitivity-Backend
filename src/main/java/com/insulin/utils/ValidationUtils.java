@@ -1,6 +1,7 @@
 package com.insulin.utils;
 
 import com.insulin.exceptions.model.*;
+import com.insulin.model.History;
 import com.insulin.model.User;
 import com.insulin.repository.AuthRepository;
 import com.insulin.repository.UserRepository;
@@ -11,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 import static com.insulin.shared.constants.ExceptionConstants.*;
 import static com.insulin.shared.constants.UserConstants.*;
@@ -94,6 +97,13 @@ public class ValidationUtils {
     public void validateIdenticalPassword(String encodedPassword, String password) {
         if (!checkSamePassword(password, encodedPassword)) {
             throw new AccessDeniedException(NOT_ENOUGH_PERMISSION);
+        }
+    }
+
+    public void validateHistoryId(List<History> histories, Long historyId) throws InvalidHistoryId {
+        boolean flag = histories.stream().anyMatch(history -> history.getId().equals(historyId));
+        if (!flag) {
+            throw new InvalidHistoryId(HISTORY_ID);
         }
     }
 

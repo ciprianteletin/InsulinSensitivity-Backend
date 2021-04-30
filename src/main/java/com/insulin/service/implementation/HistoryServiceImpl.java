@@ -10,9 +10,10 @@ import com.insulin.repository.HistoryRepository;
 import com.insulin.repository.UserRepository;
 import com.insulin.service.abstraction.HistoryService;
 import com.insulin.utils.HistoryUtils;
+import com.insulin.utils.ValidationUtils;
 import com.insulin.utils.model.IndexSummary;
+import com.insulin.utils.model.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -30,11 +31,15 @@ import static com.insulin.utils.HistoryUtils.*;
 public class HistoryServiceImpl implements HistoryService {
     private final HistoryRepository historyRepository;
     private final UserRepository userRepository;
+    private final ValidationUtils validationUtils;
 
     @Autowired
-    public HistoryServiceImpl(HistoryRepository historyRepository, UserRepository userRepository) {
+    public HistoryServiceImpl(HistoryRepository historyRepository,
+                              UserRepository userRepository,
+                              ValidationUtils validationUtils) {
         this.historyRepository = historyRepository;
         this.userRepository = userRepository;
+        this.validationUtils = validationUtils;
     }
 
     @Override
@@ -53,22 +58,30 @@ public class HistoryServiceImpl implements HistoryService {
                 .collect(Collectors.toList());
     }
 
-    // TODO maybe check if the logged user has an history object with that id.
     @Override
     public Pair<MandatoryInsulinInformation, IndexSender> getMandatorySenderPairByHistoryId(Long id, String username)
             throws InvalidHistoryId, UserNotFoundException {
         History history = historyRepository.findById(id)
                 .orElseThrow(() -> new InvalidHistoryId(HISTORY_ID));
         User user = getUserByUsernameOrThrowError(username);
+        validationUtils.validateHistoryId(user.getHistoryList(), id);
         MandatoryInsulinInformation mandatoryInformation = convertHistoryToMandatory(history);
         addUserData(user, mandatoryInformation);
         IndexSender sender = convertHistoryToSender(history);
-        return Pair.of(mandatoryInformation, sender);
+        return new Pair<>(mandatoryInformation, sender);
     }
 
     @Override
     public void deleteByHistoryId(Long historyId) {
         historyRepository.deleteById(historyId);
+    }
+
+    @Override
+    public String getCreationDate(Long id) throws InvalidHistoryId {
+        Optional<History> historyOpt = historyRepository.findById(id);
+        History history = historyOpt.orElseThrow(() -> new InvalidHistoryId(HISTORY_ID));
+        LocalDate creationDate = history.getCreationDate();
+        return creationDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
     }
 
     private User getUserByUsernameOrThrowError(String username) throws UserNotFoundException {

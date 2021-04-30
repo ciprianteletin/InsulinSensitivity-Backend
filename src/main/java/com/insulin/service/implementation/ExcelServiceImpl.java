@@ -14,9 +14,17 @@ public class ExcelServiceImpl implements ExcelService {
     public byte[] exportResponseExcel(MandatoryInsulinInformation mandatoryInformation, IndexSender sender)
             throws IOException {
         ExcelManager excelManager = new ExcelManager("insulin.xlsx");
-        excelManager.createGeneralPage(mandatoryInformation);
-        excelManager.addFormulaPage(sender);
+        excelManager.addToGeneralPage(mandatoryInformation);
+        excelManager.addFormulaPage(sender, "Indexes.xlsx");
         //excelManager.exportAsFile(LOCAL_PATH);
         return excelManager.getExcelDocument();
+    }
+
+    @Override
+    public void constructExcelDocument(ExcelManager excelManager, MandatoryInsulinInformation mandatoryInformation,
+                                       IndexSender sender, String creationDate) {
+        excelManager.addToGeneralPage(mandatoryInformation);
+        excelManager.addFormulaPage(sender, creationDate);
+        excelManager.increaseInfoId();
     }
 }

@@ -61,22 +61,22 @@ public class Ogis implements FormulaMarker, IndexInterpreter {
         String glucoseOneTwenty = FormulaExcelUtils.getGlucose(infoId, "mmol/L", GLUCOSE_ONE_TWENTY);
         String fastingGlucose = FormulaExcelUtils.getGlucose(infoId, "mmol/L", FASTING_GLUCOSE);
         String fastingInsulin = FormulaExcelUtils.getInsulin(infoId, "pmol/L", FASTING_INSULIN);
-        String nineMinusGlc = glucoseNine + " - 90 * 0.05551";
+        String nineMinusGlc = "(" + glucoseNine + " - 90 * 0.05551" + ")";
 
         String weight = FormulaExcelUtils.getOptionalNoPlaceholder(infoId, WEIGHT);
         String weightPow = FormulaExcelUtils.getPower(weight, "0.515");
         String height = FormulaExcelUtils.getOptionalNoPlaceholder(infoId, HEIGHT);
         String heightPow = FormulaExcelUtils.getPower("0.01 * " + height, "0.422");
 
-        String bsa = "0.1640443958298 * " + weightPow + " * " + heightPow;
-        String ndose = "5.551 * 75 / " + bsa;
-        String temp1 = "792 * (( 6.5 * " + ndose + " - 10000 * " +
+        String bsa = "(0.1640443958298 * " + weightPow + " * " + heightPow + ")";
+        String ndose = "(5.551 * 75 / " + bsa + ")";
+        String temp1 = "(792 * (( 6.5 * " + ndose + " - 10000 * " +
                 "(" + glucoseOneTwenty + " - " + glucoseNine + ") / 30 ) / " +
                 glucoseNine + " + 4514 / " + fastingGlucose + " ) / (" +
-                insulinNine + " - " + fastingInsulin + " + 1951)";
-        String temp2 = "( 0.0118 * " + nineMinusGlc + " + 1) * " + temp1;
-        String temp2Sqrt = FormulaExcelUtils.getSqrt(FormulaExcelUtils.getPower(temp2, "2") + " + 4 * 0.0118 * 173 * " +
-                nineMinusGlc + " * " + temp1);
+                insulinNine + " - " + fastingInsulin + " + 1951))";
+        String temp2 = "(( 0.0118 * " + nineMinusGlc + " + 1) * " + temp1 + ")";
+        String temp2Sqrt = "(" + FormulaExcelUtils.getSqrt(FormulaExcelUtils.getPower(temp2, "2") + " + 4 * 0.0118 * 173 * " +
+                nineMinusGlc + " * " + temp1) + ")";
 
         return "(" + temp2 + " + " + temp2Sqrt + ") / 2";
     }

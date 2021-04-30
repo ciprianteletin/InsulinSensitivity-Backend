@@ -59,10 +59,10 @@ public final class ValueConverter {
         if (from.equals(to)) {
             return value;
         }
-        if ("mg/dL".equals(to)) {
-            return value * GLUCOSE_CONVERT;
+        if ("mmol/L".equals(to)) {
+            return value / GLUCOSE_CONVERT;
         }
-        return value / GLUCOSE_CONVERT;
+        return value * GLUCOSE_CONVERT;
     }
 
     public static double convertSingleInsulin(double value, String from, String to) {
