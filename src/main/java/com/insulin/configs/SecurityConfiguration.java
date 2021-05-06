@@ -88,7 +88,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
      */
     private CorsConfiguration createCorsConfig(HttpServletRequest request) {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedHeaders(List.of("Authorization", "Cache-Control", "Content-Type"));
+        config.setAllowedHeaders(List.of("Authorization", "Cache-Control", "Content-Type", "Accept"));
         config.setExposedHeaders(List.of(JWT_TOKEN_HEADER, CAPTCHA_HEADER));
         config.setAllowedMethods(asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.addAllowedOrigin("http://localhost:4200");

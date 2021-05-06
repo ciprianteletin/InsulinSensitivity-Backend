@@ -75,7 +75,6 @@ public class FormulaSheet {
         Row row = sheet.createRow(this.tracker.getAndUpdate(sheetName));
         createCellWithValue(row, cellNr++, this.currentInformation);
         createEmptyColumn(row, cellNr++);
-        System.out.println(excelFormula.generateExcelFormula(this.currentInformation));
         createCellWithValue(row, cellNr++, name);
         createCellWithFormula(row, cellNr++, excelFormula.generateExcelFormula(this.currentInformation));
         createCellWithValue(row, cellNr++, indexResult.getMessage());

@@ -4,6 +4,7 @@ import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.insulin.exceptions.model.*;
 import com.insulin.shared.HttpResponse;
 import com.insulin.utils.model.CaptchaModel;
+import com.itextpdf.text.DocumentException;
 import org.hibernate.exception.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -168,6 +169,11 @@ public class ExceptionCustomHandler {
     @ExceptionHandler(IOException.class)
     public ResponseEntity<HttpResponse> fileException() {
         return buildHttpResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR, FILE_ERROR);
+    }
+
+    @ExceptionHandler(DocumentException.class)
+    public ResponseEntity<HttpResponse> documentException() {
+        return buildHttpResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR, PDF_ERROR);
     }
 
     @ExceptionHandler(UndeclaredThrowableException.class)
