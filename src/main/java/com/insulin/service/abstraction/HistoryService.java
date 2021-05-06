@@ -20,5 +20,7 @@ public interface HistoryService {
 
     void deleteByHistoryId(Long historyId);
 
+    void deleteByCreationDateBetween(String from, String to);
+
     String getCreationDate(Long id) throws InvalidHistoryId;
 }

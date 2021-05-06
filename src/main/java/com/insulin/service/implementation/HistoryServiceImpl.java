@@ -77,6 +77,15 @@ public class HistoryServiceImpl implements HistoryService {
     }
 
     @Override
+    public void deleteByCreationDateBetween(String from, String to) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        LocalDate fromDate = LocalDate.parse(from, formatter);
+        LocalDate toDate = LocalDate.parse(to, formatter);
+
+        this.historyRepository.deleteByCreationDateBetween(fromDate, toDate);
+    }
+
+    @Override
     public String getCreationDate(Long id) throws InvalidHistoryId {
         Optional<History> historyOpt = historyRepository.findById(id);
         History history = historyOpt.orElseThrow(() -> new InvalidHistoryId(HISTORY_ID));

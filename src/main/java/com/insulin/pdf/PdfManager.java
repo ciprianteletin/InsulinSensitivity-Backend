@@ -7,9 +7,10 @@ import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 
 import java.io.ByteArrayOutputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Base64;
+
+import static org.apache.commons.lang3.text.WordUtils.capitalizeFully;
 
 public class PdfManager {
     private final Document pdfDocument;
@@ -146,7 +147,7 @@ public class PdfManager {
         table.setHeaderRows(1);
 
         sender.getResults().forEach((name, result) -> {
-            table.addCell(name);
+            table.addCell(capitalizeFully(name));
             table.addCell(result.getResult() + "");
             table.addCell(result.getMessage());
             table.addCell(result.getNormalRange());

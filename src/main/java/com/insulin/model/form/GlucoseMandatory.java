@@ -4,6 +4,7 @@ import com.insulin.validation.GlucosePlaceholder;
 import lombok.*;
 
 import javax.persistence.*;
+import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
@@ -23,18 +24,22 @@ public class GlucoseMandatory {
     private Long id;
     @NotNull
     @Min(value = 0)
+    @Max(value = 300)
     @Column(name = "fasting_glucose", updatable = false, nullable = false)
     private double fastingGlucose;
     @NotNull
     @Min(value = 0)
+    @Max(value = 300)
     @Column(name = "glucose_three", updatable = false, nullable = false)
     private double glucoseThree;
     @NotNull
     @Min(value = 0)
+    @Max(value = 300)
     @Column(name = "glucose_six", updatable = false, nullable = false)
     private double glucoseSix;
     @NotNull
     @Min(value = 0)
+    @Max(value = 300)
     @Column(name = "glucose_onetwenty", updatable = false, nullable = false)
     private double glucoseOneTwenty;
     @NonNull

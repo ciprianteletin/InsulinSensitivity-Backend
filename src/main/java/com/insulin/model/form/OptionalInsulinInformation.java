@@ -14,7 +14,7 @@ import static com.insulin.formula.ValueConverter.*;
 @Builder
 public class OptionalInsulinInformation {
     @Min(value = 120)
-    @Max(value = 240)
+    @Max(value = 250)
     private Double height;
     @Min(value = 40)
     @Max(value = 300)
