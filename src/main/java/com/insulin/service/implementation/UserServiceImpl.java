@@ -11,6 +11,7 @@ import com.insulin.service.abstraction.MetaInformationService;
 import com.insulin.service.abstraction.UserManagerService;
 import com.insulin.service.abstraction.UserService;
 import com.insulin.utils.AuthenticationUtils;
+import com.insulin.utils.ByteDecompressor;
 import com.insulin.utils.ValidationUtils;
 import com.insulin.utils.model.BasicUserInfo;
 import com.insulin.utils.model.UserPasswordInfo;
@@ -22,10 +23,13 @@ import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
+import java.io.IOException;
 import java.util.Optional;
+import java.util.zip.DataFormatException;
 
 import static com.insulin.shared.constants.UserConstants.USERNAME_NOT_FOUND;
 import static com.insulin.shared.constants.UserConstants.USER_NOT_FOUND;
@@ -79,7 +83,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User getUserByUsername(String username) {
+    public User getUserByUsername(String username) throws DataFormatException, IOException {
         Optional<User> currentUser = this.userRepository.findByUsername(username);
         return currentUser.orElseThrow(() -> new UsernameNotFoundException(USERNAME_NOT_FOUND));
     }
@@ -110,6 +114,18 @@ public class UserServiceImpl implements UserService {
         if (modifyPrincipal) {
             updatePrincipal(user);
         }
+        return user;
+    }
+
+    @Override
+    @CachePut(value = "users", key = "#id", cacheManager = "cacheManager")
+    public User updateProfileImage(Long id, MultipartFile file) throws UserNotFoundException, IOException {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND));
+        UserDetail details = user.getDetails();
+        byte[] compressedImage = ByteDecompressor.compressBytes(file.getBytes());
+        details.setProfileImage(compressedImage);
+        userRepository.save(user);
         return user;
     }
 

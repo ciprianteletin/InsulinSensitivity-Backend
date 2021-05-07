@@ -55,7 +55,10 @@ public class UserDetail implements Serializable {
     @NotNull
     @BirthDay
     private String birthDay;
-    private String profileImageUrl;
+    @Lob
+    @Basic(fetch = FetchType.LAZY)
+    @Column(name = "profile_image", columnDefinition = "LONGBLOB")
+    private byte[] profileImage;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
     @JsonDeserialize(using = LocalDateDeserializer.class)

@@ -1,4 +1,4 @@
-package com.insulin.utils;
+package com.insulin.utils.model;
 
 import com.insulin.enumerations.Role;
 import com.insulin.model.User;

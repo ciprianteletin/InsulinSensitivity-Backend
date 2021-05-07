@@ -23,6 +23,7 @@ import javax.persistence.NoResultException;
 import java.io.IOException;
 import java.lang.reflect.UndeclaredThrowableException;
 import java.util.NoSuchElementException;
+import java.util.zip.DataFormatException;
 
 import static com.insulin.shared.constants.ExceptionConstants.*;
 import static com.insulin.shared.constants.SecurityConstants.CAPTCHA_HEADER;
@@ -121,6 +122,12 @@ public class ExceptionCustomHandler {
     public ResponseEntity<HttpResponse> invalidDataException(InvalidDataException exception) {
         logger.error(exception.getMessage());
         return buildHttpResponseEntity(HttpStatus.BAD_REQUEST, exception.getMessage());
+    }
+
+    @ExceptionHandler(DataFormatException.class)
+    public ResponseEntity<HttpResponse> dataFormatException() {
+        logger.error(IMAGE_EXCEPTION);
+        return buildHttpResponseEntity(HttpStatus.BAD_REQUEST, IMAGE_EXCEPTION);
     }
 
     @ExceptionHandler(UpdateDeniedException.class)

@@ -13,4 +13,5 @@ public final class ExceptionConstants {
     public static final String UPDATE_DENIED = "Token update operation is denied!";
     public static final String NO_ELEMENT = "The requested value was not found";
     public static final String HISTORY_ID = "Invalid history id passed!";
+    public static final String IMAGE_EXCEPTION = "Cannot retrieve profile image!";
 }

@@ -2,8 +2,10 @@ package com.insulin.controllers;
 
 import com.insulin.exceptions.model.*;
 import com.insulin.model.User;
+import com.insulin.model.UserDetail;
 import com.insulin.service.abstraction.UserService;
 import com.insulin.shared.HttpResponse;
+import com.insulin.utils.ByteDecompressor;
 import com.insulin.utils.HttpResponseUtils;
 import com.insulin.utils.model.BasicUserInfo;
 import com.insulin.utils.model.UserPasswordInfo;
@@ -15,9 +17,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+
+import java.io.IOException;
+import java.util.zip.DataFormatException;
 
 import static com.insulin.shared.constants.UserConstants.USER_UPDATED;
 import static com.insulin.utils.ValidationUtils.*;
@@ -35,8 +41,10 @@ public class UserController {
 
     @GetMapping("/username/{username}")
     @PreAuthorize("hasAnyAuthority('PATIENT', 'MEDIC', 'ADMIN')")
-    public ResponseEntity<User> getUserByUsername(@PathVariable("username") String username) {
-        return new ResponseEntity<>(userService.getUserByUsername(username), HttpStatus.OK);
+    public ResponseEntity<User> getUserByUsername(@PathVariable("username") String username) throws DataFormatException, IOException {
+        User user = userService.getUserByUsername(username);
+        decompressBytes(user);
+        return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
@@ -52,6 +60,16 @@ public class UserController {
         return new ResponseEntity<>(userService.getUserIpAddress(username), HttpStatus.OK);
     }
 
+    @PostMapping("/upload/{id}")
+    @PreAuthorize("hasAnyAuthority('PATIENT', 'MEDIC', 'ADMIN')")
+    public ResponseEntity<User> uploadImage(@PathVariable("id") Long id, @RequestParam(name = "imageFile") MultipartFile file)
+            throws IOException, UserNotFoundException, DataFormatException {
+        User user = this.userService.updateProfileImage(id, file);
+        byte[] compressedImage = user.getDetails().getProfileImage();
+        user.getDetails().setProfileImage(ByteDecompressor.decompressBytes(compressedImage));
+        return new ResponseEntity<>(user, HttpStatus.OK);
+    }
+
     @PutMapping("/updateInformation/{id}")
     @PreAuthorize("hasAnyAuthority('PATIENT', 'MEDIC', 'ADMIN')")
     public ResponseEntity<HttpResponse> updateUserInformation(@PathVariable("id") Long id,
@@ -65,7 +83,8 @@ public class UserController {
     @PutMapping("/updatePassword")
     @PreAuthorize("hasAnyAuthority('PATIENT', 'MEDIC', 'ADMIN')")
     public ResponseEntity<HttpResponse> updateUserPassword(@Valid @RequestBody UserPasswordInfo userPasswordInfo,
-                                                           Authentication authentication) throws OldPasswordException {
+                                                           Authentication authentication)
+            throws OldPasswordException, DataFormatException, IOException {
         User user = userService.getUserByUsername(userPasswordInfo.getUsername());
         String principal = (String) authentication.getPrincipal();
         this.userService.updatePassword(user, principal, userPasswordInfo);
@@ -84,5 +103,13 @@ public class UserController {
         validateNonNullUser(currentUser);
         this.userService.deleteUser(currentUser, principal, request);
         return HttpResponseUtils.buildHttpResponseEntity(HttpStatus.OK, "User deleted with success");
+    }
+
+    private void decompressBytes(User user) throws DataFormatException, IOException {
+        UserDetail details = user.getDetails();
+        if (details.getProfileImage() != null) {
+            byte[] image = details.getProfileImage();
+            details.setProfileImage(ByteDecompressor.decompressBytes(image));
+        }
     }
 }
