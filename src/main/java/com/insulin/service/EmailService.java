@@ -39,6 +39,11 @@ public class EmailService {
                 sendMessage(email, String.format(RESET_PASSWORD_MESSAGE, randomSecret), RESET_SUBJECT));
     }
 
+    public void sendContactEmail(String message) {
+        threadManager.runCallableVoid(() -> //
+                sendMessage(USERNAME, message, "Contact us"));
+    }
+
     /**
      * Generic method to send an email to an user, no matter of the scope of the message.
      * It is derived from the need of sending multiple emails with different messages (Register, delete)
