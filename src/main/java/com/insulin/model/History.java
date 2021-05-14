@@ -56,21 +56,4 @@ public class History {
     @JsonDeserialize(using = LocalDateDeserializer.class)
     @JsonSerialize(using = LocalDateSerializer.class)
     private LocalDate creationDate;
-
-    public void addIndex(IndexHistory index) {
-        if (isNull(indexHistory)) {
-            indexHistory = new ArrayList<>();
-        }
-        indexHistory.add(index);
-    }
-
-    public void addOptionalData(OptionalData optionalData) {
-        if (isNull(optionalData)) {
-            return;
-        }
-        if (isNull(this.optionalData)) {
-            this.optionalData = new HashSet<>();
-        }
-        this.optionalData.add(optionalData);
-    }
 }

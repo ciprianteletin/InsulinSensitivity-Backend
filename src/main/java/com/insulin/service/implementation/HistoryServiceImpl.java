@@ -73,7 +73,8 @@ public class HistoryServiceImpl implements HistoryService {
 
     @Override
     public void deleteByHistoryId(Long historyId) {
-        historyRepository.deleteById(historyId);
+        historyRepository.findById(historyId).ifPresent(historyRepository::delete);
+        historyRepository.flush();
     }
 
     @Override
@@ -83,6 +84,11 @@ public class HistoryServiceImpl implements HistoryService {
         LocalDate toDate = LocalDate.parse(to, formatter);
 
         this.historyRepository.deleteByCreationDateBetween(fromDate, toDate);
+    }
+
+    @Override
+    public void deleteAllHistory() {
+        this.historyRepository.deleteAll();
     }
 
     @Override

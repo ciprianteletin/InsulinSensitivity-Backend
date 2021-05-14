@@ -56,4 +56,11 @@ public class HistoryController {
         this.historyService.deleteByCreationDateBetween(fromDate, toDate);
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+    @DeleteMapping("/deleteAll")
+    @PreAuthorize("hasAnyAuthority('PATIENT', 'MEDIC', 'ADMIN')")
+    public ResponseEntity<HttpStatus> deleteAllHistory() {
+        this.historyService.deleteAllHistory();
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }

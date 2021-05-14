@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.Ordered;
 import org.springframework.dao.CannotAcquireLockException;
+import org.springframework.dao.ConcurrencyFailureException;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
@@ -29,7 +30,7 @@ public class DeadlockSolver implements Ordered {
     /**
      * How many retries should be tried on deadlock
      **/
-    protected int retryCount = 3;
+    protected int retryCount = 4;
 
     /**
      * How big is delay between deadlock retry (in ms)
@@ -57,7 +58,7 @@ public class DeadlockSolver implements Ordered {
             while (true) {
                 try {
                     return pjp.proceed();
-                } catch (LockAcquisitionException | CannotAcquireLockException ex) {
+                } catch (LockAcquisitionException | ConcurrencyFailureException ex) {
                     if (TransactionSynchronizationManager.isActualTransactionActive()) {
                         if (logger.isTraceEnabled())
                             logger.trace("Deadlock pointcut detected with transaction still active - propagating");
