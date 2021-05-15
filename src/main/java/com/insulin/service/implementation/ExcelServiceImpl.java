@@ -15,7 +15,7 @@ public class ExcelServiceImpl implements ExcelService {
             throws IOException {
         ExcelManager excelManager = new ExcelManager("insulin.xlsx");
         excelManager.addToGeneralPage(mandatoryInformation);
-        excelManager.addFormulaPage(sender, "Indexes.xlsx");
+        excelManager.addFormulaPage(sender, "Indexes");
         // excelManager.exportAsFile(LOCAL_PATH);
         return excelManager.getExcelDocument();
     }

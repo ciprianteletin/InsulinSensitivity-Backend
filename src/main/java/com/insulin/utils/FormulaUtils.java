@@ -2,7 +2,6 @@ package com.insulin.utils;
 
 import com.insulin.model.form.GlucoseMandatory;
 import com.insulin.model.form.InsulinMandatory;
-import com.insulin.model.form.MandatoryInsulinInformation;
 import com.insulin.model.form.OptionalInsulinInformation;
 
 import static java.lang.Math.pow;

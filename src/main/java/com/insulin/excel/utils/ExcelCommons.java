@@ -79,11 +79,6 @@ public final class ExcelCommons {
         return cell;
     }
 
-    public static void createCellWithStyleAndValue(Row row, int cellNumber, CellStyle cellStyle, Double value) {
-        Cell cell = createCellWithStyle(row, cellNumber, cellStyle);
-        cell.setCellValue(value);
-    }
-
     public static void createCellWithStyleAndValue(Row row, int cellNumber, CellStyle cellStyle, String value) {
         Cell cell = createCellWithStyle(row, cellNumber, cellStyle);
         cell.setCellValue(value);

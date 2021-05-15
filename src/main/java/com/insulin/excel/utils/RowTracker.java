@@ -23,12 +23,4 @@ public class RowTracker {
         this.tracker.put(sheetName, currentRow + 1);
         return currentRow;
     }
-
-    public void deleteSheetTracker(String sheetName) {
-        this.tracker.remove(sheetName);
-    }
-
-    public void clearTracker() {
-        this.tracker.clear();
-    }
 }

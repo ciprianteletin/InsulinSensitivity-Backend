@@ -115,24 +115,6 @@ public final class AuthenticationUtils {
         response.addCookie(cookie);
     }
 
-    public static void passCookie(String name, String value, int age, HttpServletResponse response) {
-        Cookie cookie = new Cookie(name, value);
-        cookie.setHttpOnly(false);
-        cookie.setSecure(false);
-        cookie.setMaxAge(age);
-        cookie.setPath("/");
-        response.addCookie(cookie);
-    }
-
-    public static void deleteCookie(String name, HttpServletResponse response) {
-        Cookie cookie = new Cookie(name, null);
-        cookie.setHttpOnly(false);
-        cookie.setSecure(false);
-        cookie.setMaxAge(0);
-        cookie.setPath("/");
-        response.addCookie(cookie);
-    }
-
     public static void validateUserAuthenticity(User user, String principal) {
         if (!user.getUsername().equals(principal) && !user.getDetails().getEmail().equals(principal)) {
             logger.error("Not enough permission to delete the password!");

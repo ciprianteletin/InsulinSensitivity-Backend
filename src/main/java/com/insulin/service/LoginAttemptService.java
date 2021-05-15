@@ -3,6 +3,7 @@ package com.insulin.service;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import lombok.NonNull;
 import org.springframework.stereotype.Service;
 
 import java.util.concurrent.ExecutionException;
@@ -29,7 +30,7 @@ public class LoginAttemptService {
                 .maximumSize(100)
                 .build(new CacheLoader<>() {
                     @Override
-                    public Integer load(String key) throws Exception {
+                    public Integer load(String key){
                         return 0;
                     }
                 });

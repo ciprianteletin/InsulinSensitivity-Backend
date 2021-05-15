@@ -19,8 +19,4 @@ public class IndexSender {
     public void addResult(String indexName, IndexResult result) {
         results.put(indexName, result);
     }
-
-    public IndexResult getResult(String indexName) {
-        return results.get(indexName);
-    }
 }
