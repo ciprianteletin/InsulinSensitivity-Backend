@@ -3,7 +3,7 @@ package com.insulin.service.implementation;
 import com.insulin.exceptions.model.*;
 import com.insulin.metadata.MetaInformation;
 import com.insulin.model.User;
-import com.insulin.model.UserDetail;
+import com.insulin.model.UserDetails;
 import com.insulin.repository.UserRepository;
 import com.insulin.service.EmailService;
 import com.insulin.service.abstraction.LostUserService;
@@ -29,7 +29,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import java.io.IOException;
 import java.util.Optional;
-import java.util.zip.DataFormatException;
 
 import static com.insulin.shared.constants.UserConstants.USERNAME_NOT_FOUND;
 import static com.insulin.shared.constants.UserConstants.USER_NOT_FOUND;
@@ -83,7 +82,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User getUserByUsername(String username) throws DataFormatException, IOException {
+    public User getUserByUsername(String username) {
         Optional<User> currentUser = this.userRepository.findByUsername(username);
         return currentUser.orElseThrow(() -> new UsernameNotFoundException(USERNAME_NOT_FOUND));
     }
@@ -122,7 +121,7 @@ public class UserServiceImpl implements UserService {
     public User updateProfileImage(Long id, MultipartFile file) throws UserNotFoundException, IOException {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND));
-        UserDetail details = user.getDetails();
+        UserDetails details = user.getDetails();
         byte[] compressedImage = ByteDecompressor.compressBytes(file.getBytes());
         details.setProfileImage(compressedImage);
         userRepository.save(user);
@@ -143,16 +142,16 @@ public class UserServiceImpl implements UserService {
     private void checkUserInformation(User user, BasicUserInfo basicUserInfo)
             throws UserNotFoundException, UsernameAlreadyExistentException,
             EmailAlreadyExistentException, PhoneNumberUniqueException {
-        UserDetail userDetail = user.getDetails();
+        UserDetails userDetails = user.getDetails();
 
         String updatedUsername = basicUserInfo.getUsername();
         this.checkAndSetUsername(user, updatedUsername);
 
         String updatedEmail = basicUserInfo.getEmail();
-        this.checkAndSetEmail(userDetail, updatedEmail);
+        this.checkAndSetEmail(userDetails, updatedEmail);
 
         String phoneNr = basicUserInfo.getPhoneNr();
-        this.checkAndSetPhoneNr(userDetail, phoneNr);
+        this.checkAndSetPhoneNr(userDetails, phoneNr);
     }
 
     private void checkAndSetUsername(User user, String updatedUsername)
@@ -163,20 +162,20 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    private void checkAndSetEmail(UserDetail userDetail, String updatedEmail)
+    private void checkAndSetEmail(UserDetails userDetails, String updatedEmail)
             throws EmailAlreadyExistentException, UserNotFoundException {
-        if (!userDetail.getEmail().equals(updatedEmail)) {
+        if (!userDetails.getEmail().equals(updatedEmail)) {
             this.validationUtils.validateNewEmail(updatedEmail);
-            lostUserService.deleteByEmail(userDetail.getEmail());
-            userDetail.setEmail(updatedEmail);
+            lostUserService.deleteByEmail(userDetails.getEmail());
+            userDetails.setEmail(updatedEmail);
         }
     }
 
-    private void checkAndSetPhoneNr(UserDetail userDetail, String phoneNr)
+    private void checkAndSetPhoneNr(UserDetails userDetails, String phoneNr)
             throws PhoneNumberUniqueException {
-        if (!userDetail.getPhoneNr().equals(phoneNr)) {
+        if (!userDetails.getPhoneNr().equals(phoneNr)) {
             this.validationUtils.validatePhoneNumber(phoneNr);
-            userDetail.setPhoneNr(phoneNr);
+            userDetails.setPhoneNr(phoneNr);
         }
     }
 }

@@ -2,7 +2,7 @@ package com.insulin.controllers;
 
 import com.insulin.exceptions.model.*;
 import com.insulin.model.User;
-import com.insulin.model.UserDetail;
+import com.insulin.model.UserDetails;
 import com.insulin.service.abstraction.UserService;
 import com.insulin.shared.HttpResponse;
 import com.insulin.utils.ByteDecompressor;
@@ -106,7 +106,7 @@ public class UserController {
     }
 
     private void decompressBytes(User user) throws DataFormatException, IOException {
-        UserDetail details = user.getDetails();
+        UserDetails details = user.getDetails();
         if (details.getProfileImage() != null) {
             byte[] image = details.getProfileImage();
             details.setProfileImage(ByteDecompressor.decompressBytes(image));

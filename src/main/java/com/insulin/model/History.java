@@ -12,13 +12,10 @@ import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import static java.util.Objects.isNull;
 
 /**
  * Linker entity between the entire data history (inserted values, results) and the user,
@@ -32,10 +29,12 @@ import static java.util.Objects.isNull;
 @Builder
 public class History {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    @NonNull
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "history_generator")
+    @SequenceGenerator(name="history_generator", sequenceName = "history_seq")
     @Column(nullable = false, updatable = false)
+    private Long id;
+    @NotNull
+    @Column(updatable = false)
     private String result;
     @Valid
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)

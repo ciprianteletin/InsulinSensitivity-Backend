@@ -1,7 +1,7 @@
 package com.insulin.utils.abstractions;
 
 import com.insulin.model.User;
-import com.insulin.model.UserDetail;
+import com.insulin.model.UserDetails;
 import com.insulin.utils.model.CompleteUser;
 
 /**
@@ -10,5 +10,5 @@ import com.insulin.utils.model.CompleteUser;
 public interface AbstractUserFactory {
     User createUser(CompleteUser completeUser);
 
-    UserDetail createUserDetails(CompleteUser completeUser);
+    UserDetails createUserDetails(CompleteUser completeUser);
 }

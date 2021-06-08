@@ -2,7 +2,7 @@ package com.insulin.utils.model;
 
 import com.insulin.enumerations.Role;
 import com.insulin.model.User;
-import com.insulin.model.UserDetail;
+import com.insulin.model.UserDetails;
 import com.insulin.utils.abstractions.AbstractUserFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -29,8 +29,8 @@ public class UserFactory implements AbstractUserFactory {
     }
 
     @Override
-    public UserDetail createUserDetails(CompleteUser completeUser) {
-        return UserDetail.builder() //
+    public UserDetails createUserDetails(CompleteUser completeUser) {
+        return UserDetails.builder() //
                 .firstName(completeUser.getFirstName()) //
                 .lastName(completeUser.getLastName()) //
                 .email(completeUser.getEmail()) //

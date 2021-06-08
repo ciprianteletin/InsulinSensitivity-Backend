@@ -26,6 +26,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.time.LocalDate;
 
 import static com.insulin.shared.constants.ExceptionConstants.UPDATE_DENIED;
@@ -75,6 +77,11 @@ public class AuthController {
             UsernameAlreadyExistentException, MessagingException, PhoneNumberUniqueException {
         authService.register(completeUser);
         return HttpResponseUtils.buildHttpResponseEntity(HttpStatus.OK, "User registered successfully");
+    }
+
+    @GetMapping("/checkPassword/{password}")
+    public ResponseEntity<Integer> checkPassword(@PathVariable String password) throws InterruptedException, IOException, URISyntaxException {
+        return new ResponseEntity<>(authService.checkPassword(password), HttpStatus.OK);
     }
 
     /**
@@ -192,8 +199,6 @@ public class AuthController {
     }
 
     private void updateUserDetails(User user) {
-        user.getDetails()
-                .setLastLoginDateDisplay(user.getDetails().getLastLoginDate()); //last login
         user.getDetails().setLastLoginDate(LocalDate.now());
         authService.save(user);
     }

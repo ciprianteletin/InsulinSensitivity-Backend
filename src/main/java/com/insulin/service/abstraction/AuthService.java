@@ -5,6 +5,8 @@ import com.insulin.model.User;
 import com.insulin.utils.model.CompleteUser;
 
 import javax.mail.MessagingException;
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.Optional;
 
 public interface AuthService {
@@ -25,4 +27,6 @@ public interface AuthService {
     void resetPassword(String password, String code) throws EmailNotFoundException, LinkExpiredException, OldPasswordException;
 
     void redirectResetPassword(String email) throws MessagingException, InvalidEmailForgotPassword;
+
+    int checkPassword(String password) throws URISyntaxException, IOException, InterruptedException;
 }

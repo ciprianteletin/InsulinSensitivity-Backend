@@ -2,11 +2,10 @@ package com.insulin.model;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-import com.sun.istack.NotNull;
 import lombok.*;
 
 import javax.persistence.*;
-import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "index_history")
@@ -21,19 +20,20 @@ import javax.validation.constraints.Min;
         property = "id")
 public class IndexHistory {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "index_generator")
+    @SequenceGenerator(name="index_generator", sequenceName = "index_seq")
     @Column(nullable = false, updatable = false)
     private Long id;
     @NotNull
-    @Column(name = "index_name", nullable = false, updatable = false)
+    @Column(name = "index_name", updatable = false)
     private String indexName;
     @NotNull
-    @Column(nullable = false, updatable = false)
+    @Column(updatable = false)
     private Double result;
     @NotNull
-    @Column(nullable = false, updatable = false)
+    @Column(updatable = false)
     private String message;
     @NotNull
-    @Column(nullable = false, updatable = false)
+    @Column(updatable = false)
     private String normalRange;
 }

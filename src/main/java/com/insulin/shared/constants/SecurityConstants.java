@@ -14,6 +14,8 @@ public final class SecurityConstants {
     public static final String CAPTCHA_HEADER = "Activate-Captcha";
     public static final String REFRESH_TOKEN_NAME = "refreshToken";
 
+    public static final String FLASK_API = "http://localhost:5000/";
+
     public static final String TOKEN_CANNOT_BE_VERIFIED = "Token cannot be verified"; // error message
     public static final String ISSUER = "Insulin Sensitivity INC"; // who create it
     public static final String AUDIENCE = "Users"; // optional
@@ -22,5 +24,5 @@ public final class SecurityConstants {
     public static final String ACCESS_DENIED_MESSAGE = "You don't have the permission to access this page."; // another error
     public static final String OPTIONS_HTTP_METHOD = "OPTIONS";
     public static final String[] PUBLIC_URLS = {"/login", "/register", "/autologin", "/forgotPassword/**",
-            "/resetPassword/**", "/user/resetPassword/**", "/index/**", "/contact"}; // set of urls which are permitted by default.
+            "/resetPassword/**", "/user/resetPassword/**", "/index/**", "/contact", "/checkPassword/**"}; // set of urls which are permitted by default.
 }

@@ -4,10 +4,10 @@ import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.insulin.enumerations.Role;
-import com.sun.istack.NotNull;
 import lombok.*;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -28,26 +28,24 @@ import static java.util.Objects.isNull;
         property = "id")
 public class User implements Serializable {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_generator")
+    @SequenceGenerator(name="user_generator", sequenceName = "user_seq")
     @Column(nullable = false, updatable = false)
     private Long id;
-    @Column(nullable = false)
     @NotNull
     @Size(min = 6, max = 30)
     private String username;
-    @Column(nullable = false)
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @NotNull
     @Size(min = 8)
     private String password;
     @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
-    @NotNull
     private Role role;
     //using the primary key as a foreign key.
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @PrimaryKeyJoinColumn
-    private UserDetail details;
+    private UserDetails details;
     /**
      * Stored as uni-directional relationship, because there is no need for the
      * history to know and have a reference to the user. Using Cascade.ALL,
@@ -58,9 +56,9 @@ public class User implements Serializable {
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private List<History> historyList;
 
-    public void setBidirectionalDetails(UserDetail userDetail) {
-        this.details = userDetail;
-        userDetail.setUser(this);
+    public void setBidirectionalDetails(UserDetails userDetails) {
+        this.details = userDetails;
+        userDetails.setUser(this);
     }
 
     public void addHistory(History history) {

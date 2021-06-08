@@ -9,7 +9,6 @@ import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import com.insulin.validation.BirthDay;
 import com.insulin.validation.Phone;
-import com.sun.istack.NotNull;
 import lombok.*;
 
 import javax.persistence.*;
@@ -28,30 +27,30 @@ import java.time.LocalDate;
 @JsonIdentityInfo(
         generator = ObjectIdGenerators.PropertyGenerator.class,
         property = "id")
-public class UserDetail implements Serializable {
+public class UserDetails implements Serializable {
     @Id
     @Column(name = "user_id")
     private Long id;
-    @Column(name = "first_name", nullable = false)
+    @Column(name = "first_name")
     @NotNull
     @Size(min = 3, max = 20)
     private String firstName;
-    @Column(name = "last_name", nullable = false)
+    @Column(name = "last_name")
     @NotNull
     @Size(min = 3, max = 20)
     private String lastName;
-    @Column(nullable = false)
+    @Column(unique = true)
     @Email
     @NotNull
     private String email;
-    @Column(nullable = false, name = "phone_number", unique = true)
+    @Column(name = "phone_number", unique = true)
     @NotNull
     @Phone
     private String phoneNr;
-    @Column(nullable = false)
+    @Column(updatable = false)
     @NotNull
     private Character gender;
-    @Column(name = "birth_day", nullable = false)
+    @Column(name = "birth_day", updatable = false)
     @NotNull
     @BirthDay
     private String birthDay;
@@ -63,14 +62,12 @@ public class UserDetail implements Serializable {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
     @JsonDeserialize(using = LocalDateDeserializer.class)
     @JsonSerialize(using = LocalDateSerializer.class)
+    @Column(name = "last_login_date")
     private LocalDate lastLoginDate;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
     @JsonDeserialize(using = LocalDateDeserializer.class)
     @JsonSerialize(using = LocalDateSerializer.class)
-    private LocalDate lastLoginDateDisplay;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
-    @JsonDeserialize(using = LocalDateDeserializer.class)
-    @JsonSerialize(using = LocalDateSerializer.class)
+    @Column(name = "join_date")
     private LocalDate joinDate;
 
     @OneToOne

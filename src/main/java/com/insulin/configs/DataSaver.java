@@ -1,7 +1,7 @@
 package com.insulin.configs;
 
 import com.insulin.model.User;
-import com.insulin.model.UserDetail;
+import com.insulin.model.UserDetails;
 import com.insulin.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -31,9 +31,9 @@ public class DataSaver implements CommandLineRunner {
     @Override
     public void run(String... args) {
         User user = buildUser();
-        UserDetail userDetail = buildUserDetails();
+        UserDetails userDetails = buildUserDetails();
 
-        user.setBidirectionalDetails(userDetail);
+        user.setBidirectionalDetails(userDetails);
 
         userRepository.save(user);
     }
@@ -46,8 +46,8 @@ public class DataSaver implements CommandLineRunner {
                 .build();
     }
 
-    private UserDetail buildUserDetails() {
-        return UserDetail.builder() //
+    private UserDetails buildUserDetails() {
+        return UserDetails.builder() //
                 .firstName("Cipri") //
                 .lastName("Teletin") //
                 .email("ciprian_teletin@yahoo.com") //

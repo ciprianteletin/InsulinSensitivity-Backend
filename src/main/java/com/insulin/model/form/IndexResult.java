@@ -6,7 +6,7 @@ import lombok.Data;
 
 /**
  * Class used for storing data that will be passed to the user, storing index information.
- * It's not used as Entity because it has slight difference compared to History class
+ * It's not used as Entity because it has slight difference compared to IndexHistory class
  */
 @Data
 @Builder

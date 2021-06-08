@@ -3,7 +3,7 @@ package com.insulin.service.implementation;
 import com.insulin.exceptions.model.*;
 import com.insulin.metadata.LostUser;
 import com.insulin.model.User;
-import com.insulin.model.UserDetail;
+import com.insulin.model.UserDetails;
 import com.insulin.model.UserPrincipal;
 import com.insulin.repository.AuthRepository;
 import com.insulin.service.EmailService;
@@ -16,20 +16,27 @@ import com.insulin.utils.model.CompleteUser;
 import com.insulin.utils.abstractions.AbstractUserFactory;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.time.LocalDate;
 import java.util.Optional;
 
 import static com.insulin.shared.constants.ExceptionConstants.OLD_PASSWORD;
+import static com.insulin.shared.constants.SecurityConstants.FLASK_API;
+import static com.insulin.utils.ApiCommunicationUtils.getStringResponse;
+import static com.insulin.utils.ApiCommunicationUtils.obtainGetRequest;
 import static com.insulin.utils.AuthenticationUtils.encryptPassword;
 import static java.util.Objects.isNull;
 
@@ -65,12 +72,10 @@ public class AuthServiceImpl implements AuthService, UserDetailsService {
      * the database. Throws an error if the user is not existent. The user can be found based on his username/email
      */
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public org.springframework.security.core.userdetails.UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = findUserByUsernameOrEmail(username);
         logger.info("User found for username: " + username);
         UserPrincipal principal = new UserPrincipal(user);
-        user.getDetails()
-                .setLastLoginDateDisplay(user.getDetails().getLastLoginDate()); //last login
         user.getDetails().setLastLoginDate(LocalDate.now()); // current login, now
         authRepository.save(user); //update information
         logger.info("Returning found user");
@@ -122,6 +127,13 @@ public class AuthServiceImpl implements AuthService, UserDetailsService {
     }
 
     @Override
+    public int checkPassword(String password) throws URISyntaxException, IOException, InterruptedException {
+        HttpRequest request = obtainGetRequest(FLASK_API + "checkpassword/" + password);
+        HttpResponse<String> response = getStringResponse(request);
+        return (boolean) new JSONObject(response.body()).get("result") ? 1 : 0;
+    }
+
+    @Override
     public void save(User user) {
         authRepository.save(user);
     }
@@ -133,10 +145,10 @@ public class AuthServiceImpl implements AuthService, UserDetailsService {
                 completeUser.getEmail(), completeUser.getPhoneNr());
         logger.info("Username and e-mail ok");
         User user = userFactory.createUser(completeUser);
-        UserDetail userDetail = userFactory.createUserDetails(completeUser);
-        user.setBidirectionalDetails(userDetail);
+        UserDetails userDetails = userFactory.createUserDetails(completeUser);
+        user.setBidirectionalDetails(userDetails);
         authRepository.save(user);
-        emailService.sendRegisterEmail(userDetail.getFirstName(), userDetail.getEmail());
+        emailService.sendRegisterEmail(userDetails.getFirstName(), userDetails.getEmail());
         logger.info("User registered with success!");
     }
 

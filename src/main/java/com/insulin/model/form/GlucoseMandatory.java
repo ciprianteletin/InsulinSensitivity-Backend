@@ -19,32 +19,33 @@ import static com.insulin.formula.ValueConverter.GLUCOSE_CONVERT;
 @Builder
 public class GlucoseMandatory {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "glucose_generator")
+    @SequenceGenerator(name="glucose_generator", sequenceName = "glucose_seq")
     @Column(nullable = false, updatable = false)
     private Long id;
     @NotNull
     @Min(value = 0)
     @Max(value = 300)
-    @Column(name = "fasting_glucose", updatable = false, nullable = false)
+    @Column(name = "fasting_glucose", updatable = false)
     private double fastingGlucose;
     @NotNull
     @Min(value = 0)
     @Max(value = 300)
-    @Column(name = "glucose_three", updatable = false, nullable = false)
+    @Column(name = "glucose_three", updatable = false)
     private double glucoseThree;
     @NotNull
     @Min(value = 0)
     @Max(value = 300)
-    @Column(name = "glucose_six", updatable = false, nullable = false)
+    @Column(name = "glucose_six", updatable = false)
     private double glucoseSix;
     @NotNull
     @Min(value = 0)
     @Max(value = 300)
-    @Column(name = "glucose_onetwenty", updatable = false, nullable = false)
+    @Column(name = "glucose_onetwenty", updatable = false)
     private double glucoseOneTwenty;
     @NonNull
     @GlucosePlaceholder
-    @Column(name = "glucose_placeholder", updatable = false, nullable = false)
+    @Column(name = "glucose_placeholder", updatable = false)
     private String glucosePlaceholder;
 
     public void convert() {
