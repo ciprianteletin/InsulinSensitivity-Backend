@@ -164,7 +164,7 @@ public class AuthController {
      * the user must be logged in. The refreshToken is also removed.
      */
     @GetMapping("/logout/{id}")
-    @PreAuthorize("hasAnyAuthority('PATIENT', 'MEDIC', 'ADMIN')")
+    @PreAuthorize("hasAnyAuthority('PATIENT', 'ADMIN')")
     public ResponseEntity<HttpResponse> logout(@PathVariable("id") Long id, HttpServletRequest request, HttpServletResponse response) {
         MetaInformation metaInformation = createMetaDataInformation(id, request);
         metaInformationService.deleteByUserIdAndDeviceDetails(id, metaInformation.getDeviceInformation());
@@ -180,7 +180,7 @@ public class AuthController {
      * 2. The refreshToken and the id are expired, but the user is logged in, so that we will generate a new refresh token.
      */
     @GetMapping("/refresh/{id}")
-    @PreAuthorize("hasAnyAuthority('PATIENT', 'MEDIC', 'ADMIN')")
+    @PreAuthorize("hasAnyAuthority('PATIENT', 'ADMIN')")
     public ResponseEntity<HttpStatus> generateToken(@CookieValue("refreshToken") String refreshToken,
                                                     @PathVariable("id") Long id,
                                                     HttpServletRequest request,

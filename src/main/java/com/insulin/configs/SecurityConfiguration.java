@@ -68,7 +68,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         http.cors().configurationSource(this::createCorsConfig).and().csrf().disable()
                 .sessionManagement().sessionCreationPolicy(STATELESS) //Since we are using REST + JWT, we don't need to keep a state of who is logged.
                 .and().authorizeRequests().antMatchers(PUBLIC_URLS).permitAll() //URLS accessible by anyone (login, register, recover password etc).
-                .anyRequest().authenticated() //TODO Secure in the future
+                .anyRequest().authenticated()
                 .and()
                 .exceptionHandling().accessDeniedHandler(jwtAccessDeniedHandler)
                 .authenticationEntryPoint(jwtAuthenticationEntryPoint)

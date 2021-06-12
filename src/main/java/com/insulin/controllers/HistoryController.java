@@ -27,14 +27,14 @@ public class HistoryController {
     }
 
     @GetMapping("/{username}")
-    @PreAuthorize("hasAnyAuthority('PATIENT', 'MEDIC', 'ADMIN')")
+    @PreAuthorize("hasAnyAuthority('PATIENT', 'ADMIN')")
     public ResponseEntity<List<IndexSummary>> getHistoryByUsername(@PathVariable("username") String username)
             throws UserNotFoundException {
         return new ResponseEntity<>(this.historyService.findSummaryByUsername(username), HttpStatus.OK);
     }
 
     @GetMapping("/result/{id}")
-    @PreAuthorize("hasAnyAuthority('PATIENT', 'MEDIC', 'ADMIN')")
+    @PreAuthorize("hasAnyAuthority('PATIENT', 'ADMIN')")
     public ResponseEntity<Pair<MandatoryInsulinInformation, IndexSender>> getResultsById(@PathVariable("id") Long id,
                                                                                          Authentication auth)
             throws InvalidHistoryId, UserNotFoundException {
@@ -43,14 +43,14 @@ public class HistoryController {
     }
 
     @DeleteMapping("/delete/{id}")
-    @PreAuthorize("hasAnyAuthority('PATIENT', 'MEDIC', 'ADMIN')")
+    @PreAuthorize("hasAnyAuthority('PATIENT', 'ADMIN')")
     public ResponseEntity<HttpStatus> deleteByHistoryId(@PathVariable("id") Long id) {
         this.historyService.deleteByHistoryId(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @DeleteMapping("/delete")
-    @PreAuthorize("hasAnyAuthority('PATIENT', 'MEDIC', 'ADMIN')")
+    @PreAuthorize("hasAnyAuthority('PATIENT', 'ADMIN')")
     public ResponseEntity<HttpStatus> deleteHistoryByDate(@RequestParam(name = "fromDate") String fromDate,
                                                           @RequestParam(name = "toDate") String toDate) {
         this.historyService.deleteByCreationDateBetween(fromDate, toDate);
@@ -58,7 +58,7 @@ public class HistoryController {
     }
 
     @DeleteMapping("/deleteAll")
-    @PreAuthorize("hasAnyAuthority('PATIENT', 'MEDIC', 'ADMIN')")
+    @PreAuthorize("hasAnyAuthority('PATIENT', 'ADMIN')")
     public ResponseEntity<HttpStatus> deleteAllHistory() {
         this.historyService.deleteAllHistory();
         return new ResponseEntity<>(HttpStatus.OK);

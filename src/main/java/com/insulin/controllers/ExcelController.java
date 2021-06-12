@@ -31,7 +31,7 @@ public class ExcelController {
     }
 
     @PostMapping("/result")
-    @PreAuthorize("hasAnyAuthority('PATIENT', 'MEDIC', 'ADMIN')")
+    @PreAuthorize("hasAnyAuthority('PATIENT', 'ADMIN')")
     public ResponseEntity<byte[]> getExcelResults(@RequestBody @Valid Pair<MandatoryInsulinInformation, IndexSender> excelData) throws IOException {
         byte[] excelContent = this.excelService.exportResponseExcel(excelData.getFirst(), excelData.getSecond());
         return ResponseEntity.status(HttpStatus.OK).header("Filename", "insulin.xlsx")
@@ -40,7 +40,7 @@ public class ExcelController {
     }
 
     @PostMapping("/history")
-    @PreAuthorize("hasAnyAuthority('PATIENT', 'MEDIC', 'ADMIN')")
+    @PreAuthorize("hasAnyAuthority('PATIENT', 'ADMIN')")
     public ResponseEntity<byte[]> getExcelHistory(@RequestBody List<Long> historyId, Authentication auth)
             throws InvalidHistoryId, UserNotFoundException, IOException {
         String principal = (String) auth.getPrincipal();

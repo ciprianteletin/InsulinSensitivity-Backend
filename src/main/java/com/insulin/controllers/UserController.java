@@ -40,7 +40,7 @@ public class UserController {
     }
 
     @GetMapping("/username/{username}")
-    @PreAuthorize("hasAnyAuthority('PATIENT', 'MEDIC', 'ADMIN')")
+    @PreAuthorize("hasAnyAuthority('PATIENT', 'ADMIN')")
     public ResponseEntity<User> getUserByUsername(@PathVariable("username") String username) throws DataFormatException, IOException {
         User user = userService.getUserByUsername(username);
         decompressBytes(user);
@@ -48,20 +48,20 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyAuthority('PATIENT', 'MEDIC', 'ADMIN')")
+    @PreAuthorize("hasAnyAuthority('PATIENT', 'ADMIN')")
     public ResponseEntity<User> getUserById(@PathVariable("id") Long id) throws UserNotFoundException {
         return new ResponseEntity<>(userService.getUserById(id), HttpStatus.OK);
     }
 
     @GetMapping("/ip")
-    @PreAuthorize("hasAnyAuthority('PATIENT', 'MEDIC', 'ADMIN')")
+    @PreAuthorize("hasAnyAuthority('PATIENT', 'ADMIN')")
     public ResponseEntity<String> getUserIP(Authentication authentication) throws UserNotFoundException {
         String username = (String) authentication.getPrincipal();
         return new ResponseEntity<>(userService.getUserIpAddress(username), HttpStatus.OK);
     }
 
     @PostMapping("/upload/{id}")
-    @PreAuthorize("hasAnyAuthority('PATIENT', 'MEDIC', 'ADMIN')")
+    @PreAuthorize("hasAnyAuthority('PATIENT', 'ADMIN')")
     public ResponseEntity<User> uploadImage(@PathVariable("id") Long id, @RequestParam(name = "imageFile") MultipartFile file)
             throws IOException, UserNotFoundException, DataFormatException {
         User user = this.userService.updateProfileImage(id, file);
@@ -71,7 +71,7 @@ public class UserController {
     }
 
     @PutMapping("/updateInformation/{id}")
-    @PreAuthorize("hasAnyAuthority('PATIENT', 'MEDIC', 'ADMIN')")
+    @PreAuthorize("hasAnyAuthority('PATIENT', 'ADMIN')")
     public ResponseEntity<HttpResponse> updateUserInformation(@PathVariable("id") Long id,
                                                               @Valid @RequestBody BasicUserInfo basicUserInfo)
             throws UserNotFoundException, EmailAlreadyExistentException, UsernameAlreadyExistentException, PhoneNumberUniqueException {
@@ -81,7 +81,7 @@ public class UserController {
     }
 
     @PutMapping("/updatePassword")
-    @PreAuthorize("hasAnyAuthority('PATIENT', 'MEDIC', 'ADMIN')")
+    @PreAuthorize("hasAnyAuthority('PATIENT', 'ADMIN')")
     public ResponseEntity<HttpResponse> updateUserPassword(@Valid @RequestBody UserPasswordInfo userPasswordInfo,
                                                            Authentication authentication)
             throws OldPasswordException, DataFormatException, IOException {
@@ -93,7 +93,7 @@ public class UserController {
     }
 
     @DeleteMapping("/delete/{id}")
-    @PreAuthorize("hasAnyAuthority('PATIENT', 'MEDIC', 'ADMIN')")
+    @PreAuthorize("hasAnyAuthority('PATIENT', 'ADMIN')")
     public ResponseEntity<HttpResponse> deleteUserById(@PathVariable("id") Long id,
                                                        Authentication auth,
                                                        HttpServletRequest request)

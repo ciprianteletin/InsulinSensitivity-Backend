@@ -46,7 +46,6 @@ public class HistoryServiceImpl implements HistoryService {
     public void saveHistory(User user, MandatoryInsulinInformation mandatoryInformation, String result, IndexSender indexSender) {
         History history = buildHistory(mandatoryInformation, result, indexSender);
         user.addHistory(history);
-        historyRepository.save(history);
         userRepository.save(user);
     }
 

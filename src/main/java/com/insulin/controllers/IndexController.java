@@ -42,7 +42,7 @@ public class IndexController {
     }
 
     @PostMapping("/pdf")
-    @PreAuthorize("hasAnyAuthority('PATIENT', 'MEDIC', 'ADMIN')")
+    @PreAuthorize("hasAnyAuthority('PATIENT', 'ADMIN')")
     public ResponseEntity<byte[]> getIndexPdf(@RequestParam(name = "glucoseImg") String glucoseImg,
                                               @RequestParam(name = "insulinImg") String insulinImg,
                                               @RequestBody Pair<IndexSender, MandatoryInsulinInformation> dataPair)

@@ -126,6 +126,10 @@ public class AuthServiceImpl implements AuthService, UserDetailsService {
         lostUserService.save(email, secretParam);
     }
 
+    /**
+     * Calls the Flask server to check the password against all pwned password to check if it's secured or not
+     * The call is made via HttpClient and we receive a HttpResponse.
+     */
     @Override
     public int checkPassword(String password) throws URISyntaxException, IOException, InterruptedException {
         HttpRequest request = obtainGetRequest(FLASK_API + "checkpassword/" + password);
