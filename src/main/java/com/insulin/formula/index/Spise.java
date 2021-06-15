@@ -11,7 +11,7 @@ import org.springframework.data.util.Pair;
 
 import static com.insulin.formula.RangeChecker.checkLowerBound;
 import static com.insulin.formula.ValueConverter.APPROXIMATE;
-import static com.insulin.formula.ValueConverter.convertHDL;
+import static com.insulin.formula.ValueConverter.convertCholesterolMmol;
 import static com.insulin.shared.constants.IndexDataConstants.HDL;
 import static com.insulin.shared.constants.IndexDataConstants.THYROGLOBULIN;
 import static com.insulin.utils.FormulaUtils.*;
@@ -30,7 +30,7 @@ public class Spise implements FormulaMarker, IndexInterpreter {
         validateTyroAndHdl(mandatoryInformation.getOptionalInformation(), "spise");
         OptionalInsulinInformation optionalInformation = mandatoryInformation.getOptionalInformation();
         double hdl = optionalInformation.getHdl();
-        hdl = convertHDL(hdl, mandatoryInformation.getGlucoseMandatory().getGlucosePlaceholder());
+        hdl = convertCholesterolMmol(hdl, mandatoryInformation.getGlucoseMandatory().getGlucosePlaceholder());
         double bmi = calculateBMI(optionalInformation);
         double tyro = optionalInformation.getThyroglobulin();
 

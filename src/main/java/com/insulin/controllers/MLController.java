@@ -3,6 +3,7 @@ package com.insulin.controllers;
 import com.insulin.service.abstraction.MLService;
 import com.insulin.utils.model.ClassificationModel;
 import com.insulin.utils.model.ModelResult;
+import com.insulin.utils.model.RegressionModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +27,13 @@ public class MLController {
     @PreAuthorize("hasAnyAuthority('PATIENT', 'ADMIN')")
     public ResponseEntity<ModelResult> predictDiabetes(@Valid @RequestBody ClassificationModel dataModel) throws IOException, InterruptedException {
         mlService.adaptClassificationModelValues(dataModel);
+        return new ResponseEntity<>(mlService.sendToModel(dataModel), HttpStatus.OK);
+    }
+
+    @PostMapping("/evolution")
+    @PreAuthorize("hasAnyAuthority('PATIENT', 'ADMIN')")
+    public ResponseEntity<ModelResult> predictEvolution(@Valid @RequestBody RegressionModel dataModel) throws IOException, InterruptedException {
+        mlService.adaptRegressionModelValues(dataModel);
         return new ResponseEntity<>(mlService.sendToModel(dataModel), HttpStatus.OK);
     }
 }

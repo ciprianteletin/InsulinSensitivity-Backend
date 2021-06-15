@@ -31,8 +31,8 @@ public class OptionalInsulinInformation {
     public void convert(String actual) {
         // From mg/dL to mmol
         double nefaConvert = NEFA_CONVERT;
-        double hdlConvert = 1. / HDL_CONVERT;
-        double triglycerideConvert = TRYGLICERIDE_CONVERT;
+        double hdlConvert = 1. / CHOL_CONVERT;
+        double triglycerideConvert = TRIGLYCERIDE_CONVERT;
 
         if (actual.equals("mmol/L")) {
             nefaConvert = 1. / nefaConvert;

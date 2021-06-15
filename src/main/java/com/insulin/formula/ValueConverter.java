@@ -19,8 +19,8 @@ public final class ValueConverter {
     public static final String GREATER_THAN = ">";
     public static final String DASH = "-";
     public static final double NEFA_CONVERT = 0.35;
-    public static final double TRYGLICERIDE_CONVERT = 0.01129;
-    public static final double HDL_CONVERT = 38.67;
+    public static final double TRIGLYCERIDE_CONVERT = 0.01129;
+    public static final double CHOL_CONVERT = 38.67;
 
     private ValueConverter() {
 
@@ -75,24 +75,38 @@ public final class ValueConverter {
         return value / INSULIN_CONVERT;
     }
 
-    public static double convertNefa(double nefa, String from) {
+    public static double convertNefaMmol(double nefa, String from) {
         if (from.equals("mmol/L")) {
             return nefa;
         }
         return nefa * NEFA_CONVERT;
     }
 
-    public static double convertTrygliceride(double value, String from) {
+    public static double convertTriglycerideMmol(double value, String from) {
         if (from.equals("mmol/L")) {
             return value;
         }
-        return value * TRYGLICERIDE_CONVERT;
+        return value * TRIGLYCERIDE_CONVERT;
     }
 
-    public static double convertHDL(double value, String from) {
+    public static double convertTriglycerideMgdl(double value, String from) {
+        if (from.equals("mg/dL")) {
+            return value;
+        }
+        return value / TRIGLYCERIDE_CONVERT;
+    }
+
+    public static double convertCholesterolMmol(double value, String from) {
         if (from.equals("mmol/L")) {
             return value;
         }
-        return value / HDL_CONVERT;
+        return value / CHOL_CONVERT;
+    }
+
+    public static double convertCholesterolMgdl(double value, String from) {
+        if (from.equals("mg/dL")) {
+            return value;
+        }
+        return value * CHOL_CONVERT;
     }
 }

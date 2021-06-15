@@ -31,7 +31,7 @@ public class McAuley implements FormulaMarker, IndexInterpreter {
                 .getTriglyceride();
         fastingInsulin = convertSingleInsulin(fastingInsulin,
                 mandatoryInformation.getInsulinMandatory().getInsulinPlaceholder(), "μIU/mL");
-        trygliceride = convertTrygliceride(trygliceride,
+        trygliceride = convertTriglycerideMmol(trygliceride,
                 mandatoryInformation.getGlucoseMandatory().getGlucosePlaceholder());
         double power = 2.63 - 0.28 * log(fastingInsulin) - 0.31 * log(trygliceride);
         double result = Math.exp(power);

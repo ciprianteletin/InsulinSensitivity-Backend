@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 import com.insulin.service.abstraction.MLService;
 import com.insulin.utils.model.ClassificationModel;
 import com.insulin.utils.model.ModelResult;
+import com.insulin.utils.model.RegressionModel;
 import org.json.JSONObject;
 import org.springframework.stereotype.Service;
 
@@ -35,6 +36,15 @@ public class MLServiceImpl implements MLService {
     }
 
     @Override
+    public void adaptRegressionModelValues(RegressionModel regressionModel) {
+        convertMgMmol(regressionModel);
+
+        setCholHDLRatio(regressionModel);
+
+        setLogTriglycerides(regressionModel);
+    }
+
+    @Override
     public ModelResult sendToModel(ClassificationModel classificationModel) throws IOException, InterruptedException {
         ObjectWriter writer = new ObjectMapper().writer().withDefaultPrettyPrinter();
         String json = writer.writeValueAsString(classificationModel);
@@ -48,6 +58,24 @@ public class MLServiceImpl implements MLService {
         modelResult.setResult(jsonObject.getDouble("Result"));
         modelResult.setProbability(probability);
 
+        return modelResult;
+    }
+
+    @Override
+    public ModelResult sendToModel(RegressionModel regressionModel) throws IOException, InterruptedException {
+        ObjectWriter writer = new ObjectMapper().writer().withDefaultPrettyPrinter();
+        String json = writer.writeValueAsString(regressionModel);
+        HttpRequest request = obtainPostClassificationRequest(FLASK_API + "/classification/progress", json);
+
+        HttpResponse<String> response = getStringResponse(request);
+
+        Double evolution = Double.parseDouble(response.body());
+        evolution = roundValue(evolution);
+
+        ModelResult modelResult = new ModelResult();
+        modelResult.setResult(evolution);
+
+        setDiagnosisCategory(modelResult);
         return modelResult;
     }
 
@@ -66,10 +94,26 @@ public class MLServiceImpl implements MLService {
     }
 
     private void convertMgMmol(ClassificationModel classificationModel) {
-        if (classificationModel.getPlaceholder().equals("mmol/L")) {
-            classificationModel.setGlucose(roundValue(convertSingleGlucose(classificationModel.getGlucose(), "mmol/L", "mg/dL")));
-            classificationModel.setCholesterol(roundValue(convertSingleGlucose(classificationModel.getCholesterol(), "mmol/L", "mg/dL")));
-            classificationModel.setHdl(roundValue(convertSingleGlucose(classificationModel.getHdl(), "mmol/L", "mg/dL")));
+        String placeholder = classificationModel.getPlaceholder();
+        if (placeholder.equals("mmol/L")) {
+            classificationModel.setGlucose(roundValue(convertSingleGlucose(classificationModel.getGlucose(), placeholder, "mg/dL")));
+            classificationModel.setCholesterol(roundValue(convertCholesterolMgdl(classificationModel.getCholesterol(), placeholder)));
+            classificationModel.setHdl(roundValue(convertCholesterolMgdl(classificationModel.getHdl(), placeholder)));
+        }
+    }
+
+    private void setLogTriglycerides(RegressionModel regressionModel) {
+        regressionModel.setLtg(Math.log10(regressionModel.getLtg()));
+    }
+
+    private void convertMgMmol(RegressionModel regressionModel) {
+        String placeholder = regressionModel.getPlaceholder();
+        if (placeholder.equals("mmol/L")) {
+            regressionModel.setGlucose(roundValue(convertSingleGlucose(regressionModel.getGlucose(), placeholder, "mg/dL")));
+            regressionModel.setCholesterol(roundValue(convertCholesterolMgdl(regressionModel.getCholesterol(), placeholder)));
+            regressionModel.setHdl(roundValue(convertCholesterolMgdl(regressionModel.getHdl(), placeholder)));
+            regressionModel.setLdl(roundValue(convertCholesterolMgdl(regressionModel.getLdl(), placeholder)));
+            regressionModel.setLtg(roundValue(convertTriglycerideMgdl(regressionModel.getLtg(), placeholder)));
         }
     }
 
@@ -85,7 +129,19 @@ public class MLServiceImpl implements MLService {
         classificationModel.setCholHDLRatio(roundValue(chol / hdl));
     }
 
+    private void setCholHDLRatio(RegressionModel regressionModel) {
+        Double chol = regressionModel.getCholesterol();
+        Double hdl = regressionModel.getHdl();
+
+        regressionModel.setTch(roundValue(chol / hdl).intValue());
+    }
+
     private Double roundValue(Double value) {
         return Math.round(value * 1000d) / 1000d;
+    }
+
+    private void setDiagnosisCategory(ModelResult modelResult) {
+        Double result = modelResult.getResult();
+        modelResult.setCategory((int) (result / 100));
     }
 }

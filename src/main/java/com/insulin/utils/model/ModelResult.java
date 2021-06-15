@@ -12,4 +12,5 @@ import lombok.Setter;
 public class ModelResult {
     private Double probability;
     private Double result;
+    private Integer category;
 }

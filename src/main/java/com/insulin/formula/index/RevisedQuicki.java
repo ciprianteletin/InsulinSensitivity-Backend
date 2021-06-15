@@ -30,7 +30,7 @@ public class RevisedQuicki implements FormulaMarker, IndexInterpreter {
                 mandatoryInformation.getInsulinMandatory().getFastingInsulin(),
                 mandatoryInformation.getInsulinMandatory().getInsulinPlaceholder(),
                 "μIU/mL");
-        double nefa = convertNefa(mandatoryInformation.getOptionalInformation().getNefa(),
+        double nefa = convertNefaMmol(mandatoryInformation.getOptionalInformation().getNefa(),
                 mandatoryInformation.getGlucoseMandatory().getGlucosePlaceholder());
 
         double result = 1.0 / (log(fastingGlucose) + log(fastingInsulin) + log(nefa));
