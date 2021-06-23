@@ -25,22 +25,22 @@ public class InsulinMandatory {
     private Long id;
     @NotNull
     @Min(value = 0)
-    @Max(value = 300)
+    @Max(value = 174)
     @Column(name = "fasting_insulin", updatable = false)
     private double fastingInsulin;
     @NotNull
     @Min(value = 0)
-    @Max(value = 300)
+    @Max(value = 1597)
     @Column(name = "insulin_three", updatable = false)
     private double insulinThree;
     @NotNull
     @Min(value = 0)
-    @Max(value = 300)
+    @Max(value = 1917)
     @Column(name = "insulin_six", updatable = false)
     private double insulinSix;
     @NotNull
     @Min(value = 0)
-    @Max(value = 300)
+    @Max(value = 1153)
     @Column(name = "insulin_onetwenty", updatable = false)
     private double insulinOneTwenty;
     @NotNull

@@ -6,6 +6,8 @@ import com.insulin.model.form.GlucoseMandatory;
 import java.util.List;
 import java.util.Optional;
 
+import static com.insulin.formula.ValueConverter.glucoseConverter;
+
 /**
  * Class which will keep all interpreters in one place, so that every
  * user can check their input against the interpreters list.
@@ -38,11 +40,18 @@ public final class Analyzer {
     public String filterGlucoseMandatoryResult(GlucoseMandatory glucoseMandatory) {
         String result = "Healthy";
         Optional<Interpreter> interpreter = interpreters.stream()
-                .filter(in -> in.interpret(glucoseMandatory))
+                .filter(in -> in.interpret(getMgDlGlucose(glucoseMandatory)))
                 .findAny();
         if (interpreter.isPresent()) {
             result = interpreter.get().getName();
         }
         return result;
+    }
+
+    public GlucoseMandatory getMgDlGlucose(GlucoseMandatory glucoseMandatory) {
+        if (glucoseMandatory.getGlucosePlaceholder().equals("mmol/L")) {
+            return glucoseConverter(glucoseMandatory, "mg/dL");
+        }
+        return glucoseMandatory;
     }
 }

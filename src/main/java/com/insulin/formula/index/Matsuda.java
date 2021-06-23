@@ -10,7 +10,7 @@ import com.insulin.model.form.InsulinMandatory;
 import com.insulin.model.form.MandatoryInsulinInformation;
 import org.springframework.data.util.Pair;
 
-import static com.insulin.formula.RangeChecker.checkUpperBound;
+import static com.insulin.formula.RangeChecker.checkLowerBound;
 import static com.insulin.shared.constants.IndexDataConstants.*;
 import static com.insulin.shared.constants.NumericConstants.TEN_FOUR;
 import static com.insulin.formula.ValueConverter.*;
@@ -40,7 +40,7 @@ public class Matsuda implements FormulaMarker, IndexInterpreter {
 
     @Override
     public Pair<String, Severity> interpret(double result) {
-        if (checkUpperBound(interpretValue, result)) {
+        if (checkLowerBound(interpretValue, result)) {
             return Pair.of("Insulin Resistance", Severity.INSULIN_RESISTANCE);
         }
         return healthyPair();
