@@ -142,6 +142,12 @@ public class MLServiceImpl implements MLService {
 
     private void setDiagnosisCategory(ModelResult modelResult) {
         Double result = modelResult.getResult();
-        modelResult.setCategory((int) (result / 100));
+        int category = 2;
+        if (result < 150) {
+            category = 0;
+        } else if (result < 250) {
+            category = 1;
+        }
+        modelResult.setCategory(category);
     }
 }
