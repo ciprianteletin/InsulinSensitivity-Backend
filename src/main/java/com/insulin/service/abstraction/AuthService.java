@@ -7,7 +7,6 @@ import com.insulin.utils.model.CompleteUser;
 import javax.mail.MessagingException;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.Optional;
 
 public interface AuthService {
 
@@ -15,14 +14,6 @@ public interface AuthService {
 
     void register(CompleteUser completeUser)
             throws UserNotFoundException, EmailAlreadyExistentException, UsernameAlreadyExistentException, MessagingException, PhoneNumberUniqueException;
-
-    Optional<User> findUserByUsername(String username);
-
-    User findUserByEmail(String email);
-
-    User findUserByUsernameOrEmail(String text);
-
-    User findUserById(Long id) throws UserNotFoundException;
 
     void resetPassword(String password, String code) throws EmailNotFoundException, LinkExpiredException, OldPasswordException;
 

@@ -5,7 +5,7 @@ import com.insulin.metadata.LostUser;
 import com.insulin.model.User;
 import com.insulin.model.UserDetails;
 import com.insulin.model.UserPrincipal;
-import com.insulin.repository.AuthRepository;
+import com.insulin.repository.UserRepository;
 import com.insulin.service.EmailService;
 import com.insulin.service.abstraction.AuthService;
 import com.insulin.service.abstraction.LostUserService;
@@ -31,7 +31,6 @@ import java.net.URISyntaxException;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.LocalDate;
-import java.util.Optional;
 
 import static com.insulin.shared.constants.ExceptionConstants.OLD_PASSWORD;
 import static com.insulin.shared.constants.SecurityConstants.FLASK_API;
@@ -45,7 +44,7 @@ import static java.util.Objects.isNull;
 @Qualifier("userService")
 public class AuthServiceImpl implements AuthService, UserDetailsService {
     private final Logger logger = LoggerFactory.getLogger(getClass());
-    private final AuthRepository authRepository;
+    private final UserRepository userRepository;
     private final AbstractUserFactory userFactory;
     private final EmailService emailService;
     private final LostUserService lostUserService;
@@ -53,15 +52,15 @@ public class AuthServiceImpl implements AuthService, UserDetailsService {
     private final UserManagerService userManagerService;
 
     @Autowired
-    public AuthServiceImpl(AuthRepository authRepository,
-                           AbstractUserFactory userFactory,
+    public AuthServiceImpl(AbstractUserFactory userFactory,
                            EmailService emailService,
+                           UserRepository userRepository,
                            LostUserService lostUserService,
                            ValidationUtils validationUtils,
                            UserManagerService userManagerService) {
-        this.authRepository = authRepository;
         this.userFactory = userFactory;
         this.emailService = emailService;
+        this.userRepository = userRepository;
         this.lostUserService = lostUserService;
         this.validationUtils = validationUtils;
         this.userManagerService = userManagerService;
@@ -72,32 +71,22 @@ public class AuthServiceImpl implements AuthService, UserDetailsService {
      * the database. Throws an error if the user is not existent. The user can be found based on his username/email
      */
     @Override
-    public org.springframework.security.core.userdetails.UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = findUserByUsernameOrEmail(username);
+    public org.springframework.security.core.userdetails.UserDetails loadUserByUsername(String username)
+            throws UsernameNotFoundException {
+        User user = this.userManagerService.findUserByUsernameOrEmail(username);
         logger.info("User found for username: " + username);
         UserPrincipal principal = new UserPrincipal(user);
         user.getDetails().setLastLoginDate(LocalDate.now()); // current login, now
-        authRepository.save(user); //update information
+        userRepository.save(user); //update information
         logger.info("Returning found user");
         return principal;
-    }
-
-    @Override
-    public User findUserByUsernameOrEmail(String text) {
-        return userManagerService.findUserByUsernameOrEmail(text);
-    }
-
-    @Override
-    public User findUserById(Long id) throws UserNotFoundException {
-        return authRepository.findById(id) //
-                .orElseThrow(() -> new UserNotFoundException("User not found for the specified id. Auto-login failed"));
     }
 
     @Override
     public void resetPassword(String password, String code) throws EmailNotFoundException, LinkExpiredException, OldPasswordException {
         ImmutablePair<String, String> lostUserInfoPair = getEmailFromLostUser(code);
         String email = AuthenticationUtils.decryptText(lostUserInfoPair.getRight());
-        User forgottenUser = this.findUserByEmail(email);
+        User forgottenUser = this.userManagerService.findUserByEmail(email);
         if (isNull(forgottenUser)) {
             throw new EmailNotFoundException("The provided email was not mapped to any user!");
         }
@@ -106,7 +95,7 @@ public class AuthServiceImpl implements AuthService, UserDetailsService {
         }
         String encryptedPassword = encryptPassword(password);
         forgottenUser.setPassword(encryptedPassword);
-        authRepository.save(forgottenUser);
+        userRepository.save(forgottenUser);
         lostUserService.deleteById(lostUserInfoPair.getLeft());
     }
 
@@ -117,7 +106,7 @@ public class AuthServiceImpl implements AuthService, UserDetailsService {
      */
     @Override
     public void redirectResetPassword(String email) throws InvalidEmailForgotPassword {
-        User existUser = authRepository.findUserByEmail(email);
+        User existUser = userManagerService.findUserByEmail(email);
         if (isNull(existUser)) {
             throw new InvalidEmailForgotPassword("The provided email does not exist!");
         }
@@ -139,7 +128,7 @@ public class AuthServiceImpl implements AuthService, UserDetailsService {
 
     @Override
     public void save(User user) {
-        authRepository.save(user);
+        userRepository.save(user);
     }
 
     @Override
@@ -151,19 +140,9 @@ public class AuthServiceImpl implements AuthService, UserDetailsService {
         User user = userFactory.createUser(completeUser);
         UserDetails userDetails = userFactory.createUserDetails(completeUser);
         user.setBidirectionalDetails(userDetails);
-        authRepository.save(user);
+        userRepository.save(user);
         emailService.sendRegisterEmail(userDetails.getFirstName(), userDetails.getEmail());
         logger.info("User registered with success!");
-    }
-
-    @Override
-    public Optional<User> findUserByUsername(String username) {
-        return Optional.ofNullable(authRepository.findUserByUsername(username));
-    }
-
-    @Override
-    public User findUserByEmail(String email) {
-        return authRepository.findUserByEmail(email);
     }
 
     private ImmutablePair<String, String> getEmailFromLostUser(String code) throws LinkExpiredException {

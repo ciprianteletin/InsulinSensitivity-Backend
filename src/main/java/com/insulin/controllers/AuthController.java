@@ -7,6 +7,7 @@ import com.insulin.model.User;
 import com.insulin.model.UserPrincipal;
 import com.insulin.service.abstraction.AuthService;
 import com.insulin.service.abstraction.MetaInformationService;
+import com.insulin.service.abstraction.UserManagerService;
 import com.insulin.shared.HttpResponse;
 import com.insulin.utils.HttpResponseUtils;
 import com.insulin.utils.model.CompleteUser;
@@ -48,22 +49,25 @@ public class AuthController {
     private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider provider;
     private final MetaInformationService metaInformationService;
+    private final UserManagerService userManagerService;
 
     @Autowired
     public AuthController(@Qualifier("userService") AuthService authService,
                           AuthenticationManager authenticationManager,
+                          UserManagerService userManagerService,
                           JwtTokenProvider provider,
                           MetaInformationService metaInformationService) {
         this.provider = provider;
         this.authenticationManager = authenticationManager;
         this.authService = authService;
+        this.userManagerService = userManagerService;
         this.metaInformationService = metaInformationService;
     }
 
     @PostMapping("/login")
     public ResponseEntity<User> login(@Valid @RequestBody User user, HttpServletRequest request, HttpServletResponse response) {
         authenticate(user.getUsername(), user.getPassword());
-        User loginUser = authService.findUserByUsernameOrEmail(user.getUsername());
+        User loginUser = userManagerService.findUserByUsernameOrEmail(user.getUsername());
         UserPrincipal userPrincipal = new UserPrincipal(loginUser);
         HttpHeaders jwtHeader = getJwtHeader(userPrincipal);
         MetaInformation metaInformation = saveMetaDataInformation(loginUser.getId(), request);
@@ -126,7 +130,7 @@ public class AuthController {
                 .findByRefreshTokenAndDevice(refreshToken, metaInformation.getDeviceInformation());
         if (nonNull(storedInformation) && refreshToken.equals(storedInformation.getRefreshToken())) {
             //Then the user was logged on his device and has the good token.
-            User user = authService.findUserById(storedInformation.getUserId());
+            User user = userManagerService.findUserById(storedInformation.getUserId());
             updateUserDetails(user);
             UserPrincipal userPrincipal = new UserPrincipal(user);
             HttpHeaders jwtHeader = getJwtHeader(userPrincipal);
@@ -146,7 +150,7 @@ public class AuthController {
         if (refreshToken == null) {
             throw new UpdateDeniedException(UPDATE_DENIED);
         }
-        User user = authService.findUserByUsername(username)
+        User user = userManagerService.findUserByUsername(username)
                 .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND));
         MetaInformation storedInformation = metaInformationService
                 .findByUserIdAndRefreshToken(user.getId(), refreshToken);
@@ -189,7 +193,7 @@ public class AuthController {
         MetaInformation dbMetaInformation = metaInformationService //
                 .findByUserIdAndRefreshToken(id, refreshToken);
         String username = (String) auth.getPrincipal(); // can be email or actual username
-        UserPrincipal loggedUser = new UserPrincipal(authService.findUserByUsernameOrEmail(username));
+        UserPrincipal loggedUser = new UserPrincipal(userManagerService.findUserByUsernameOrEmail(username));
         if (isNull(dbMetaInformation)) {
             MetaInformation metaInformation = saveMetaDataInformation(id, request);
             passHttpOnlyCookie(REFRESH_TOKEN_NAME, metaInformation.getRefreshToken(), REFRESH_EXPIRATION_TIME_SEC, response);
