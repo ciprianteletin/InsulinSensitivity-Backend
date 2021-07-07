@@ -7,12 +7,17 @@ import javax.validation.constraints.Min;
 
 import static com.insulin.formula.ValueConverter.*;
 
+/**
+ * Container for the details that are not mandatory, rather optional, requested by some index only
+ * Not mapped as an entity, because it can contain a lot of null values and the decision
+ * was to build another class to store the values in db.
+ */
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class OptionalInsulinInformation {
+public class OptionalIndexInformation {
     @Min(value = 120)
     @Max(value = 250)
     private Double height;

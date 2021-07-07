@@ -31,7 +31,6 @@ import java.io.IOException;
 import java.util.Optional;
 
 import static com.insulin.shared.constants.UserConstants.USERNAME_NOT_FOUND;
-import static com.insulin.shared.constants.UserConstants.USER_NOT_FOUND;
 import static com.insulin.utils.AuthenticationUtils.*;
 
 @Service
@@ -83,7 +82,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User getUserByUsername(String username) {
-        Optional<User> currentUser = this.userRepository.findByUsername(username);
+        Optional<User> currentUser = this.userManagerService.findUserByUsername(username);
         return currentUser.orElseThrow(() -> new UsernameNotFoundException(USERNAME_NOT_FOUND));
     }
 
@@ -105,8 +104,7 @@ public class UserServiceImpl implements UserService {
     public User updateUser(Long id, BasicUserInfo basicUserInfo)
             throws UserNotFoundException, EmailAlreadyExistentException,
             UsernameAlreadyExistentException, PhoneNumberUniqueException {
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND));
+        User user = userManagerService.findUserById(id);
         boolean modifyPrincipal = verifyPrincipalChange(user, basicUserInfo);
         this.checkUserInformation(user, basicUserInfo);
         this.userRepository.save(user);
@@ -119,8 +117,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @CachePut(value = "users", key = "#id", cacheManager = "cacheManager")
     public User updateProfileImage(Long id, MultipartFile file) throws UserNotFoundException, IOException {
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND));
+        User user = userManagerService.findUserById(id);
         UserDetails details = user.getDetails();
         byte[] compressedImage = ByteDecompressor.compressBytes(file.getBytes());
         details.setProfileImage(compressedImage);

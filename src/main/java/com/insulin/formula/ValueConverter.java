@@ -2,7 +2,7 @@ package com.insulin.formula;
 
 import com.insulin.model.form.GlucoseMandatory;
 import com.insulin.model.form.InsulinMandatory;
-import com.insulin.model.form.OptionalInsulinInformation;
+import com.insulin.model.form.OptionalIndexInformation;
 
 import static com.insulin.utils.MandatoryInfoBuildUtils.*;
 
@@ -46,11 +46,11 @@ public final class ValueConverter {
         return insulinMandatory;
     }
 
-    public static OptionalInsulinInformation optionalConverter(OptionalInsulinInformation optionalInsulin, String from, String to) {
+    public static OptionalIndexInformation optionalConverter(OptionalIndexInformation optionalInsulin, String from, String to) {
         if (from.equals(to)) {
             return optionalInsulin;
         }
-        OptionalInsulinInformation copyOptional = buildOptional(optionalInsulin);
+        OptionalIndexInformation copyOptional = buildOptional(optionalInsulin);
         copyOptional.convert(from);
         return copyOptional;
     }

@@ -1,7 +1,7 @@
 package com.insulin.service.implementation;
 
 import com.insulin.model.form.IndexSender;
-import com.insulin.model.form.MandatoryInsulinInformation;
+import com.insulin.model.form.MandatoryIndexInformation;
 import com.insulin.pdf.PdfManager;
 import com.insulin.service.abstraction.PdfService;
 import com.insulin.utils.model.Pair;
@@ -14,10 +14,10 @@ import java.io.IOException;
 public class PdfServiceImpl implements PdfService {
 
     @Override
-    public byte[] getPDF(String glucoseImg, String insulinImg, Pair<IndexSender, MandatoryInsulinInformation> pair)
+    public byte[] getPDF(String glucoseImg, String insulinImg, Pair<IndexSender, MandatoryIndexInformation> pair)
             throws IOException, DocumentException {
         IndexSender sender = pair.getFirst();
-        MandatoryInsulinInformation mandatoryInformation = pair.getSecond();
+        MandatoryIndexInformation mandatoryInformation = pair.getSecond();
         PdfManager pdfManager = new PdfManager();
         createFirstPage(pdfManager, sender, mandatoryInformation);
         createSecondPage(pdfManager, sender, glucoseImg, insulinImg);
@@ -25,7 +25,7 @@ public class PdfServiceImpl implements PdfService {
         return pdfManager.returnPdf();
     }
 
-    private void createFirstPage(PdfManager pdfManager, IndexSender sender, MandatoryInsulinInformation mandatoryInformation)
+    private void createFirstPage(PdfManager pdfManager, IndexSender sender, MandatoryIndexInformation mandatoryInformation)
             throws DocumentException {
         pdfManager.addTitleAndResult(sender);
         pdfManager.addGlucoseTable(mandatoryInformation.getGlucoseMandatory());

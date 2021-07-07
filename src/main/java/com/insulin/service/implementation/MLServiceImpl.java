@@ -18,6 +18,10 @@ import static com.insulin.shared.constants.SecurityConstants.FLASK_API;
 import static com.insulin.utils.ApiCommunicationUtils.getStringResponse;
 import static com.insulin.utils.ApiCommunicationUtils.obtainPostClassificationRequest;
 
+/**
+ * Service which prepares the data to be used inside the models and also is responsible
+ * with calling and extracting information from the second API.
+ */
 @Service
 public class MLServiceImpl implements MLService {
     @Override

@@ -3,7 +3,7 @@ package com.insulin.controllers;
 import com.insulin.exceptions.model.InvalidHistoryId;
 import com.insulin.exceptions.model.UserNotFoundException;
 import com.insulin.model.form.IndexSender;
-import com.insulin.model.form.MandatoryInsulinInformation;
+import com.insulin.model.form.MandatoryIndexInformation;
 import com.insulin.service.abstraction.HistoryService;
 import com.insulin.utils.model.IndexSummary;
 import com.insulin.utils.model.Pair;
@@ -35,8 +35,8 @@ public class HistoryController {
 
     @GetMapping("/result/{id}")
     @PreAuthorize("hasAnyAuthority('PATIENT', 'ADMIN')")
-    public ResponseEntity<Pair<MandatoryInsulinInformation, IndexSender>> getResultsById(@PathVariable("id") Long id,
-                                                                                         Authentication auth)
+    public ResponseEntity<Pair<MandatoryIndexInformation, IndexSender>> getResultsById(@PathVariable("id") Long id,
+                                                                                       Authentication auth)
             throws InvalidHistoryId, UserNotFoundException {
         String principal = (String) auth.getPrincipal();
         return new ResponseEntity<>(historyService.getMandatorySenderPairByHistoryId(id, principal), HttpStatus.OK);

@@ -40,8 +40,8 @@ public final class MandatoryInfoBuildUtils {
                 .build();
     }
 
-    public static OptionalInsulinInformation buildOptional(OptionalInsulinInformation optionalInformation) {
-        return OptionalInsulinInformation.builder() //
+    public static OptionalIndexInformation buildOptional(OptionalIndexInformation optionalInformation) {
+        return OptionalIndexInformation.builder() //
                 .hdl(optionalInformation.getHdl()) //
                 .height(optionalInformation.getHeight()) //
                 .weight(optionalInformation.getWeight()) //
@@ -51,9 +51,9 @@ public final class MandatoryInfoBuildUtils {
                 .build();
     }
 
-    public static Set<OptionalData> buildOptionalData(MandatoryInsulinInformation mandatoryInformation) {
+    public static Set<OptionalData> buildOptionalData(MandatoryIndexInformation mandatoryInformation) {
         Set<OptionalData> optionalData = new HashSet<>();
-        OptionalInsulinInformation optionalInfo = mandatoryInformation.getOptionalInformation();
+        OptionalIndexInformation optionalInfo = mandatoryInformation.getOptionalInformation();
         optionalData.add(OptionalData.buildOptionalData("Height", optionalInfo.getHeight()));
         optionalData.add(OptionalData.buildOptionalData("Weight", optionalInfo.getWeight()));
         optionalData.add(OptionalData.buildOptionalData("Nefa", optionalInfo.getNefa()));

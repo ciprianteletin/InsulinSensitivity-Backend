@@ -2,13 +2,13 @@ package com.insulin.service.abstraction;
 
 import com.insulin.excel.ExcelManager;
 import com.insulin.model.form.IndexSender;
-import com.insulin.model.form.MandatoryInsulinInformation;
+import com.insulin.model.form.MandatoryIndexInformation;
 
 import java.io.IOException;
 
 public interface ExcelService {
-    byte[] exportResponseExcel(MandatoryInsulinInformation mandatoryInformation, IndexSender sender) throws IOException;
+    byte[] exportResponseExcel(MandatoryIndexInformation mandatoryInformation, IndexSender sender) throws IOException;
 
-    void constructExcelDocument(ExcelManager excelManager, MandatoryInsulinInformation mandatoryInformation,
+    void constructExcelDocument(ExcelManager excelManager, MandatoryIndexInformation mandatoryInformation,
                                 IndexSender sender, String creationDate);
 }

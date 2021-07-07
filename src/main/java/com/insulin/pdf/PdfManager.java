@@ -102,7 +102,7 @@ public class PdfManager {
         pdfDocument.add(p);
     }
 
-    public void addOptionalData(OptionalInsulinInformation optionalInformation) throws DocumentException {
+    public void addOptionalData(OptionalIndexInformation optionalInformation) throws DocumentException {
         createGenericParagraph("Optional Data:");
 
         PdfPTable table = new PdfPTable(6);

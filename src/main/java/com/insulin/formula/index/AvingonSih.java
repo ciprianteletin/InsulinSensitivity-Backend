@@ -3,7 +3,7 @@ package com.insulin.formula.index;
 import com.insulin.excel.utils.FormulaExcelUtils;
 import com.insulin.interfaces.FormulaMarker;
 import com.insulin.model.form.IndexResult;
-import com.insulin.model.form.MandatoryInsulinInformation;
+import com.insulin.model.form.MandatoryIndexInformation;
 
 import static com.insulin.formula.ValueConverter.*;
 import static com.insulin.formula.ValueConverter.convertSingleInsulin;
@@ -14,7 +14,7 @@ import static com.insulin.validation.FormulaValidation.validateWeight;
 
 public class AvingonSih implements FormulaMarker {
     @Override
-    public IndexResult calculate(MandatoryInsulinInformation mandatoryInformation) {
+    public IndexResult calculate(MandatoryIndexInformation mandatoryInformation) {
         validateWeight(mandatoryInformation.getOptionalInformation(), "Avingon");
         double vd = 150. / mandatoryInformation.getOptionalInformation().getWeight();
         double glucoseOneTwenty = convertSingleGlucose(

@@ -69,11 +69,11 @@ public final class HistoryUtils {
                 .build();
     }
 
-    public static MandatoryInsulinInformation convertHistoryToMandatory(History history) {
-        OptionalInsulinInformation optionalInformation = new OptionalInsulinInformation();
+    public static MandatoryIndexInformation convertHistoryToMandatory(History history) {
+        OptionalIndexInformation optionalInformation = new OptionalIndexInformation();
         Set<OptionalData> optionalData = history.getOptionalData();
         populateOptionalInformationObject(optionalInformation, optionalData);
-        return MandatoryInsulinInformation.builder() //
+        return MandatoryIndexInformation.builder() //
                 .glucoseMandatory(history.getGlucoseMandatory()) //
                 .insulinMandatory(history.getInsulinMandatory()) //
                 .selectedIndexes(getIndexNamesFromIndexHistory(history.getIndexHistory())) //
@@ -81,7 +81,7 @@ public final class HistoryUtils {
                 .build();
     }
 
-    public static History buildHistory(MandatoryInsulinInformation mandatoryInformation, String result, IndexSender sender) {
+    public static History buildHistory(MandatoryIndexInformation mandatoryInformation, String result, IndexSender sender) {
         return History.builder() //
                 .result(result) //
                 .indexHistory(convertSenderToHistory(sender)) //
@@ -98,11 +98,11 @@ public final class HistoryUtils {
         return indexNames;
     }
 
-    private static void populateOptionalInformationObject(OptionalInsulinInformation optionalInformation, Set<OptionalData> optionalData) {
+    private static void populateOptionalInformationObject(OptionalIndexInformation optionalInformation, Set<OptionalData> optionalData) {
         optionalData.forEach(opt -> matchOptionalAttribute(optionalInformation, opt));
     }
 
-    private static void matchOptionalAttribute(OptionalInsulinInformation optionalInformation, OptionalData optionalData) {
+    private static void matchOptionalAttribute(OptionalIndexInformation optionalInformation, OptionalData optionalData) {
         Double value = optionalData.getValue();
         switch (optionalData.getName()) {
             case "Height":

@@ -5,7 +5,7 @@ import com.insulin.excel.utils.FormulaExcelUtils;
 import com.insulin.interfaces.FormulaMarker;
 import com.insulin.interfaces.IndexInterpreter;
 import com.insulin.model.form.IndexResult;
-import com.insulin.model.form.MandatoryInsulinInformation;
+import com.insulin.model.form.MandatoryIndexInformation;
 import org.springframework.data.util.Pair;
 
 import static com.insulin.formula.RangeChecker.checkUpperBound;
@@ -21,8 +21,8 @@ public class McAuley implements FormulaMarker, IndexInterpreter {
     private static final double upperValue = 5.8;
 
     @Override
-    public IndexResult calculate(MandatoryInsulinInformation mandatoryInformation) {
-        validateTrygliceride(mandatoryInformation.getOptionalInformation(), "mcAuley");
+    public IndexResult calculate(MandatoryIndexInformation mandatoryInformation) {
+        validateTrygliceride(mandatoryInformation.getOptionalInformation(), "McAuley");
         double fastingInsulin = mandatoryInformation
                 .getInsulinMandatory()
                 .getFastingInsulin();

@@ -19,8 +19,8 @@ import static java.lang.Math.sqrt;
 
 public class Ogis implements FormulaMarker, IndexInterpreter {
     @Override
-    public IndexResult calculate(MandatoryInsulinInformation mandatoryInformation) {
-        validateWeightAndHeight(mandatoryInformation.getOptionalInformation(), "ogis");
+    public IndexResult calculate(MandatoryIndexInformation mandatoryInformation) {
+        validateWeightAndHeight(mandatoryInformation.getOptionalInformation(), "Ogis");
 
         GlucoseMandatory glucoseMandatory = glucoseConverter(mandatoryInformation.getGlucoseMandatory(), "mmol/L");
         InsulinMandatory insulinMandatory = insulinConverter(mandatoryInformation.getInsulinMandatory(), "pmol/L");
@@ -30,7 +30,7 @@ public class Ogis implements FormulaMarker, IndexInterpreter {
         double pp1 = 6.5, pp2 = 1951, pp3 = 4514;
         double pp4 = 792, pp5 = 0.0118, pp6 = 173;
         double dt = 30, glc = 90 * 0.05551;
-        OptionalInsulinInformation optionalInformation = mandatoryInformation.getOptionalInformation();
+        OptionalIndexInformation optionalInformation = mandatoryInformation.getOptionalInformation();
         double bsa = 0.1640443958298 * pow(optionalInformation.getWeight(), 0.515)
                 * pow((0.01 * optionalInformation.getHeight()), 0.422);
         double ndose = 5.551 * 75 / bsa;

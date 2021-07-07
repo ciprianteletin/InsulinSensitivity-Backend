@@ -7,7 +7,7 @@ import com.insulin.interfaces.IndexInterpreter;
 import com.insulin.model.form.GlucoseMandatory;
 import com.insulin.model.form.IndexResult;
 import com.insulin.model.form.InsulinMandatory;
-import com.insulin.model.form.MandatoryInsulinInformation;
+import com.insulin.model.form.MandatoryIndexInformation;
 import org.springframework.data.util.Pair;
 
 import static com.insulin.formula.RangeChecker.checkInBetween;
@@ -25,8 +25,8 @@ public class Gutt implements FormulaMarker, IndexInterpreter {
     private final int fluctuation = 39;
 
     @Override
-    public IndexResult calculate(MandatoryInsulinInformation mandatoryInformation) {
-        validateWeight(mandatoryInformation.getOptionalInformation(), "gutt");
+    public IndexResult calculate(MandatoryIndexInformation mandatoryInformation) {
+        validateWeight(mandatoryInformation.getOptionalInformation(), "Gutt");
         GlucoseMandatory glucoseMandatory = mandatoryInformation.getGlucoseMandatory();
         InsulinMandatory insulinMandatory = mandatoryInformation.getInsulinMandatory();
 

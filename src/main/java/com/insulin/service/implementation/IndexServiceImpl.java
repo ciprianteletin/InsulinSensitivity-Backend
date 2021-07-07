@@ -31,7 +31,7 @@ public class IndexServiceImpl implements IndexService {
     }
 
     @Override
-    public IndexSender getIndexResult(MandatoryInsulinInformation mandatoryInformation, String username) {
+    public IndexSender getIndexResult(MandatoryIndexInformation mandatoryInformation, String username) {
         GlucoseMandatory glucoseMandatory = mandatoryInformation.getGlucoseMandatory();
         String initialResult = analyzer.filterGlucoseMandatoryResult(glucoseMandatory);
         Optional<User> user = getUserOrNull(username); // for preserving a history
@@ -42,7 +42,7 @@ public class IndexServiceImpl implements IndexService {
         return sender;
     }
 
-    private IndexSender populateIndexSenderMap(MandatoryInsulinInformation mandatoryInformation) {
+    private IndexSender populateIndexSenderMap(MandatoryIndexInformation mandatoryInformation) {
         IndexSender indexSender = new IndexSender();
         List<String> indexes = mandatoryInformation.getSelectedIndexes();
         indexes.forEach(index -> {

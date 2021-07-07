@@ -53,7 +53,7 @@ public class UserManagerServiceImpl implements UserManagerService {
     @Override
     public User findUserById(Long id) throws UserNotFoundException {
         return userRepository.findById(id) //
-                .orElseThrow(() -> new UserNotFoundException("User not found for the specified id. Auto-login failed"));
+                .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND));
     }
 
     @Override

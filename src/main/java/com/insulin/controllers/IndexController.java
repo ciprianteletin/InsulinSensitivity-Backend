@@ -1,7 +1,7 @@
 package com.insulin.controllers;
 
 import com.insulin.model.form.IndexSender;
-import com.insulin.model.form.MandatoryInsulinInformation;
+import com.insulin.model.form.MandatoryIndexInformation;
 import com.insulin.service.abstraction.IndexService;
 import com.insulin.service.abstraction.PdfService;
 import com.insulin.utils.model.Pair;
@@ -36,7 +36,7 @@ public class IndexController {
      * and also the graphical representation.
      */
     @PostMapping("/{username}")
-    public ResponseEntity<IndexSender> evaluateIndexes(@RequestBody @Valid MandatoryInsulinInformation mandatoryInformation,
+    public ResponseEntity<IndexSender> evaluateIndexes(@RequestBody @Valid MandatoryIndexInformation mandatoryInformation,
                                                        @PathVariable(name = "username", required = false) String username) {
         return new ResponseEntity<>(indexService.getIndexResult(mandatoryInformation, username), HttpStatus.OK);
     }
@@ -45,7 +45,7 @@ public class IndexController {
     @PreAuthorize("hasAnyAuthority('PATIENT', 'ADMIN')")
     public ResponseEntity<byte[]> getIndexPdf(@RequestParam(name = "glucoseImg") String glucoseImg,
                                               @RequestParam(name = "insulinImg") String insulinImg,
-                                              @RequestBody Pair<IndexSender, MandatoryInsulinInformation> dataPair)
+                                              @RequestBody Pair<IndexSender, MandatoryIndexInformation> dataPair)
             throws IOException, DocumentException {
         return ResponseEntity.status(HttpStatus.OK).header("Filename", "insulin.pdf")
                 .contentType(MediaType.parseMediaType("application/pdf"))

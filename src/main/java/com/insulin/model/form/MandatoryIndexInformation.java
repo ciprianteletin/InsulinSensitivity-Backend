@@ -7,12 +7,16 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.Size;
 import java.util.List;
 
+/**
+ * Wrapper class which contains all necessary details for index calculation.
+ * Inside this class resides data from the user directly.
+ */
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class MandatoryInsulinInformation {
+public class MandatoryIndexInformation {
     @Size(min = 1, max = 1)
     private String gender;
     private String fullName;
@@ -25,5 +29,5 @@ public class MandatoryInsulinInformation {
     @Valid
     private InsulinMandatory insulinMandatory;
     @Valid
-    private OptionalInsulinInformation optionalInformation;
+    private OptionalIndexInformation optionalInformation;
 }

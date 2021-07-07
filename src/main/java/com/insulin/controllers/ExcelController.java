@@ -4,7 +4,7 @@ import com.insulin.excel.ExcelManager;
 import com.insulin.exceptions.model.InvalidHistoryId;
 import com.insulin.exceptions.model.UserNotFoundException;
 import com.insulin.model.form.IndexSender;
-import com.insulin.model.form.MandatoryInsulinInformation;
+import com.insulin.model.form.MandatoryIndexInformation;
 import com.insulin.service.abstraction.ExcelService;
 import com.insulin.service.abstraction.HistoryService;
 import com.insulin.utils.model.Pair;
@@ -32,7 +32,7 @@ public class ExcelController {
 
     @PostMapping("/result")
     @PreAuthorize("hasAnyAuthority('PATIENT', 'ADMIN')")
-    public ResponseEntity<byte[]> getExcelResults(@RequestBody @Valid Pair<MandatoryInsulinInformation, IndexSender> excelData) throws IOException {
+    public ResponseEntity<byte[]> getExcelResults(@RequestBody @Valid Pair<MandatoryIndexInformation, IndexSender> excelData) throws IOException {
         byte[] excelContent = this.excelService.exportResponseExcel(excelData.getFirst(), excelData.getSecond());
         return ResponseEntity.status(HttpStatus.OK).header("Filename", "insulin.xlsx")
                 .contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
@@ -47,7 +47,7 @@ public class ExcelController {
         ExcelManager excelManager = new ExcelManager("Insulin.xlsx");
         for (Long id : historyId) {
             String creationDate = historyService.getCreationDate(id);
-            Pair<MandatoryInsulinInformation, IndexSender> excelData = historyService.getMandatorySenderPairByHistoryId(id, principal);
+            Pair<MandatoryIndexInformation, IndexSender> excelData = historyService.getMandatorySenderPairByHistoryId(id, principal);
             excelService.constructExcelDocument(excelManager, excelData.getFirst(), excelData.getSecond(), creationDate);
         }
         return ResponseEntity.status(HttpStatus.OK).header("Filename", "insulin.xlsx")

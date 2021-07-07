@@ -4,7 +4,7 @@ import com.insulin.enumerations.Severity;
 import com.insulin.interfaces.FormulaMarker;
 import com.insulin.interfaces.IndexInterpreter;
 import com.insulin.model.form.IndexResult;
-import com.insulin.model.form.MandatoryInsulinInformation;
+import com.insulin.model.form.MandatoryIndexInformation;
 import org.springframework.data.util.Pair;
 
 import static com.insulin.shared.constants.NumericConstants.BALANCE_AVIGNON;
@@ -16,7 +16,7 @@ public class Avingon implements FormulaMarker, IndexInterpreter {
     private final FormulaMarker avingonSih = new AvingonSih();
 
     @Override
-    public IndexResult calculate(MandatoryInsulinInformation mandatoryInformation) {
+    public IndexResult calculate(MandatoryIndexInformation mandatoryInformation) {
         double sibResult = avingonSib.calculate(mandatoryInformation).getResult();
         double sihResult = avingonSih.calculate(mandatoryInformation).getResult();
 

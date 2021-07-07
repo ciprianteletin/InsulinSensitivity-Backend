@@ -3,8 +3,8 @@ package com.insulin.excel;
 import com.insulin.excel.utils.RowTracker;
 import com.insulin.model.form.GlucoseMandatory;
 import com.insulin.model.form.InsulinMandatory;
-import com.insulin.model.form.MandatoryInsulinInformation;
-import com.insulin.model.form.OptionalInsulinInformation;
+import com.insulin.model.form.MandatoryIndexInformation;
+import com.insulin.model.form.OptionalIndexInformation;
 import org.apache.poi.ss.usermodel.*;
 
 import java.util.List;
@@ -54,7 +54,7 @@ public class InformationSheet {
         this.infoId++;
     }
 
-    public void addMandatoryInformation(MandatoryInsulinInformation mandatoryInformation) {
+    public void addMandatoryInformation(MandatoryIndexInformation mandatoryInformation) {
         Row firstRow = sheet.createRow(this.tracker.getAndUpdate(infoSheetName));
         Row secondRow = sheet.createRow(this.tracker.getAndUpdate(infoSheetName));
         addUserInfo(firstRow, secondRow, mandatoryInformation);
@@ -66,7 +66,7 @@ public class InformationSheet {
         createEmptyRow(this.tracker.getAndUpdate(infoSheetName), this.sheet);
     }
 
-    private void addUserInfo(Row firstRow, Row secondRow, MandatoryInsulinInformation mandatoryInformation) {
+    private void addUserInfo(Row firstRow, Row secondRow, MandatoryIndexInformation mandatoryInformation) {
         int cellNr = 0;
 
         createCellWithValue(firstRow, cellNr++, infoId);
@@ -109,18 +109,18 @@ public class InformationSheet {
         }
     }
 
-    private void addOptionalData(OptionalInsulinInformation optionalInformation, String placeholder, Row first, Row second) {
+    private void addOptionalData(OptionalIndexInformation optionalInformation, String placeholder, Row first, Row second) {
         int cellNr = OPTIONAL_START;
         createCellWithNullCheckCommons(first, second, cellNr++, optionalInformation.getWeight());
         createCellWithNullCheckCommons(first, second, cellNr, optionalInformation.getHeight());
 
         if (placeholder.equals("mg/dL")) {
             addOptional(optionalInformation, first);
-            OptionalInsulinInformation convertedOpt = optionalConverter(optionalInformation, placeholder, "mmol/L");
+            OptionalIndexInformation convertedOpt = optionalConverter(optionalInformation, placeholder, "mmol/L");
             addOptional(convertedOpt, second);
         } else {
             addOptional(optionalInformation, second);
-            OptionalInsulinInformation convertedOpt = optionalConverter(optionalInformation, placeholder, "mg/dL");
+            OptionalIndexInformation convertedOpt = optionalConverter(optionalInformation, placeholder, "mg/dL");
             addOptional(convertedOpt, first);
         }
     }
@@ -151,7 +151,7 @@ public class InformationSheet {
         createCellWithValue(row, cellNr, insulinMandatory.getInsulinOneTwenty());
     }
 
-    private void addOptional(OptionalInsulinInformation optionalinformation, Row row) {
+    private void addOptional(OptionalIndexInformation optionalinformation, Row row) {
         int cellNr = OPTIONAL_START + 2; // as we added two values before
 
         createCellWithNullCheck(row, cellNr++, optionalinformation.getHdl());

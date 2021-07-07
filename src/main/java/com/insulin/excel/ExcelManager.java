@@ -1,7 +1,7 @@
 package com.insulin.excel;
 
 import com.insulin.model.form.IndexSender;
-import com.insulin.model.form.MandatoryInsulinInformation;
+import com.insulin.model.form.MandatoryIndexInformation;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
@@ -23,7 +23,7 @@ public class ExcelManager {
         this.formulaSheet = new FormulaSheet(workbook);
     }
 
-    public void addToGeneralPage(MandatoryInsulinInformation mandatoryInformation) {
+    public void addToGeneralPage(MandatoryIndexInformation mandatoryInformation) {
         informationSheet.addMandatoryInformation(mandatoryInformation);
     }
 

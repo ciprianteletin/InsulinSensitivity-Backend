@@ -5,7 +5,7 @@ import com.insulin.excel.utils.FormulaExcelUtils;
 import com.insulin.interfaces.FormulaMarker;
 import com.insulin.interfaces.IndexInterpreter;
 import com.insulin.model.form.IndexResult;
-import com.insulin.model.form.MandatoryInsulinInformation;
+import com.insulin.model.form.MandatoryIndexInformation;
 import org.springframework.data.util.Pair;
 
 import static com.insulin.formula.RangeChecker.checkInBetween;
@@ -19,7 +19,7 @@ public class HomaB implements FormulaMarker, IndexInterpreter {
     private static final double fluctuation = 30.56;
 
     @Override
-    public IndexResult calculate(MandatoryInsulinInformation mandatoryInformation) {
+    public IndexResult calculate(MandatoryIndexInformation mandatoryInformation) {
         double fastingGlucose = convertSingleGlucose(
                 mandatoryInformation.getGlucoseMandatory().getFastingGlucose(),
                 mandatoryInformation.getGlucoseMandatory().getGlucosePlaceholder(),

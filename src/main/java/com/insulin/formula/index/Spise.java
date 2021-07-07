@@ -5,8 +5,8 @@ import com.insulin.excel.utils.FormulaExcelUtils;
 import com.insulin.interfaces.FormulaMarker;
 import com.insulin.interfaces.IndexInterpreter;
 import com.insulin.model.form.IndexResult;
-import com.insulin.model.form.MandatoryInsulinInformation;
-import com.insulin.model.form.OptionalInsulinInformation;
+import com.insulin.model.form.MandatoryIndexInformation;
+import com.insulin.model.form.OptionalIndexInformation;
 import org.springframework.data.util.Pair;
 
 import static com.insulin.formula.RangeChecker.checkLowerBound;
@@ -25,10 +25,10 @@ public class Spise implements FormulaMarker, IndexInterpreter {
     private static final double lowerLimit = 6.61;
 
     @Override
-    public IndexResult calculate(MandatoryInsulinInformation mandatoryInformation) {
-        validateWeightAndHeight(mandatoryInformation.getOptionalInformation(), "spice");
-        validateTyroAndHdl(mandatoryInformation.getOptionalInformation(), "spise");
-        OptionalInsulinInformation optionalInformation = mandatoryInformation.getOptionalInformation();
+    public IndexResult calculate(MandatoryIndexInformation mandatoryInformation) {
+        validateWeightAndHeight(mandatoryInformation.getOptionalInformation(), "Spise");
+        validateTyroAndHdl(mandatoryInformation.getOptionalInformation(), "Spise");
+        OptionalIndexInformation optionalInformation = mandatoryInformation.getOptionalInformation();
         double hdl = optionalInformation.getHdl();
         hdl = convertCholesterolMmol(hdl, mandatoryInformation.getGlucoseMandatory().getGlucosePlaceholder());
         double bmi = calculateBMI(optionalInformation);

@@ -5,7 +5,7 @@ import com.insulin.exceptions.model.UserNotFoundException;
 import com.insulin.model.History;
 import com.insulin.model.User;
 import com.insulin.model.form.IndexSender;
-import com.insulin.model.form.MandatoryInsulinInformation;
+import com.insulin.model.form.MandatoryIndexInformation;
 import com.insulin.repository.HistoryRepository;
 import com.insulin.repository.UserRepository;
 import com.insulin.service.abstraction.HistoryService;
@@ -43,7 +43,7 @@ public class HistoryServiceImpl implements HistoryService {
     }
 
     @Override
-    public void saveHistory(User user, MandatoryInsulinInformation mandatoryInformation, String result, IndexSender indexSender) {
+    public void saveHistory(User user, MandatoryIndexInformation mandatoryInformation, String result, IndexSender indexSender) {
         History history = buildHistory(mandatoryInformation, result, indexSender);
         user.addHistory(history);
         userRepository.save(user);
@@ -58,13 +58,13 @@ public class HistoryServiceImpl implements HistoryService {
     }
 
     @Override
-    public Pair<MandatoryInsulinInformation, IndexSender> getMandatorySenderPairByHistoryId(Long id, String username)
+    public Pair<MandatoryIndexInformation, IndexSender> getMandatorySenderPairByHistoryId(Long id, String username)
             throws InvalidHistoryId, UserNotFoundException {
         History history = historyRepository.findById(id)
                 .orElseThrow(() -> new InvalidHistoryId(HISTORY_ID));
         User user = getUserByUsernameOrThrowError(username);
         validationUtils.validateHistoryId(user.getHistoryList(), id);
-        MandatoryInsulinInformation mandatoryInformation = convertHistoryToMandatory(history);
+        MandatoryIndexInformation mandatoryInformation = convertHistoryToMandatory(history);
         addUserData(user, mandatoryInformation);
         IndexSender sender = convertHistoryToSender(history);
         return new Pair<>(mandatoryInformation, sender);
@@ -102,7 +102,7 @@ public class HistoryServiceImpl implements HistoryService {
         return userRepository.findByUsername(username).orElseThrow(() -> new UserNotFoundException("User not found!"));
     }
 
-    private void addUserData(User user, MandatoryInsulinInformation mandatoryInformation) {
+    private void addUserData(User user, MandatoryIndexInformation mandatoryInformation) {
         mandatoryInformation.setFullName(user.getDetails().getFirstName() + " " + user.getDetails().getLastName());
         String gender;
         if (user.getDetails().getGender() == 'M') {

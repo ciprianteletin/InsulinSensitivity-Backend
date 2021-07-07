@@ -1,7 +1,7 @@
 package com.insulin.validation;
 
 import com.insulin.exceptions.model.InputIndexException;
-import com.insulin.model.form.OptionalInsulinInformation;
+import com.insulin.model.form.OptionalIndexInformation;
 
 import java.text.MessageFormat;
 
@@ -23,13 +23,13 @@ public final class FormulaValidation {
 
     }
 
-    public static void validateWeightAndHeight(OptionalInsulinInformation optionalInformation, String index)
+    public static void validateWeightAndHeight(OptionalIndexInformation optionalInformation, String index)
             throws InputIndexException {
         validateHeight(optionalInformation, index);
         validateWeight(optionalInformation, index);
     }
 
-    public static void validateWeight(OptionalInsulinInformation optionalInformation, String index)
+    public static void validateWeight(OptionalIndexInformation optionalInformation, String index)
             throws InputIndexException {
         Double weight = optionalInformation.getWeight();
         if (isNull(weight)) {
@@ -38,16 +38,16 @@ public final class FormulaValidation {
         }
     }
 
-    public static void validateHeight(OptionalInsulinInformation optionalInformation, String index)
+    public static void validateHeight(OptionalIndexInformation optionalInformation, String index)
             throws InputIndexException {
-        Double height = optionalInformation.getWeight();
+        Double height = optionalInformation.getHeight();
         if (isNull(height)) {
             String message = MessageFormat.format(SINGLE_NULL, "height", index);
             throw new InputIndexException(message);
         }
     }
 
-    public static void validateNefa(OptionalInsulinInformation optionalInformation, String index)
+    public static void validateNefa(OptionalIndexInformation optionalInformation, String index)
             throws InputIndexException {
         Double nefa = optionalInformation.getNefa();
         if (isNull(nefa)) {
@@ -56,7 +56,7 @@ public final class FormulaValidation {
         }
     }
 
-    public static void validateTrygliceride(OptionalInsulinInformation optionalInformation, String index)
+    public static void validateTrygliceride(OptionalIndexInformation optionalInformation, String index)
             throws InputIndexException {
         Double trygliceride = optionalInformation.getTriglyceride();
         if (isNull(trygliceride)) {
@@ -65,7 +65,7 @@ public final class FormulaValidation {
         }
     }
 
-    public static void validateTyroAndHdl(OptionalInsulinInformation optionalInformation, String index)
+    public static void validateTyroAndHdl(OptionalIndexInformation optionalInformation, String index)
             throws InputIndexException {
         Double tyroglobulin = optionalInformation.getThyroglobulin();
         Double hdl = optionalInformation.getHdl();

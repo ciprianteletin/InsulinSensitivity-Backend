@@ -10,6 +10,10 @@ import javax.validation.constraints.NotNull;
 
 import static com.insulin.formula.ValueConverter.INSULIN_CONVERT;
 
+/**
+ * Entity which is mapped to a table with the same name and attributes.
+ * Container for insulin related details.
+ */
 @Entity
 @Table(name = "insulin_mandatory")
 @Getter

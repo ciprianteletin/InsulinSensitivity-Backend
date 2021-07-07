@@ -6,7 +6,7 @@ import com.insulin.interfaces.FormulaMarker;
 import com.insulin.interfaces.IndexInterpreter;
 import com.insulin.model.form.IndexResult;
 import com.insulin.model.form.InsulinMandatory;
-import com.insulin.model.form.MandatoryInsulinInformation;
+import com.insulin.model.form.MandatoryIndexInformation;
 import org.springframework.data.util.Pair;
 
 import static com.insulin.formula.ValueConverter.*;
@@ -19,8 +19,8 @@ import static com.insulin.validation.FormulaValidation.validateWeightAndHeight;
 
 public class StumvollV1 implements FormulaMarker, IndexInterpreter {
     @Override
-    public IndexResult calculate(MandatoryInsulinInformation mandatoryInformation) {
-        validateWeightAndHeight(mandatoryInformation.getOptionalInformation(), "stumvoll");
+    public IndexResult calculate(MandatoryIndexInformation mandatoryInformation) {
+        validateWeightAndHeight(mandatoryInformation.getOptionalInformation(), "Stumvoll");
         InsulinMandatory insulinMandatory = mandatoryInformation.getInsulinMandatory();
 
         double insulin120 = convertSingleInsulin(insulinMandatory.getInsulinOneTwenty(),

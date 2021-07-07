@@ -5,7 +5,7 @@ import com.insulin.excel.utils.FormulaExcelUtils;
 import com.insulin.interfaces.FormulaMarker;
 import com.insulin.interfaces.IndexInterpreter;
 import com.insulin.model.form.IndexResult;
-import com.insulin.model.form.MandatoryInsulinInformation;
+import com.insulin.model.form.MandatoryIndexInformation;
 import org.springframework.data.util.Pair;
 
 import static com.insulin.formula.RangeChecker.checkInBetween;
@@ -20,8 +20,8 @@ public class RevisedQuicki implements FormulaMarker, IndexInterpreter {
     private final double fluctuation = 0.013;
 
     @Override
-    public IndexResult calculate(MandatoryInsulinInformation mandatoryInformation) {
-        validateNefa(mandatoryInformation.getOptionalInformation(), "revised quicki");
+    public IndexResult calculate(MandatoryIndexInformation mandatoryInformation) {
+        validateNefa(mandatoryInformation.getOptionalInformation(), "Revised Quicki");
         double fastingGlucose = convertSingleGlucose(
                 mandatoryInformation.getGlucoseMandatory().getFastingGlucose(),
                 mandatoryInformation.getGlucoseMandatory().getGlucosePlaceholder(),

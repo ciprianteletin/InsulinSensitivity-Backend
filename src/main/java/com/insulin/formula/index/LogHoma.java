@@ -5,7 +5,7 @@ import com.insulin.excel.utils.FormulaExcelUtils;
 import com.insulin.interfaces.FormulaMarker;
 import com.insulin.interfaces.IndexInterpreter;
 import com.insulin.model.form.IndexResult;
-import com.insulin.model.form.MandatoryInsulinInformation;
+import com.insulin.model.form.MandatoryIndexInformation;
 import org.springframework.data.util.Pair;
 
 import static com.insulin.formula.RangeChecker.checkInBetween;
@@ -21,7 +21,7 @@ public class LogHoma implements FormulaMarker, IndexInterpreter {
     private final static double fluctuation = 0.64;
 
     @Override
-    public IndexResult calculate(MandatoryInsulinInformation mandatoryInformation) {
+    public IndexResult calculate(MandatoryIndexInformation mandatoryInformation) {
         Homa homa = new Homa();
         double result = log(homa.calculate(mandatoryInformation).getResult());
         return buildIndexResult(result, interpret(result), getInterval());
